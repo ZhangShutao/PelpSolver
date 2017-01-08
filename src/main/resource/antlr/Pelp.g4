@@ -50,9 +50,9 @@ ZERO : '0';
 STRING : '"' ('\\"'|~('"'))* '"';
 
 //普通谓词名，含中文
-PREDICATE : [a-zA-Z] [a-zA-Z0-9_-]*;
+PREDICATE : [a-z][a-zA-Z0-9_-]*;
 //变量
-VAR : [A-Z] [A-Za-z0-9_]*;
+VAR : [A-Z][A-Za-z0-9_]*;
 
 //空白字符或换行符
 WS : ( ' ' | '\t' | '\n' | '\r')+ -> skip;
@@ -75,15 +75,16 @@ predicate : PREDICATE;
 // 变量
 var : VAR | KNOW;
 // 谓词/函数参数
-param : (integer | decimal | string | var);
+param : (integer | string | predicate) # const_param
+      | var                            # var_param;
 
 // 客观字
 objective_literal : NAF? MINUS? predicate (LPAREN (param (COMMA param)*)? RPAREN)?;
 // 主观字
-subjective_literal : KNOW (LPAREN | LCBRACK) decimal COMMA decimal (RPAREN | RCBRACK) objective_literal;
+subjective_literal : KNOW (LPAREN | LSBRACK) decimal COMMA decimal (RPAREN | RSBRACK) objective_literal;
 
 // 规则首部
-rule_head : objective_literal (VBAR objective_literal);
+rule_head : objective_literal (VBAR objective_literal)*;
 // 规则体部
 rule_body : (objective_literal | subjective_literal) (COMMA (objective_literal | subjective_literal))*;
 
@@ -91,6 +92,6 @@ hard_rule : rule_head DOT                # fact_rule
           | IF rule_body DOT             # constrain_rule
           | rule_head IF rule_body DOT   # normal_rule;
 
-soft_rule : hard_rule LPAREN decimal RPAREN;
+soft_rule : hard_rule LSBRACK decimal RSBRACK;
 
 program : (soft_rule | hard_rule)*;

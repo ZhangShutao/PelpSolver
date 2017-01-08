@@ -58,15 +58,29 @@ public interface PelpListener extends ParseTreeListener {
 	 */
 	void exitVar(PelpParser.VarContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link PelpParser#param}.
+	 * Enter a parse tree produced by the {@code const_param}
+	 * labeled alternative in {@link PelpParser#param}.
 	 * @param ctx the parse tree
 	 */
-	void enterParam(PelpParser.ParamContext ctx);
+	void enterConst_param(PelpParser.Const_paramContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link PelpParser#param}.
+	 * Exit a parse tree produced by the {@code const_param}
+	 * labeled alternative in {@link PelpParser#param}.
 	 * @param ctx the parse tree
 	 */
-	void exitParam(PelpParser.ParamContext ctx);
+	void exitConst_param(PelpParser.Const_paramContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code var_param}
+	 * labeled alternative in {@link PelpParser#param}.
+	 * @param ctx the parse tree
+	 */
+	void enterVar_param(PelpParser.Var_paramContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code var_param}
+	 * labeled alternative in {@link PelpParser#param}.
+	 * @param ctx the parse tree
+	 */
+	void exitVar_param(PelpParser.Var_paramContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link PelpParser#objective_literal}.
 	 * @param ctx the parse tree

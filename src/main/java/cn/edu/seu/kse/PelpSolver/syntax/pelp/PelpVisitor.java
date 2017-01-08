@@ -41,11 +41,19 @@ public interface PelpVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitVar(PelpParser.VarContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link PelpParser#param}.
+	 * Visit a parse tree produced by the {@code const_param}
+	 * labeled alternative in {@link PelpParser#param}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitParam(PelpParser.ParamContext ctx);
+	T visitConst_param(PelpParser.Const_paramContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code var_param}
+	 * labeled alternative in {@link PelpParser#param}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitVar_param(PelpParser.Var_paramContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link PelpParser#objective_literal}.
 	 * @param ctx the parse tree

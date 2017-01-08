@@ -76,13 +76,25 @@ public class PelpBaseListener implements PelpListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterParam(PelpParser.ParamContext ctx) { }
+	@Override public void enterConst_param(PelpParser.Const_paramContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitParam(PelpParser.ParamContext ctx) { }
+	@Override public void exitConst_param(PelpParser.Const_paramContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterVar_param(PelpParser.Var_paramContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitVar_param(PelpParser.Var_paramContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
