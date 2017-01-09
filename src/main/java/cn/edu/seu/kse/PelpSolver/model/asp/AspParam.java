@@ -1,6 +1,8 @@
 package cn.edu.seu.kse.PelpSolver.model.asp;
 
 import cn.edu.seu.kse.PelpSolver.model.ObjectModel;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 
 /**
  * ASP字的参数的语法类
@@ -35,5 +37,25 @@ public class AspParam extends ObjectModel {
 
     public void setText(String text) {
         this.text = text;
+    }
+
+    @Override
+    public String toString() {
+        return text;
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder().append(type).append(true).toHashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (null == obj || obj.getClass() != AspParam.class) {
+            return false;
+        } else {
+            AspParam other = (AspParam) obj;
+            return new EqualsBuilder().append(type, other.getType()).append(text, other.getText()).isEquals();
+        }
     }
 }

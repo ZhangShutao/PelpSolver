@@ -1,9 +1,12 @@
 package cn.edu.seu.kse.PelpSolver.model.asp;
 
 import cn.edu.seu.kse.PelpSolver.model.ObjectModel;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.StringJoiner;
 
 /**
  * ASP的规则类
@@ -68,5 +71,48 @@ public class AspRule extends ObjectModel {
 
     public boolean isConstrain() {
         return head.isEmpty() && !body.isEmpty();
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+
+        StringJoiner headJoiner = new StringJoiner("|");
+        head.forEach(aspLiteral -> headJoiner.add(aspLiteral.toString()));
+        builder.append(headJoiner.toString());
+
+        if (!isFact()) {
+            if (isSoftConstrain) {
+                builder.append(":~");
+            } else {
+                builder.append(":-");
+            }
+            StringJoiner bodyJoiner = new StringJoiner(",");
+            body.forEach(aspLiteral -> bodyJoiner.add(aspLiteral.toString()));
+            builder.append(bodyJoiner.toString());
+        }
+        builder.append(".");
+        if (isConstrain()) {
+            builder.append("[").append(weight).append("]");
+        }
+
+        return builder.toString();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder().append(head.toArray()).append(isSoftConstrain)
+                .append(body.toArray()).append(weight).toHashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (null == obj || obj.getClass() != AspRule.class) {
+            return false;
+        } else {
+            AspRule other = (AspRule) obj;
+            return new EqualsBuilder().append(head, other.getHead()).append(body, other.getBody())
+                    .append(isSoftConstrain, other.isSoftConstrain).append(weight, other.getWeight()).isEquals();
+        }
     }
 }
