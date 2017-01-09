@@ -81,7 +81,7 @@ public class AspVisitorImpl extends AspBaseVisitor {
     public Object visitConstrain_rule(AspParser.Constrain_ruleContext ctx) {
         AspRule rule = new AspRule();
         rule.setBody((List<AspLiteral>) visit(ctx.rule_body()));
-        return super.visitConstrain_rule(ctx);
+        return rule;
     }
 
     @Override
@@ -96,9 +96,13 @@ public class AspVisitorImpl extends AspBaseVisitor {
     @SuppressWarnings("unchecked")
     public Object visitSoft_constrain(AspParser.Soft_constrainContext ctx) {
         List<AspLiteral> body = (List<AspLiteral>) visit(ctx.rule_body());
-        int weight = Integer.parseInt(ctx.integer().getText());
+        int weight = Integer.parseInt(ctx.integer(0).getText());
+        int level = ctx.integer().size() == 2 ? Integer.parseInt(ctx.integer(1).getText()) : 0;
 
-        return new AspRule(body, weight);
+        List<AspParam> params = new ArrayList<>();
+        ctx.param().forEach(paramContext -> params.add((AspParam) visit(paramContext)));
+
+        return new AspRule(body, weight, level, params);
     }
 
     @Override

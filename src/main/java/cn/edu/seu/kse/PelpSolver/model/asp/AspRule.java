@@ -18,6 +18,8 @@ public class AspRule extends ObjectModel {
     private List<AspLiteral> body = new ArrayList<>();
     private boolean isSoftConstrain = false;
     private int weight;
+    private int level = 0;
+    private List<AspParam> softConstrainParams = new ArrayList<>();
 
     public AspRule() {
     }
@@ -27,10 +29,12 @@ public class AspRule extends ObjectModel {
         this.body = body;
     }
 
-    public AspRule(List<AspLiteral> body, int weight) {
+    public AspRule(List<AspLiteral> body, int weight, int level, List<AspParam> softConstrainParams) {
         this.body = body;
         this.isSoftConstrain = true;
         this.weight = weight;
+        this.level = level;
+        this.softConstrainParams = softConstrainParams;
     }
 
     public List<AspLiteral> getHead() {
@@ -65,6 +69,22 @@ public class AspRule extends ObjectModel {
         this.weight = weight;
     }
 
+    public int getLevel() {
+        return level;
+    }
+
+    public void setLevel(int level) {
+        this.level = level;
+    }
+
+    public List<AspParam> getSoftConstrainParams() {
+        return softConstrainParams;
+    }
+
+    public void setSoftConstrainParams(List<AspParam> softConstrainParams) {
+        this.softConstrainParams = softConstrainParams;
+    }
+
     public boolean isFact() {
         return !head.isEmpty() && body.isEmpty();
     }
@@ -92,8 +112,12 @@ public class AspRule extends ObjectModel {
             builder.append(bodyJoiner.toString());
         }
         builder.append(".");
-        if (isConstrain()) {
-            builder.append("[").append(weight).append("]");
+        if (isSoftConstrain()) {
+            StringJoiner softJoiner = new StringJoiner(",", "[", "]");
+            softJoiner.add(String.valueOf(weight) + "@" + String.valueOf(level));
+            softConstrainParams.forEach(aspParam -> softJoiner.add(aspParam.toString()));
+
+            builder.append(softJoiner.toString());
         }
 
         return builder.toString();

@@ -18,8 +18,8 @@ public class AspParser extends Parser {
 		new PredictionContextCache();
 	public static final int
 		LPAREN=1, RPAREN=2, LSBRACK=3, RSBRACK=4, LCBRACK=5, RCBRACK=6, COMMA=7, 
-		DOT=8, VBAR=9, COLON=10, MINUS=11, NAF=12, IF=13, SOFT_IF=14, DECIMAL=15, 
-		POSITIVE_INT=16, ZERO=17, STRING=18, PREDICATE=19, VAR=20, WS=21, LINE_COMMENT=22;
+		DOT=8, VBAR=9, COLON=10, MINUS=11, NAF=12, IF=13, SOFT_IF=14, AT=15, DECIMAL=16, 
+		POSITIVE_INT=17, ZERO=18, STRING=19, PREDICATE=20, VAR=21, WS=22, LINE_COMMENT=23;
 	public static final int
 		RULE_integer = 0, RULE_string = 1, RULE_predicate = 2, RULE_var = 3, RULE_param = 4, 
 		RULE_literal = 5, RULE_rule_head = 6, RULE_rule_body = 7, RULE_reasoning_rule = 8, 
@@ -31,12 +31,13 @@ public class AspParser extends Parser {
 
 	private static final String[] _LITERAL_NAMES = {
 		null, "'('", "')'", "'['", "']'", "'{'", "'}'", "','", "'.'", "'|'", "':'", 
-		"'-'", "'not'", "':-'", "':~'", null, null, "'0'"
+		"'-'", "'not'", "':-'", "':~'", "'@'", null, null, "'0'"
 	};
 	private static final String[] _SYMBOLIC_NAMES = {
 		null, "LPAREN", "RPAREN", "LSBRACK", "RSBRACK", "LCBRACK", "RCBRACK", 
-		"COMMA", "DOT", "VBAR", "COLON", "MINUS", "NAF", "IF", "SOFT_IF", "DECIMAL", 
-		"POSITIVE_INT", "ZERO", "STRING", "PREDICATE", "VAR", "WS", "LINE_COMMENT"
+		"COMMA", "DOT", "VBAR", "COLON", "MINUS", "NAF", "IF", "SOFT_IF", "AT", 
+		"DECIMAL", "POSITIVE_INT", "ZERO", "STRING", "PREDICATE", "VAR", "WS", 
+		"LINE_COMMENT"
 	};
 	public static final Vocabulary VOCABULARY = new VocabularyImpl(_LITERAL_NAMES, _SYMBOLIC_NAMES);
 
@@ -667,10 +668,24 @@ public class AspParser extends Parser {
 		}
 		public TerminalNode DOT() { return getToken(AspParser.DOT, 0); }
 		public TerminalNode LSBRACK() { return getToken(AspParser.LSBRACK, 0); }
-		public IntegerContext integer() {
-			return getRuleContext(IntegerContext.class,0);
+		public List<IntegerContext> integer() {
+			return getRuleContexts(IntegerContext.class);
+		}
+		public IntegerContext integer(int i) {
+			return getRuleContext(IntegerContext.class,i);
 		}
 		public TerminalNode RSBRACK() { return getToken(AspParser.RSBRACK, 0); }
+		public TerminalNode AT() { return getToken(AspParser.AT, 0); }
+		public List<TerminalNode> COMMA() { return getTokens(AspParser.COMMA); }
+		public TerminalNode COMMA(int i) {
+			return getToken(AspParser.COMMA, i);
+		}
+		public List<ParamContext> param() {
+			return getRuleContexts(ParamContext.class);
+		}
+		public ParamContext param(int i) {
+			return getRuleContext(ParamContext.class,i);
+		}
 		public Soft_constrainContext(Reasoning_ruleContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -755,10 +770,11 @@ public class AspParser extends Parser {
 	public final Reasoning_ruleContext reasoning_rule() throws RecognitionException {
 		Reasoning_ruleContext _localctx = new Reasoning_ruleContext(_ctx, getState());
 		enterRule(_localctx, 16, RULE_reasoning_rule);
+		int _la;
 		try {
-			setState(98);
+			setState(109);
 			_errHandler.sync(this);
-			switch ( getInterpreter().adaptivePredict(_input,10,_ctx) ) {
+			switch ( getInterpreter().adaptivePredict(_input,12,_ctx) ) {
 			case 1:
 				_localctx = new Fact_ruleContext(_localctx);
 				enterOuterAlt(_localctx, 1);
@@ -809,7 +825,34 @@ public class AspParser extends Parser {
 				match(LSBRACK);
 				setState(95);
 				integer();
-				setState(96);
+				setState(98);
+				_la = _input.LA(1);
+				if (_la==AT) {
+					{
+					setState(96);
+					match(AT);
+					setState(97);
+					integer();
+					}
+				}
+
+				setState(104);
+				_errHandler.sync(this);
+				_la = _input.LA(1);
+				while (_la==COMMA) {
+					{
+					{
+					setState(100);
+					match(COMMA);
+					setState(101);
+					param();
+					}
+					}
+					setState(106);
+					_errHandler.sync(this);
+					_la = _input.LA(1);
+				}
+				setState(107);
 				match(RSBRACK);
 				}
 				break;
@@ -859,17 +902,17 @@ public class AspParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(103);
+			setState(114);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << MINUS) | (1L << NAF) | (1L << IF) | (1L << SOFT_IF) | (1L << PREDICATE))) != 0)) {
 				{
 				{
-				setState(100);
+				setState(111);
 				reasoning_rule();
 				}
 				}
-				setState(105);
+				setState(116);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
@@ -887,33 +930,35 @@ public class AspParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\u0430\ud6d1\u8206\uad2d\u4417\uaef1\u8d80\uaadd\3\30m\4\2\t\2\4\3\t"+
+		"\3\u0430\ud6d1\u8206\uad2d\u4417\uaef1\u8d80\uaadd\3\31x\4\2\t\2\4\3\t"+
 		"\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\4\13\t\13\3"+
 		"\2\5\2\30\n\2\3\2\3\2\3\3\3\3\3\4\3\4\3\5\3\5\3\6\3\6\3\6\5\6%\n\6\3\6"+
 		"\5\6(\n\6\3\7\7\7+\n\7\f\7\16\7.\13\7\3\7\5\7\61\n\7\3\7\3\7\3\7\3\7\3"+
 		"\7\7\78\n\7\f\7\16\7;\13\7\5\7=\n\7\3\7\5\7@\n\7\3\b\3\b\3\b\7\bE\n\b"+
 		"\f\b\16\bH\13\b\3\t\3\t\3\t\7\tM\n\t\f\t\16\tP\13\t\3\n\3\n\3\n\3\n\3"+
 		"\n\3\n\3\n\3\n\3\n\3\n\3\n\3\n\3\n\3\n\3\n\3\n\3\n\3\n\3\n\5\ne\n\n\3"+
-		"\13\7\13h\n\13\f\13\16\13k\13\13\3\13\2\2\f\2\4\6\b\n\f\16\20\22\24\2"+
-		"\3\3\2\22\23q\2\27\3\2\2\2\4\33\3\2\2\2\6\35\3\2\2\2\b\37\3\2\2\2\n\'"+
-		"\3\2\2\2\f,\3\2\2\2\16A\3\2\2\2\20I\3\2\2\2\22d\3\2\2\2\24i\3\2\2\2\26"+
-		"\30\7\r\2\2\27\26\3\2\2\2\27\30\3\2\2\2\30\31\3\2\2\2\31\32\t\2\2\2\32"+
-		"\3\3\2\2\2\33\34\7\24\2\2\34\5\3\2\2\2\35\36\7\25\2\2\36\7\3\2\2\2\37"+
-		" \7\26\2\2 \t\3\2\2\2!%\5\2\2\2\"%\5\4\3\2#%\5\6\4\2$!\3\2\2\2$\"\3\2"+
-		"\2\2$#\3\2\2\2%(\3\2\2\2&(\5\b\5\2\'$\3\2\2\2\'&\3\2\2\2(\13\3\2\2\2)"+
-		"+\7\16\2\2*)\3\2\2\2+.\3\2\2\2,*\3\2\2\2,-\3\2\2\2-\60\3\2\2\2.,\3\2\2"+
-		"\2/\61\7\r\2\2\60/\3\2\2\2\60\61\3\2\2\2\61\62\3\2\2\2\62?\5\6\4\2\63"+
-		"<\7\3\2\2\649\5\n\6\2\65\66\7\t\2\2\668\5\n\6\2\67\65\3\2\2\28;\3\2\2"+
-		"\29\67\3\2\2\29:\3\2\2\2:=\3\2\2\2;9\3\2\2\2<\64\3\2\2\2<=\3\2\2\2=>\3"+
-		"\2\2\2>@\7\4\2\2?\63\3\2\2\2?@\3\2\2\2@\r\3\2\2\2AF\5\f\7\2BC\7\13\2\2"+
-		"CE\5\f\7\2DB\3\2\2\2EH\3\2\2\2FD\3\2\2\2FG\3\2\2\2G\17\3\2\2\2HF\3\2\2"+
-		"\2IN\5\f\7\2JK\7\t\2\2KM\5\f\7\2LJ\3\2\2\2MP\3\2\2\2NL\3\2\2\2NO\3\2\2"+
-		"\2O\21\3\2\2\2PN\3\2\2\2QR\5\16\b\2RS\7\n\2\2Se\3\2\2\2TU\7\17\2\2UV\5"+
-		"\20\t\2VW\7\n\2\2We\3\2\2\2XY\5\16\b\2YZ\7\17\2\2Z[\5\20\t\2[\\\7\n\2"+
-		"\2\\e\3\2\2\2]^\7\20\2\2^_\5\20\t\2_`\7\n\2\2`a\7\5\2\2ab\5\2\2\2bc\7"+
-		"\6\2\2ce\3\2\2\2dQ\3\2\2\2dT\3\2\2\2dX\3\2\2\2d]\3\2\2\2e\23\3\2\2\2f"+
-		"h\5\22\n\2gf\3\2\2\2hk\3\2\2\2ig\3\2\2\2ij\3\2\2\2j\25\3\2\2\2ki\3\2\2"+
-		"\2\16\27$\',\609<?FNdi";
+		"\n\3\n\7\ni\n\n\f\n\16\nl\13\n\3\n\3\n\5\np\n\n\3\13\7\13s\n\13\f\13\16"+
+		"\13v\13\13\3\13\2\2\f\2\4\6\b\n\f\16\20\22\24\2\3\3\2\23\24~\2\27\3\2"+
+		"\2\2\4\33\3\2\2\2\6\35\3\2\2\2\b\37\3\2\2\2\n\'\3\2\2\2\f,\3\2\2\2\16"+
+		"A\3\2\2\2\20I\3\2\2\2\22o\3\2\2\2\24t\3\2\2\2\26\30\7\r\2\2\27\26\3\2"+
+		"\2\2\27\30\3\2\2\2\30\31\3\2\2\2\31\32\t\2\2\2\32\3\3\2\2\2\33\34\7\25"+
+		"\2\2\34\5\3\2\2\2\35\36\7\26\2\2\36\7\3\2\2\2\37 \7\27\2\2 \t\3\2\2\2"+
+		"!%\5\2\2\2\"%\5\4\3\2#%\5\6\4\2$!\3\2\2\2$\"\3\2\2\2$#\3\2\2\2%(\3\2\2"+
+		"\2&(\5\b\5\2\'$\3\2\2\2\'&\3\2\2\2(\13\3\2\2\2)+\7\16\2\2*)\3\2\2\2+."+
+		"\3\2\2\2,*\3\2\2\2,-\3\2\2\2-\60\3\2\2\2.,\3\2\2\2/\61\7\r\2\2\60/\3\2"+
+		"\2\2\60\61\3\2\2\2\61\62\3\2\2\2\62?\5\6\4\2\63<\7\3\2\2\649\5\n\6\2\65"+
+		"\66\7\t\2\2\668\5\n\6\2\67\65\3\2\2\28;\3\2\2\29\67\3\2\2\29:\3\2\2\2"+
+		":=\3\2\2\2;9\3\2\2\2<\64\3\2\2\2<=\3\2\2\2=>\3\2\2\2>@\7\4\2\2?\63\3\2"+
+		"\2\2?@\3\2\2\2@\r\3\2\2\2AF\5\f\7\2BC\7\13\2\2CE\5\f\7\2DB\3\2\2\2EH\3"+
+		"\2\2\2FD\3\2\2\2FG\3\2\2\2G\17\3\2\2\2HF\3\2\2\2IN\5\f\7\2JK\7\t\2\2K"+
+		"M\5\f\7\2LJ\3\2\2\2MP\3\2\2\2NL\3\2\2\2NO\3\2\2\2O\21\3\2\2\2PN\3\2\2"+
+		"\2QR\5\16\b\2RS\7\n\2\2Sp\3\2\2\2TU\7\17\2\2UV\5\20\t\2VW\7\n\2\2Wp\3"+
+		"\2\2\2XY\5\16\b\2YZ\7\17\2\2Z[\5\20\t\2[\\\7\n\2\2\\p\3\2\2\2]^\7\20\2"+
+		"\2^_\5\20\t\2_`\7\n\2\2`a\7\5\2\2ad\5\2\2\2bc\7\21\2\2ce\5\2\2\2db\3\2"+
+		"\2\2de\3\2\2\2ej\3\2\2\2fg\7\t\2\2gi\5\n\6\2hf\3\2\2\2il\3\2\2\2jh\3\2"+
+		"\2\2jk\3\2\2\2km\3\2\2\2lj\3\2\2\2mn\7\6\2\2np\3\2\2\2oQ\3\2\2\2oT\3\2"+
+		"\2\2oX\3\2\2\2o]\3\2\2\2p\23\3\2\2\2qs\5\22\n\2rq\3\2\2\2sv\3\2\2\2tr"+
+		"\3\2\2\2tu\3\2\2\2u\25\3\2\2\2vt\3\2\2\2\20\27$\',\609<?FNdjot";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {
