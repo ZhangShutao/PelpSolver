@@ -159,4 +159,14 @@ public interface AspListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitProgram(AspParser.ProgramContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link AspParser#answer_set}.
+	 * @param ctx the parse tree
+	 */
+	void enterAnswer_set(AspParser.Answer_setContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link AspParser#answer_set}.
+	 * @param ctx the parse tree
+	 */
+	void exitAnswer_set(AspParser.Answer_setContext ctx);
 }

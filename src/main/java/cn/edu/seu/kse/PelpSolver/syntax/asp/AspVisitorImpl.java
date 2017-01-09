@@ -1,12 +1,11 @@
 package cn.edu.seu.kse.PelpSolver.syntax.asp;
 
-import cn.edu.seu.kse.PelpSolver.model.asp.AspLiteral;
-import cn.edu.seu.kse.PelpSolver.model.asp.AspParam;
-import cn.edu.seu.kse.PelpSolver.model.asp.AspProgram;
-import cn.edu.seu.kse.PelpSolver.model.asp.AspRule;
+import cn.edu.seu.kse.PelpSolver.model.asp.*;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * ASP语法解析的Visitor实现类
@@ -111,5 +110,13 @@ public class AspVisitorImpl extends AspBaseVisitor {
         ctx.reasoning_rule().forEach(ruleContext -> rules.add((AspRule) visit(ruleContext)));
 
         return new AspProgram(rules);
+    }
+
+    @Override
+    public Object visitAnswer_set(AspParser.Answer_setContext ctx) {
+        Set<AspLiteral> answerSet = new HashSet<>();
+        ctx.literal().forEach(literalContext -> answerSet.add((AspLiteral) visit(literalContext)));
+
+        return new AnswerSet(answerSet);
     }
 }

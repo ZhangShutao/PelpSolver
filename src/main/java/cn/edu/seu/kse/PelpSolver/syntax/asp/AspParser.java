@@ -23,10 +23,10 @@ public class AspParser extends Parser {
 	public static final int
 		RULE_integer = 0, RULE_string = 1, RULE_predicate = 2, RULE_var = 3, RULE_param = 4, 
 		RULE_literal = 5, RULE_rule_head = 6, RULE_rule_body = 7, RULE_reasoning_rule = 8, 
-		RULE_program = 9;
+		RULE_program = 9, RULE_answer_set = 10;
 	public static final String[] ruleNames = {
 		"integer", "string", "predicate", "var", "param", "literal", "rule_head", 
-		"rule_body", "reasoning_rule", "program"
+		"rule_body", "reasoning_rule", "program", "answer_set"
 	};
 
 	private static final String[] _LITERAL_NAMES = {
@@ -118,16 +118,16 @@ public class AspParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(21);
+			setState(23);
 			_la = _input.LA(1);
 			if (_la==MINUS) {
 				{
-				setState(20);
+				setState(22);
 				match(MINUS);
 				}
 			}
 
-			setState(23);
+			setState(25);
 			_la = _input.LA(1);
 			if ( !(_la==POSITIVE_INT || _la==ZERO) ) {
 			_errHandler.recoverInline(this);
@@ -174,7 +174,7 @@ public class AspParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(25);
+			setState(27);
 			match(STRING);
 			}
 		}
@@ -216,7 +216,7 @@ public class AspParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(27);
+			setState(29);
 			match(PREDICATE);
 			}
 		}
@@ -258,7 +258,7 @@ public class AspParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(29);
+			setState(31);
 			match(VAR);
 			}
 		}
@@ -333,7 +333,7 @@ public class AspParser extends Parser {
 		ParamContext _localctx = new ParamContext(_ctx, getState());
 		enterRule(_localctx, 8, RULE_param);
 		try {
-			setState(37);
+			setState(39);
 			switch (_input.LA(1)) {
 			case MINUS:
 			case POSITIVE_INT:
@@ -343,25 +343,25 @@ public class AspParser extends Parser {
 				_localctx = new Const_paramContext(_localctx);
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(34);
+				setState(36);
 				switch (_input.LA(1)) {
 				case MINUS:
 				case POSITIVE_INT:
 				case ZERO:
 					{
-					setState(31);
+					setState(33);
 					integer();
 					}
 					break;
 				case STRING:
 					{
-					setState(32);
+					setState(34);
 					string();
 					}
 					break;
 				case PREDICATE:
 					{
-					setState(33);
+					setState(35);
 					predicate();
 					}
 					break;
@@ -374,7 +374,7 @@ public class AspParser extends Parser {
 				_localctx = new Var_paramContext(_localctx);
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(36);
+				setState(38);
 				var();
 				}
 				break;
@@ -440,63 +440,63 @@ public class AspParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(42);
+			setState(44);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while (_la==NAF) {
 				{
 				{
-				setState(39);
+				setState(41);
 				match(NAF);
 				}
 				}
-				setState(44);
+				setState(46);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
-			setState(46);
+			setState(48);
 			_la = _input.LA(1);
 			if (_la==MINUS) {
 				{
-				setState(45);
+				setState(47);
 				match(MINUS);
 				}
 			}
 
-			setState(48);
+			setState(50);
 			predicate();
-			setState(61);
+			setState(63);
 			_la = _input.LA(1);
 			if (_la==LPAREN) {
 				{
-				setState(49);
+				setState(51);
 				match(LPAREN);
-				setState(58);
+				setState(60);
 				_la = _input.LA(1);
 				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << MINUS) | (1L << POSITIVE_INT) | (1L << ZERO) | (1L << STRING) | (1L << PREDICATE) | (1L << VAR))) != 0)) {
 					{
-					setState(50);
+					setState(52);
 					param();
-					setState(55);
+					setState(57);
 					_errHandler.sync(this);
 					_la = _input.LA(1);
 					while (_la==COMMA) {
 						{
 						{
-						setState(51);
+						setState(53);
 						match(COMMA);
-						setState(52);
+						setState(54);
 						param();
 						}
 						}
-						setState(57);
+						setState(59);
 						_errHandler.sync(this);
 						_la = _input.LA(1);
 					}
 					}
 				}
 
-				setState(60);
+				setState(62);
 				match(RPAREN);
 				}
 			}
@@ -551,21 +551,21 @@ public class AspParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(63);
+			setState(65);
 			literal();
-			setState(68);
+			setState(70);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while (_la==VBAR) {
 				{
 				{
-				setState(64);
+				setState(66);
 				match(VBAR);
-				setState(65);
+				setState(67);
 				literal();
 				}
 				}
-				setState(70);
+				setState(72);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
@@ -619,21 +619,21 @@ public class AspParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(71);
+			setState(73);
 			literal();
-			setState(76);
+			setState(78);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while (_la==COMMA) {
 				{
 				{
-				setState(72);
+				setState(74);
 				match(COMMA);
-				setState(73);
+				setState(75);
 				literal();
 				}
 				}
-				setState(78);
+				setState(80);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
@@ -772,16 +772,16 @@ public class AspParser extends Parser {
 		enterRule(_localctx, 16, RULE_reasoning_rule);
 		int _la;
 		try {
-			setState(109);
+			setState(111);
 			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,12,_ctx) ) {
 			case 1:
 				_localctx = new Fact_ruleContext(_localctx);
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(79);
+				setState(81);
 				rule_head();
-				setState(80);
+				setState(82);
 				match(DOT);
 				}
 				break;
@@ -789,11 +789,11 @@ public class AspParser extends Parser {
 				_localctx = new Constrain_ruleContext(_localctx);
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(82);
-				match(IF);
-				setState(83);
-				rule_body();
 				setState(84);
+				match(IF);
+				setState(85);
+				rule_body();
+				setState(86);
 				match(DOT);
 				}
 				break;
@@ -801,13 +801,13 @@ public class AspParser extends Parser {
 				_localctx = new Normal_ruleContext(_localctx);
 				enterOuterAlt(_localctx, 3);
 				{
-				setState(86);
-				rule_head();
-				setState(87);
-				match(IF);
 				setState(88);
-				rule_body();
+				rule_head();
 				setState(89);
+				match(IF);
+				setState(90);
+				rule_body();
+				setState(91);
 				match(DOT);
 				}
 				break;
@@ -815,44 +815,44 @@ public class AspParser extends Parser {
 				_localctx = new Soft_constrainContext(_localctx);
 				enterOuterAlt(_localctx, 4);
 				{
-				setState(91);
-				match(SOFT_IF);
-				setState(92);
-				rule_body();
 				setState(93);
-				match(DOT);
+				match(SOFT_IF);
 				setState(94);
-				match(LSBRACK);
+				rule_body();
 				setState(95);
+				match(DOT);
+				setState(96);
+				match(LSBRACK);
+				setState(97);
 				integer();
-				setState(98);
+				setState(100);
 				_la = _input.LA(1);
 				if (_la==AT) {
 					{
-					setState(96);
+					setState(98);
 					match(AT);
-					setState(97);
+					setState(99);
 					integer();
 					}
 				}
 
-				setState(104);
+				setState(106);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 				while (_la==COMMA) {
 					{
 					{
-					setState(100);
+					setState(102);
 					match(COMMA);
-					setState(101);
+					setState(103);
 					param();
 					}
 					}
-					setState(106);
+					setState(108);
 					_errHandler.sync(this);
 					_la = _input.LA(1);
 				}
-				setState(107);
+				setState(109);
 				match(RSBRACK);
 				}
 				break;
@@ -902,17 +902,77 @@ public class AspParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(114);
+			setState(116);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << MINUS) | (1L << NAF) | (1L << IF) | (1L << SOFT_IF) | (1L << PREDICATE))) != 0)) {
 				{
 				{
-				setState(111);
+				setState(113);
 				reasoning_rule();
 				}
 				}
-				setState(116);
+				setState(118);
+				_errHandler.sync(this);
+				_la = _input.LA(1);
+			}
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			exitRule();
+		}
+		return _localctx;
+	}
+
+	public static class Answer_setContext extends ParserRuleContext {
+		public List<LiteralContext> literal() {
+			return getRuleContexts(LiteralContext.class);
+		}
+		public LiteralContext literal(int i) {
+			return getRuleContext(LiteralContext.class,i);
+		}
+		public Answer_setContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_answer_set; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof AspListener ) ((AspListener)listener).enterAnswer_set(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof AspListener ) ((AspListener)listener).exitAnswer_set(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof AspVisitor ) return ((AspVisitor<? extends T>)visitor).visitAnswer_set(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+
+	public final Answer_setContext answer_set() throws RecognitionException {
+		Answer_setContext _localctx = new Answer_setContext(_ctx, getState());
+		enterRule(_localctx, 20, RULE_answer_set);
+		int _la;
+		try {
+			enterOuterAlt(_localctx, 1);
+			{
+			setState(122);
+			_errHandler.sync(this);
+			_la = _input.LA(1);
+			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << MINUS) | (1L << NAF) | (1L << PREDICATE))) != 0)) {
+				{
+				{
+				setState(119);
+				literal();
+				}
+				}
+				setState(124);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
@@ -930,35 +990,37 @@ public class AspParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\u0430\ud6d1\u8206\uad2d\u4417\uaef1\u8d80\uaadd\3\31x\4\2\t\2\4\3\t"+
-		"\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\4\13\t\13\3"+
-		"\2\5\2\30\n\2\3\2\3\2\3\3\3\3\3\4\3\4\3\5\3\5\3\6\3\6\3\6\5\6%\n\6\3\6"+
-		"\5\6(\n\6\3\7\7\7+\n\7\f\7\16\7.\13\7\3\7\5\7\61\n\7\3\7\3\7\3\7\3\7\3"+
-		"\7\7\78\n\7\f\7\16\7;\13\7\5\7=\n\7\3\7\5\7@\n\7\3\b\3\b\3\b\7\bE\n\b"+
-		"\f\b\16\bH\13\b\3\t\3\t\3\t\7\tM\n\t\f\t\16\tP\13\t\3\n\3\n\3\n\3\n\3"+
-		"\n\3\n\3\n\3\n\3\n\3\n\3\n\3\n\3\n\3\n\3\n\3\n\3\n\3\n\3\n\5\ne\n\n\3"+
-		"\n\3\n\7\ni\n\n\f\n\16\nl\13\n\3\n\3\n\5\np\n\n\3\13\7\13s\n\13\f\13\16"+
-		"\13v\13\13\3\13\2\2\f\2\4\6\b\n\f\16\20\22\24\2\3\3\2\23\24~\2\27\3\2"+
-		"\2\2\4\33\3\2\2\2\6\35\3\2\2\2\b\37\3\2\2\2\n\'\3\2\2\2\f,\3\2\2\2\16"+
-		"A\3\2\2\2\20I\3\2\2\2\22o\3\2\2\2\24t\3\2\2\2\26\30\7\r\2\2\27\26\3\2"+
-		"\2\2\27\30\3\2\2\2\30\31\3\2\2\2\31\32\t\2\2\2\32\3\3\2\2\2\33\34\7\25"+
-		"\2\2\34\5\3\2\2\2\35\36\7\26\2\2\36\7\3\2\2\2\37 \7\27\2\2 \t\3\2\2\2"+
-		"!%\5\2\2\2\"%\5\4\3\2#%\5\6\4\2$!\3\2\2\2$\"\3\2\2\2$#\3\2\2\2%(\3\2\2"+
-		"\2&(\5\b\5\2\'$\3\2\2\2\'&\3\2\2\2(\13\3\2\2\2)+\7\16\2\2*)\3\2\2\2+."+
-		"\3\2\2\2,*\3\2\2\2,-\3\2\2\2-\60\3\2\2\2.,\3\2\2\2/\61\7\r\2\2\60/\3\2"+
-		"\2\2\60\61\3\2\2\2\61\62\3\2\2\2\62?\5\6\4\2\63<\7\3\2\2\649\5\n\6\2\65"+
-		"\66\7\t\2\2\668\5\n\6\2\67\65\3\2\2\28;\3\2\2\29\67\3\2\2\29:\3\2\2\2"+
-		":=\3\2\2\2;9\3\2\2\2<\64\3\2\2\2<=\3\2\2\2=>\3\2\2\2>@\7\4\2\2?\63\3\2"+
-		"\2\2?@\3\2\2\2@\r\3\2\2\2AF\5\f\7\2BC\7\13\2\2CE\5\f\7\2DB\3\2\2\2EH\3"+
-		"\2\2\2FD\3\2\2\2FG\3\2\2\2G\17\3\2\2\2HF\3\2\2\2IN\5\f\7\2JK\7\t\2\2K"+
-		"M\5\f\7\2LJ\3\2\2\2MP\3\2\2\2NL\3\2\2\2NO\3\2\2\2O\21\3\2\2\2PN\3\2\2"+
-		"\2QR\5\16\b\2RS\7\n\2\2Sp\3\2\2\2TU\7\17\2\2UV\5\20\t\2VW\7\n\2\2Wp\3"+
-		"\2\2\2XY\5\16\b\2YZ\7\17\2\2Z[\5\20\t\2[\\\7\n\2\2\\p\3\2\2\2]^\7\20\2"+
-		"\2^_\5\20\t\2_`\7\n\2\2`a\7\5\2\2ad\5\2\2\2bc\7\21\2\2ce\5\2\2\2db\3\2"+
-		"\2\2de\3\2\2\2ej\3\2\2\2fg\7\t\2\2gi\5\n\6\2hf\3\2\2\2il\3\2\2\2jh\3\2"+
-		"\2\2jk\3\2\2\2km\3\2\2\2lj\3\2\2\2mn\7\6\2\2np\3\2\2\2oQ\3\2\2\2oT\3\2"+
-		"\2\2oX\3\2\2\2o]\3\2\2\2p\23\3\2\2\2qs\5\22\n\2rq\3\2\2\2sv\3\2\2\2tr"+
-		"\3\2\2\2tu\3\2\2\2u\25\3\2\2\2vt\3\2\2\2\20\27$\',\609<?FNdjot";
+		"\3\u0430\ud6d1\u8206\uad2d\u4417\uaef1\u8d80\uaadd\3\31\u0080\4\2\t\2"+
+		"\4\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\4\13"+
+		"\t\13\4\f\t\f\3\2\5\2\32\n\2\3\2\3\2\3\3\3\3\3\4\3\4\3\5\3\5\3\6\3\6\3"+
+		"\6\5\6\'\n\6\3\6\5\6*\n\6\3\7\7\7-\n\7\f\7\16\7\60\13\7\3\7\5\7\63\n\7"+
+		"\3\7\3\7\3\7\3\7\3\7\7\7:\n\7\f\7\16\7=\13\7\5\7?\n\7\3\7\5\7B\n\7\3\b"+
+		"\3\b\3\b\7\bG\n\b\f\b\16\bJ\13\b\3\t\3\t\3\t\7\tO\n\t\f\t\16\tR\13\t\3"+
+		"\n\3\n\3\n\3\n\3\n\3\n\3\n\3\n\3\n\3\n\3\n\3\n\3\n\3\n\3\n\3\n\3\n\3\n"+
+		"\3\n\5\ng\n\n\3\n\3\n\7\nk\n\n\f\n\16\nn\13\n\3\n\3\n\5\nr\n\n\3\13\7"+
+		"\13u\n\13\f\13\16\13x\13\13\3\f\7\f{\n\f\f\f\16\f~\13\f\3\f\2\2\r\2\4"+
+		"\6\b\n\f\16\20\22\24\26\2\3\3\2\23\24\u0086\2\31\3\2\2\2\4\35\3\2\2\2"+
+		"\6\37\3\2\2\2\b!\3\2\2\2\n)\3\2\2\2\f.\3\2\2\2\16C\3\2\2\2\20K\3\2\2\2"+
+		"\22q\3\2\2\2\24v\3\2\2\2\26|\3\2\2\2\30\32\7\r\2\2\31\30\3\2\2\2\31\32"+
+		"\3\2\2\2\32\33\3\2\2\2\33\34\t\2\2\2\34\3\3\2\2\2\35\36\7\25\2\2\36\5"+
+		"\3\2\2\2\37 \7\26\2\2 \7\3\2\2\2!\"\7\27\2\2\"\t\3\2\2\2#\'\5\2\2\2$\'"+
+		"\5\4\3\2%\'\5\6\4\2&#\3\2\2\2&$\3\2\2\2&%\3\2\2\2\'*\3\2\2\2(*\5\b\5\2"+
+		")&\3\2\2\2)(\3\2\2\2*\13\3\2\2\2+-\7\16\2\2,+\3\2\2\2-\60\3\2\2\2.,\3"+
+		"\2\2\2./\3\2\2\2/\62\3\2\2\2\60.\3\2\2\2\61\63\7\r\2\2\62\61\3\2\2\2\62"+
+		"\63\3\2\2\2\63\64\3\2\2\2\64A\5\6\4\2\65>\7\3\2\2\66;\5\n\6\2\678\7\t"+
+		"\2\28:\5\n\6\29\67\3\2\2\2:=\3\2\2\2;9\3\2\2\2;<\3\2\2\2<?\3\2\2\2=;\3"+
+		"\2\2\2>\66\3\2\2\2>?\3\2\2\2?@\3\2\2\2@B\7\4\2\2A\65\3\2\2\2AB\3\2\2\2"+
+		"B\r\3\2\2\2CH\5\f\7\2DE\7\13\2\2EG\5\f\7\2FD\3\2\2\2GJ\3\2\2\2HF\3\2\2"+
+		"\2HI\3\2\2\2I\17\3\2\2\2JH\3\2\2\2KP\5\f\7\2LM\7\t\2\2MO\5\f\7\2NL\3\2"+
+		"\2\2OR\3\2\2\2PN\3\2\2\2PQ\3\2\2\2Q\21\3\2\2\2RP\3\2\2\2ST\5\16\b\2TU"+
+		"\7\n\2\2Ur\3\2\2\2VW\7\17\2\2WX\5\20\t\2XY\7\n\2\2Yr\3\2\2\2Z[\5\16\b"+
+		"\2[\\\7\17\2\2\\]\5\20\t\2]^\7\n\2\2^r\3\2\2\2_`\7\20\2\2`a\5\20\t\2a"+
+		"b\7\n\2\2bc\7\5\2\2cf\5\2\2\2de\7\21\2\2eg\5\2\2\2fd\3\2\2\2fg\3\2\2\2"+
+		"gl\3\2\2\2hi\7\t\2\2ik\5\n\6\2jh\3\2\2\2kn\3\2\2\2lj\3\2\2\2lm\3\2\2\2"+
+		"mo\3\2\2\2nl\3\2\2\2op\7\6\2\2pr\3\2\2\2qS\3\2\2\2qV\3\2\2\2qZ\3\2\2\2"+
+		"q_\3\2\2\2r\23\3\2\2\2su\5\22\n\2ts\3\2\2\2ux\3\2\2\2vt\3\2\2\2vw\3\2"+
+		"\2\2w\25\3\2\2\2xv\3\2\2\2y{\5\f\7\2zy\3\2\2\2{~\3\2\2\2|z\3\2\2\2|}\3"+
+		"\2\2\2}\27\3\2\2\2~|\3\2\2\2\21\31&).\62;>AHPflqv|";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

@@ -109,4 +109,11 @@ public class AspBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements As
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
 	@Override public T visitProgram(AspParser.ProgramContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
+	@Override public T visitAnswer_set(AspParser.Answer_setContext ctx) { return visitChildren(ctx); }
 }

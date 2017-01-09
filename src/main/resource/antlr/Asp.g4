@@ -91,4 +91,8 @@ reasoning_rule : rule_head DOT                                                  
                | rule_head IF rule_body DOT                                                 # normal_rule
                | SOFT_IF rule_body DOT LSBRACK integer (AT integer)? (COMMA param)* RSBRACK # soft_constrain;
 
+// ASP程序
 program : reasoning_rule*;
+
+// 回答集
+answer_set : literal*;

@@ -100,4 +100,10 @@ public interface AspVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitProgram(AspParser.ProgramContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link AspParser#answer_set}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitAnswer_set(AspParser.Answer_setContext ctx);
 }

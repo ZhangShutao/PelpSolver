@@ -179,6 +179,18 @@ public class AspBaseListener implements AspListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitProgram(AspParser.ProgramContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterAnswer_set(AspParser.Answer_setContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitAnswer_set(AspParser.Answer_setContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
