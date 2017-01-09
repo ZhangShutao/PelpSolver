@@ -138,6 +138,18 @@ public interface AspListener extends ParseTreeListener {
 	 */
 	void exitNormal_rule(AspParser.Normal_ruleContext ctx);
 	/**
+	 * Enter a parse tree produced by the {@code soft_constrain}
+	 * labeled alternative in {@link AspParser#reasoning_rule}.
+	 * @param ctx the parse tree
+	 */
+	void enterSoft_constrain(AspParser.Soft_constrainContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code soft_constrain}
+	 * labeled alternative in {@link AspParser#reasoning_rule}.
+	 * @param ctx the parse tree
+	 */
+	void exitSoft_constrain(AspParser.Soft_constrainContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link AspParser#program}.
 	 * @param ctx the parse tree
 	 */

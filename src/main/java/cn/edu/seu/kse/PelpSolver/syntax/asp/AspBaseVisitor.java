@@ -101,5 +101,12 @@ public class AspBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements As
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
+	@Override public T visitSoft_constrain(AspParser.Soft_constrainContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
 	@Override public T visitProgram(AspParser.ProgramContext ctx) { return visitChildren(ctx); }
 }

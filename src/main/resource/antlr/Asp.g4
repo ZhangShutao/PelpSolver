@@ -37,6 +37,8 @@ MINUS : '-';
 NAF : 'not';
 // 推理符号
 IF : ':-';
+// 弱约束符号
+SOFT_IF : ':~';
 
 //小数(点表示法)
 DECIMAL : MINUS? ([1-9][0-9]* | ZERO ) DOT [0-9]+;
@@ -82,8 +84,9 @@ rule_head : literal (VBAR literal)*;
 // 规则体部
 rule_body : literal (COMMA literal)*;
 
-reasoning_rule : rule_head DOT                # fact_rule
-               | IF rule_body DOT             # constrain_rule
-               | rule_head IF rule_body DOT   # normal_rule;
+reasoning_rule : rule_head DOT                                 # fact_rule
+               | IF rule_body DOT                              # constrain_rule
+               | rule_head IF rule_body DOT                    # normal_rule
+               | SOFT_IF rule_body DOT LSBRACK integer RSBRACK # soft_constrain;
 
 program : reasoning_rule*;

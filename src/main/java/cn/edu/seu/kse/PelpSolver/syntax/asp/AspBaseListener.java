@@ -160,6 +160,18 @@ public class AspBaseListener implements AspListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterSoft_constrain(AspParser.Soft_constrainContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitSoft_constrain(AspParser.Soft_constrainContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterProgram(AspParser.ProgramContext ctx) { }
 	/**
 	 * {@inheritDoc}

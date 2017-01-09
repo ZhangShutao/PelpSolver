@@ -88,6 +88,13 @@ public interface AspVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitNormal_rule(AspParser.Normal_ruleContext ctx);
 	/**
+	 * Visit a parse tree produced by the {@code soft_constrain}
+	 * labeled alternative in {@link AspParser#reasoning_rule}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitSoft_constrain(AspParser.Soft_constrainContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link AspParser#program}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
