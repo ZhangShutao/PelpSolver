@@ -4,7 +4,7 @@
  * 2017-01-06
  */
 
-grammar Pelp;
+grammar Asp;
 
 /**
  * 词法定义
@@ -37,8 +37,6 @@ MINUS : '-';
 NAF : 'not';
 // 推理符号
 IF : ':-';
-// 主观模态词
-KNOW : 'K';
 
 //小数(点表示法)
 DECIMAL : MINUS? ([1-9][0-9]* | ZERO ) DOT [0-9]+;
@@ -50,14 +48,14 @@ ZERO : '0';
 STRING : '"' ('\\"'|~('"'))* '"';
 
 //普通谓词名，含中文
-PREDICATE : [a-z][a-zA-Z0-9_]*;
+PREDICATE : [a-z_][a-zA-Z0-9_]*;
 //变量
 VAR : [A-Z][A-Za-z0-9_]*;
 
 //空白字符或换行符
 WS : ( ' ' | '\t' | '\n' | '\r')+ -> skip;
 // 注释
-LINE_COMMENT : '%' ~ ('\n' | '\r') * '\r'? '\n' {skip();};
+LINE_COMMENT : '%' ~ ('\n' | '\r') * '\r'? '\n' {skip();} ;
 
 /**
  * 语法定义
@@ -65,33 +63,27 @@ LINE_COMMENT : '%' ~ ('\n' | '\r') * '\r'? '\n' {skip();};
 
 //整数
 integer : MINUS? (POSITIVE_INT | ZERO);
-//小数
-decimal : (DECIMAL | integer);
 //字符串
 string : STRING;
 
 //谓词
 predicate : PREDICATE;
 // 变量
-var : VAR | KNOW;
+var : VAR;
 // 谓词/函数参数
 param : (integer | string | predicate) # const_param
       | var                            # var_param;
 
 // 客观字
-objective_literal : NAF? MINUS? predicate (LPAREN (param (COMMA param)*)? RPAREN)?;
-// 主观字
-subjective_literal : KNOW (LPAREN | LSBRACK) decimal COMMA decimal (RPAREN | RSBRACK) objective_literal;
+literal : (NAF)* MINUS? predicate (LPAREN (param (COMMA param)*)? RPAREN)?;
 
 // 规则首部
-rule_head : objective_literal (VBAR objective_literal)*;
+rule_head : literal (VBAR literal)*;
 // 规则体部
-rule_body : (objective_literal | subjective_literal) (COMMA (objective_literal | subjective_literal))*;
+rule_body : literal (COMMA literal)*;
 
-hard_rule : rule_head DOT                # fact_rule
-          | IF rule_body DOT             # constrain_rule
-          | rule_head IF rule_body DOT   # normal_rule;
+reasoning_rule : rule_head DOT                # fact_rule
+               | IF rule_body DOT             # constrain_rule
+               | rule_head IF rule_body DOT   # normal_rule;
 
-soft_rule : hard_rule LSBRACK decimal RSBRACK;
-
-program : (soft_rule | hard_rule)*;
+program : reasoning_rule*;
