@@ -1,19 +1,15 @@
 package cn.edu.seu.kse.PelSolver.syntax;
 
-import cn.edu.seu.kse.PelpSolver.model.ObjectModel;
 import cn.edu.seu.kse.PelpSolver.model.asp.AspLiteral;
 import cn.edu.seu.kse.PelpSolver.model.asp.AspParam;
 import cn.edu.seu.kse.PelpSolver.model.asp.AspProgram;
 import cn.edu.seu.kse.PelpSolver.model.asp.AspRule;
-import cn.edu.seu.kse.PelpSolver.syntax.SyntaxErrorListener;
-import cn.edu.seu.kse.PelpSolver.syntax.asp.AspLexer;
 import cn.edu.seu.kse.PelpSolver.syntax.asp.AspParser;
-import cn.edu.seu.kse.PelpSolver.syntax.asp.AspVisitorImpl;
-import org.antlr.v4.runtime.ANTLRInputStream;
-import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.junit.Test;
 
+import static cn.edu.seu.kse.PelpSolver.syntax.parser.AspSyntaxParser.getParser;
+import static cn.edu.seu.kse.PelpSolver.syntax.parser.AspSyntaxParser.getVisitedObject;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -22,23 +18,6 @@ import static org.junit.Assert.assertTrue;
  * Created by 张舒韬 on 2017/1/9.
  */
 public class AspVisitorImplTest {
-
-    private AspParser getParser(String text) {
-        AspLexer lexer = new AspLexer(new ANTLRInputStream(text));
-        CommonTokenStream token = new CommonTokenStream(lexer);
-        AspParser parser = new AspParser(token);
-
-        // 错误处理
-        parser.removeErrorListeners();
-        parser.addErrorListener(new SyntaxErrorListener());
-
-        return parser;
-    }
-
-    private ObjectModel getVisitedObject(ParseTree tree) {
-        AspVisitorImpl visitor = new AspVisitorImpl();
-        return (ObjectModel) visitor.visit(tree);
-    }
 
     @Test
     public void testSimpleLiteral() {
@@ -49,6 +28,16 @@ public class AspVisitorImplTest {
         assertTrue("simple(1,2)".equals(literal.toString()));
         assertFalse(literal.isNegation());
         assertTrue(literal.getParams().get(0).getType() == AspParam.CONSTANT);
+    }
+
+    @Test
+    public void testLiteralWithoutParam() {
+        AspParser parser = getParser("p");
+        ParseTree tree = parser.literal();
+        AspLiteral literal = (AspLiteral) getVisitedObject(tree);
+
+        assertTrue("p".equals(literal.toString()));
+        assertTrue(literal.getParams().isEmpty());
     }
 
     @Test

@@ -2,7 +2,7 @@ package cn.edu.seu.kse.PelSolver.syntax;
 
 import cn.edu.seu.kse.PelpSolver.exception.SyntaxErrorException;
 import cn.edu.seu.kse.PelpSolver.model.pelp.PelpProgram;
-import cn.edu.seu.kse.PelpSolver.syntax.parser.PelpProgramParser;
+import cn.edu.seu.kse.PelpSolver.syntax.parser.PelpSyntaxParser;
 import org.junit.Test;
 
 import static junit.framework.TestCase.assertTrue;
@@ -13,7 +13,7 @@ import static org.junit.Assert.fail;
  * PelpProgramParser类的单元测试
  * Created by 张舒韬 on 2017/1/9.
  */
-public class PelpProgramParserTest {
+public class PelpSyntaxParserTest {
     @Test
     public void testProgramParser() {
         String text = "human(X) :- man(X).\n" +
@@ -22,7 +22,7 @@ public class PelpProgramParserTest {
                 "man(jo).[1]\n" +
                 "woman(jo).[1]";
         try {
-            PelpProgram program = PelpProgramParser.parser(text);
+            PelpProgram program = PelpSyntaxParser.parseProgram(text);
 
             assertTrue(program.getRules().size() == 5);
             assertFalse(program.getRules().get(0).isSoft());
@@ -41,7 +41,7 @@ public class PelpProgramParserTest {
                 "man(jo).[1]\n" +
                 "woman(jo).[1]";
         try {
-            PelpProgram program = PelpProgramParser.parser(text);
+            PelpProgram program = PelpSyntaxParser.parseProgram(text);
             fail("未检测到语法错误：\n" + program);
         } catch (SyntaxErrorException e) {
             assertTrue(e.getMessage().contains("Human"));
@@ -56,7 +56,7 @@ public class PelpProgramParserTest {
                 "man(jo).[1]\n" +
                 "woman(jo";
         try {
-            PelpProgram program = PelpProgramParser.parser(text);
+            PelpProgram program = PelpSyntaxParser.parseProgram(text);
             fail("未检测到语法错误：\n" + program);
         } catch (SyntaxErrorException e) {
             assertTrue(e.getMessage().contains("woman(jo"));

@@ -69,9 +69,11 @@ public class AspLiteral extends ObjectModel {
         }
         builder.append(isNegation ? "-" : "").append(predicate);
 
-        StringJoiner paramJoiner = new StringJoiner(",", "(", ")");
-        params.forEach(aspParam -> paramJoiner.add(aspParam.toString()));
-        builder.append(paramJoiner.toString());
+        if (!params.isEmpty()) {
+            StringJoiner paramJoiner = new StringJoiner(",", "(", ")");
+            params.forEach(aspParam -> paramJoiner.add(aspParam.toString()));
+            builder.append(paramJoiner.toString());
+        }
 
         return builder.toString();
     }

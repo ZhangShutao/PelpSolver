@@ -14,14 +14,14 @@ import org.antlr.v4.runtime.tree.ParseTree;
  * Pelp语法解析工具类
  * Created by 张舒韬 on 2017/1/8.
  */
-public class PelpProgramParser {
+public class PelpSyntaxParser {
     /**
      * 将输入的文本解析为一个Pelp程序对象
      * @param text 待解析的文本
      * @return 解析所得的PelpProgram对象
      * @throws SyntaxErrorException 文本中存在语法错误
      */
-    public static PelpProgram parser(String text) throws SyntaxErrorException {
+    public static PelpProgram parseProgram(String text) throws SyntaxErrorException {
         PelpLexer lexer = new PelpLexer(new ANTLRInputStream(text));
         CommonTokenStream token = new CommonTokenStream(lexer);
         PelpParser parser = new PelpParser(token);
