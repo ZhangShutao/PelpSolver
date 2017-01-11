@@ -1,9 +1,6 @@
 package cn.edu.seu.kse.PelSolver.syntax;
 
-import cn.edu.seu.kse.PelpSolver.model.asp.AspLiteral;
-import cn.edu.seu.kse.PelpSolver.model.asp.AspParam;
-import cn.edu.seu.kse.PelpSolver.model.asp.AspProgram;
-import cn.edu.seu.kse.PelpSolver.model.asp.AspRule;
+import cn.edu.seu.kse.PelpSolver.model.asp.*;
 import cn.edu.seu.kse.PelpSolver.syntax.asp.AspParser;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.junit.Test;
@@ -161,5 +158,39 @@ public class AspVisitorImplTest {
                 ":~_sat(1,X1,X2).[1@1,X1,X2]";
         assertTrue(text2.equals(program.toString()));
         assertTrue(program.getRules().size() == 14);
+    }
+
+    @Test
+    public void testAnswerSetWithoutWeight() {
+        String text = "Answer: 1\n" +
+                "friend(a,b) friend(b,c) influences(a,b) influences(b,c) influences(a,c)";
+
+        AspParser parser = getParser(text);
+        ParseTree tree = parser.answer_set();
+        AnswerSet answerSet = (AnswerSet) getVisitedObject(tree);
+
+        String text2 = "Answer:\n" +
+                "influences(a,b),influences(b,c),influences(a,c),friend(a,b),friend(b,c)";
+        assertTrue(text2.equals(answerSet.toString()));
+        assertTrue(answerSet.getWeights().isEmpty());
+    }
+
+    @Test
+    public void testAnswerSetWithWeight() {
+        String text = "Answer: 1\n" +
+                "friend(a,b) friend(b,c) influences(a,b) influences(b,c) influences(a,c)\n" +
+                "Optimization: 9 1";
+
+        AspParser parser = getParser(text);
+        ParseTree tree = parser.answer_set();
+        AnswerSet answerSet = (AnswerSet) getVisitedObject(tree);
+
+        String text2 = "Answer:\n" +
+                "influences(a,b),influences(b,c),influences(a,c),friend(a,b),friend(b,c)\n" +
+                "Weights:\n" +
+                "9,1";
+        assertTrue(text2.equals(answerSet.toString()));
+
+        assertFalse(answerSet.getWeights().isEmpty());
     }
 }
