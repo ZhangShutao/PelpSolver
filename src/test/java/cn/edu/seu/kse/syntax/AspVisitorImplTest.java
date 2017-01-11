@@ -162,8 +162,7 @@ public class AspVisitorImplTest {
 
     @Test
     public void testAnswerSetWithoutWeight() {
-        String text = "Answer: 1\n" +
-                "friend(a,b) friend(b,c) influences(a,b) influences(b,c) influences(a,c)";
+        String text = "friend(a,b) friend(b,c) influences(a,b) influences(b,c) influences(a,c)";
 
         AspParser parser = getParser(text);
         ParseTree tree = parser.answer_set();
@@ -173,24 +172,5 @@ public class AspVisitorImplTest {
                 "influences(a,b),influences(b,c),influences(a,c),friend(a,b),friend(b,c)";
         assertTrue(text2.equals(answerSet.toString()));
         assertTrue(answerSet.getWeights().isEmpty());
-    }
-
-    @Test
-    public void testAnswerSetWithWeight() {
-        String text = "Answer: 1\n" +
-                "friend(a,b) friend(b,c) influences(a,b) influences(b,c) influences(a,c)\n" +
-                "Optimization: 9 1";
-
-        AspParser parser = getParser(text);
-        ParseTree tree = parser.answer_set();
-        AnswerSet answerSet = (AnswerSet) getVisitedObject(tree);
-
-        String text2 = "Answer:\n" +
-                "influences(a,b),influences(b,c),influences(a,c),friend(a,b),friend(b,c)\n" +
-                "Weights:\n" +
-                "9,1";
-        assertTrue(text2.equals(answerSet.toString()));
-
-        assertFalse(answerSet.getWeights().isEmpty());
     }
 }

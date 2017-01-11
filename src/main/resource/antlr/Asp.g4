@@ -41,10 +41,6 @@ IF : ':-';
 SOFT_IF : ':~';
 // 弱约束等级符号
 AT : '@';
-//
-ANSWERSET_PREFIX : 'Answer:';
-//
-OPTIMIZATION_PREFIX : 'Optimization:';
 
 //小数(点表示法)
 DECIMAL : MINUS? ([1-9][0-9]* | ZERO ) DOT [0-9]+;
@@ -99,4 +95,4 @@ reasoning_rule : rule_head DOT                                                  
 program : reasoning_rule*;
 
 // 回答集
-answer_set : ANSWERSET_PREFIX POSITIVE_INT literal* (OPTIMIZATION_PREFIX (integer)*)?;
+answer_set : literal* ;

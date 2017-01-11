@@ -46,12 +46,8 @@ public class AspSyntaxParser {
         try {
             ParseTree tree = parser.program();
             return (AspProgram) getVisitedObject(tree);
-        } catch (Exception e) {
-            if (e.getMessage().contains("语法错误：")) {
-                throw new SyntaxErrorException(e.getMessage());
-            } else {
-                throw e;
-            }
+        } catch (RuntimeException e) {
+            throw new SyntaxErrorException(e.getMessage(), e);
         }
     }
 
@@ -66,12 +62,8 @@ public class AspSyntaxParser {
         try {
             ParseTree tree = parser.answer_set();
             return (AnswerSet) getVisitedObject(tree);
-        } catch (Exception e) {
-            if (e.getMessage().contains("语法错误：")) {
-                throw new SyntaxErrorException(e.getMessage());
-            } else {
-                throw e;
-            }
+        } catch (RuntimeException e) {
+            throw new SyntaxErrorException(e.getMessage(), e);
         }
     }
 

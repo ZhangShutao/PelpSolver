@@ -115,10 +115,8 @@ public class AspVisitorImpl extends AspBaseVisitor {
     @Override
     public Object visitAnswer_set(AspParser.Answer_setContext ctx) {
         Set<AspLiteral> answerSet = new HashSet<>();
-        List<Integer> weights = new ArrayList<>();
         ctx.literal().forEach(literalContext -> answerSet.add((AspLiteral) visit(literalContext)));
-        ctx.integer().forEach(integerContext -> weights.add(Integer.parseInt(integerContext.getText())));
 
-        return new AnswerSet(answerSet, weights);
+        return new AnswerSet(answerSet);
     }
 }
