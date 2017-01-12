@@ -10,6 +10,10 @@ public class SyntaxErrorException extends Exception{
     }
 
     public SyntaxErrorException(String msg) {
-        super(msg);
+        super("语法错误：" + msg);
+    }
+
+    public SyntaxErrorException(String msg, Throwable cause) {
+        super("语法错误：" + msg, cause);
     }
 }
