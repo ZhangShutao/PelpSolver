@@ -89,7 +89,7 @@ public class AspLiteral extends ObjectModel {
         if (null == obj || obj.getClass() != AspLiteral.class) {
             return false;
         } else {
-            AspLiteral other = new AspLiteral();
+            AspLiteral other = (AspLiteral) obj;
             return new EqualsBuilder().append(nafCount, other.getNafCount())
                     .append(isNegation(), other.isNegation())
                     .append(predicate, other.getPredicate())

@@ -171,6 +171,6 @@ public class AspVisitorImplTest {
         String text2 = "Answer:\n" +
                 "influences(a,b),influences(b,c),influences(a,c),friend(a,b),friend(b,c)";
         assertTrue(text2.equals(answerSet.toString()));
-        assertTrue(answerSet.getWeights().isEmpty());
+        assertTrue(answerSet.getWeight() == 0);
     }
 }

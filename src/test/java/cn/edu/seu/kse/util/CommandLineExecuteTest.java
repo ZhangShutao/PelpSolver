@@ -20,6 +20,7 @@ public class CommandLineExecuteTest {
     private static final String perfectProgram = "naive(X):-simple(X). simple(jo).";
     private static final String warningProgram = "naive(X):-simple(X).";
     private static final String errorProgram = "Naive(X):-Simple(X). Simple(jo).";
+    private static final String unsatProgram = "-simple(X):-simple(X).simple(jo).";
 
     private File generateTemporaryFile(String text) {
         File file;
@@ -51,6 +52,10 @@ public class CommandLineExecuteTest {
             assertTrue(output.getError().isEmpty());
         } catch (UnsupportedOsTypeException | IOException e) {
             fail(e.getMessage());
+        } finally {
+            if (file != null && !file.delete()) {
+                file.deleteOnExit();
+            }
         }
     }
 
@@ -64,6 +69,10 @@ public class CommandLineExecuteTest {
             assertTrue(output.getError().contains("warning"));
         } catch (UnsupportedOsTypeException | IOException e) {
             fail(e.getMessage());
+        } finally {
+            if (file != null && !file.delete()) {
+                file.deleteOnExit();
+            }
         }
     }
 
@@ -77,6 +86,25 @@ public class CommandLineExecuteTest {
             assertTrue(output.getError().contains("ERROR"));
         } catch (UnsupportedOsTypeException | IOException e) {
             fail(e.getMessage());
+        } finally {
+            if (file != null && !file.delete()) {
+                file.deleteOnExit();
+            }
+        }
+    }
+
+    @Test
+    public void testCallClingoWithUnsatisfiableProgram() {
+        File file = generateTemporaryFile(unsatProgram);
+        try {
+            CommandLineOutput output = CommandLineExecute.callShell("clingo", Arrays.asList("0", file.getAbsolutePath()));
+            assertTrue(output.getOutput().contains("UNSATISFIABLE"));
+        } catch (UnsupportedOsTypeException | IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (file != null && !file.delete()) {
+                file.deleteOnExit();
+            }
         }
     }
 }

@@ -12,7 +12,7 @@ import java.util.*;
  */
 public class AnswerSet extends ObjectModel {
     private Set<AspLiteral> literals = new HashSet<>();
-    private List<Integer> weights = new ArrayList<>();
+    private Integer weight = 0;
 
     public AnswerSet() {
     }
@@ -21,9 +21,9 @@ public class AnswerSet extends ObjectModel {
         this.literals = literals;
     }
 
-    public AnswerSet(Set<AspLiteral> literals, List<Integer> weights) {
+    public AnswerSet(Set<AspLiteral> literals, Integer weight) {
         this.literals = literals;
-        this.weights = weights;
+        this.weight = weight;
     }
 
     public Set<AspLiteral> getLiterals() {
@@ -34,26 +34,26 @@ public class AnswerSet extends ObjectModel {
         this.literals = literals;
     }
 
-    public List<Integer> getWeights() {
-        return weights;
+    public Integer getWeight() {
+        return weight;
     }
 
-    public void setWeights(List<Integer> weights) {
-        this.weights = weights;
+    public void setWeight(Integer weight) {
+        this.weight = weight;
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(literals.toArray()).append(weights.toArray()).toHashCode();
+        return new HashCodeBuilder().append(literals.toArray()).append(weight).toHashCode();
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (null == obj || obj.getClass() == AnswerSet.class) {
+        if (null == obj || obj.getClass() != AnswerSet.class) {
             return false;
         } else {
             AnswerSet other = (AnswerSet) obj;
-            return new EqualsBuilder().append(literals, other.getLiterals()).append(weights, other.weights).isEquals();
+            return new EqualsBuilder().append(literals, other.getLiterals()).append(weight, other.weight).isEquals();
         }
     }
 
@@ -65,10 +65,8 @@ public class AnswerSet extends ObjectModel {
         literals.forEach(aspLiteral -> answerSetJoiner.add(aspLiteral.toString()));
         builder.append(answerSetJoiner.toString());
 
-        if (!weights.isEmpty()) {
-            StringJoiner weightJoiner = new StringJoiner(",", "\nWeights:\n", "");
-            weights.forEach(weight -> weightJoiner.add(weight.toString()));
-            builder.append(weightJoiner.toString());
+        if (weight != 0) {
+            builder.append("\nWeights:").append(weight);
         }
 
         return builder.toString();
