@@ -95,4 +95,4 @@ reasoning_rule : rule_head DOT                                                  
 program : reasoning_rule*;
 
 // 回答集
-answer_set : literal*;
+answer_set : literal* ;
