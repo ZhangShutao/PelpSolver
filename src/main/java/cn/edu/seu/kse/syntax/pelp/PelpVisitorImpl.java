@@ -138,7 +138,10 @@ public class PelpVisitorImpl extends PelpBaseVisitor {
         List<PelpRule> rules = new ArrayList<>();
         for (int i = 0; i != ctx.getChildCount(); ++i) {
             if (ctx.getChild(i) instanceof PelpParser.Hard_ruleContext || ctx.getChild(i) instanceof  PelpParser.Soft_ruleContext) {
-                rules.add((PelpRule) visit(ctx.getChild(i)));
+                PelpRule rule = (PelpRule) visit(ctx.getChild(i));
+                String ruleId = "_r" + Integer.toString(rules.size());
+                rule.setId(ruleId);
+                rules.add(rule);
             }
         }
         return new PelpProgram(rules);

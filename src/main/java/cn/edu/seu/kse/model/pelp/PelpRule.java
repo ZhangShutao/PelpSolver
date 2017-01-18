@@ -16,9 +16,11 @@ public class PelpRule extends ObjectModel {
     private Double weight = null;
 
     public PelpRule() {
+        setId("_r0"); // 默认规则编号为_r0
     }
 
     public PelpRule(List<PelpObjectiveLiteral> head, List<PelpLiteral> body, Double weight) {
+        super();
         this.head = head;
         this.body = body;
         this.weight = weight;
