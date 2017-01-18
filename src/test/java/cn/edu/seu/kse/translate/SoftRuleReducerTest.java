@@ -15,24 +15,47 @@ import static org.junit.Assert.fail;
  */
 public class SoftRuleReducerTest {
 
-    private static PelpProgram getTestProgram() throws SyntaxErrorException {
-        String text = "student(jo).\n" +
-                "ill(jo). [2]\n" +
-                "-ill(jo). [1]\n" +
-                "rest(X) :- K[0.6, 0] ill(X), student(X).";
-        return PelpSyntaxParser.parseProgram(text);
+    private final static String text[] = {"student(jo).\n" +
+            "ill(jo). [2]\n" +
+            "-ill(jo). [1]\n" +
+            "rest(X) :- K[0.6, 0] ill(X), student(X).",
+
+            "feelGood(X) :- rest(X).[2]\n" +
+            "student(jo).\n" +
+            "ill(jo).[2]\n" +
+            "-ill(jo).[1]\n" +
+            "rest(X) :- K[0.6, 1] ill(X), student(X).\n" +
+            "feelGood(X) :- -ill(X).\n" +
+            "not feelGood(X) :- rest(X). [1]"};
+    private ModelTranslator translator = new SoftRuleReducer();
+
+    private static PelpProgram getTestProgram(int id) throws SyntaxErrorException {
+        return PelpSyntaxParser.parseProgram(text[id]);
     }
 
     @Test
     public void testGenerateHerbrandDeclare() {
-        ModelTranslator translator = new SoftRuleReducer();
         try {
-            PelpProgram originProgram = getTestProgram();
+            PelpProgram originProgram = getTestProgram(0);
 
             PelpProgram translatedProgram = (PelpProgram) translator.translateProgram(originProgram);
+            System.out.println(translatedProgram);
             assertTrue(translatedProgram.toString().contains("_herbrand(jo)."));
         } catch (SyntaxErrorException e) {
             fail(e.getMessage());
+        }
+    }
+
+    @Test
+    public void testGenerateSelectOption() {
+        try {
+            PelpProgram originProgram = getTestProgram(1);
+
+            PelpProgram translateProgram = (PelpProgram) translator.translateProgram(originProgram);
+            System.out.println(translateProgram);
+            assertTrue(translateProgram.getRules().get(1).toString().equals("_select(_r0,X)|not _select(_r0,X):-_herbrand(X)."));
+        } catch (SyntaxErrorException e) {
+            e.printStackTrace();
         }
     }
 }
