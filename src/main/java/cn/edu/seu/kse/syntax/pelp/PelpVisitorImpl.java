@@ -98,8 +98,12 @@ public class PelpVisitorImpl extends PelpBaseVisitor {
     @SuppressWarnings("unchecked")
     public Object visitFact_rule(PelpParser.Fact_ruleContext ctx) {
         List<PelpObjectiveLiteral> head = (List) visit(ctx.rule_head());
-
-        return new PelpRule(head, new ArrayList<>(), null);
+        PelpRule rule = new PelpRule(head, new ArrayList<>(), null);
+        if (!rule.isSafe()) {
+            throw new RuntimeException("语法错误：规则" + rule +"不安全");
+        } else {
+            return rule;
+        }
     }
 
     @Override
@@ -114,7 +118,12 @@ public class PelpVisitorImpl extends PelpBaseVisitor {
     public Object visitNormal_rule(PelpParser.Normal_ruleContext ctx) {
         List<PelpObjectiveLiteral> head = (List) visit(ctx.rule_head());
         List<PelpLiteral> body = (List) visit(ctx.rule_body());
-        return new PelpRule(head, body, null);
+        PelpRule rule = new PelpRule(head, body, null);
+        if (!rule.isSafe()) {
+            throw new RuntimeException("语法错误：规则" + rule +"不安全");
+        } else {
+            return rule;
+        }
     }
 
     @Override
@@ -129,7 +138,10 @@ public class PelpVisitorImpl extends PelpBaseVisitor {
         List<PelpRule> rules = new ArrayList<>();
         for (int i = 0; i != ctx.getChildCount(); ++i) {
             if (ctx.getChild(i) instanceof PelpParser.Hard_ruleContext || ctx.getChild(i) instanceof  PelpParser.Soft_ruleContext) {
-                rules.add((PelpRule) visit(ctx.getChild(i)));
+                PelpRule rule = (PelpRule) visit(ctx.getChild(i));
+                String ruleId = "_r" + Integer.toString(rules.size());
+                rule.setId(ruleId);
+                rules.add(rule);
             }
         }
         return new PelpProgram(rules);

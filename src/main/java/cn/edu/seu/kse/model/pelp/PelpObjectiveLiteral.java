@@ -43,4 +43,9 @@ public class PelpObjectiveLiteral extends PelpLiteral{
                     .isEquals();
         }
     }
+
+    @Override
+    public boolean isPositive() {
+        return !isNaf();
+    }
 }

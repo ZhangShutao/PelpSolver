@@ -2,9 +2,7 @@ package cn.edu.seu.kse.model.pelp;
 
 import cn.edu.seu.kse.model.ObjectModel;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.StringJoiner;
+import java.util.*;
 
 /**
  * PELP字的语法类，是一个抽象类，有表示主观字和客观字的子类
@@ -66,4 +64,23 @@ public abstract class PelpLiteral extends ObjectModel {
         return builder.toString();
     }
 
+    public Set<PelpParam> getHerbrandUniverse() {
+        return filterParamType(PelpParam.CONSTANT);
+    }
+
+    public Set<PelpParam> getVariableSet() {
+        return filterParamType(PelpParam.VARIABLE);
+    }
+
+    private Set<PelpParam> filterParamType (int type) {
+        Set<PelpParam> paramSet = new HashSet<>();
+        getParams().forEach(pelpParam -> {
+            if (pelpParam.getType() == type) {
+                paramSet.add(pelpParam);
+            }
+        });
+        return paramSet;
+    }
+
+    public abstract boolean isPositive();
 }

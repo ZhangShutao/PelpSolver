@@ -36,7 +36,7 @@ public class PelpSyntaxParser {
             return (PelpProgram) visitor.visit(tree);
         } catch (Exception e) {
             if (e.getMessage().contains("语法错误：")) {
-                throw new SyntaxErrorException(e.getMessage());
+                throw new SyntaxErrorException(e.getMessage().substring("语法错误：".length()));
             } else {
                 throw e;
             }
