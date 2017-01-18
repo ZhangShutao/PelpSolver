@@ -62,4 +62,26 @@ public class PelpSyntaxParserTest {
             assertTrue(e.getMessage().contains("woman(jo"));
         }
     }
+
+    @Test
+    public void testWrongProgramWithUnsafeRule() {
+        String text = "simple(Y) :- naive(X).";
+        try {
+            PelpProgram program = PelpSyntaxParser.parseProgram(text);
+            fail("未检测到语法错误：\n" + program);
+        } catch (SyntaxErrorException e) {
+            assertTrue(e.getMessage().contains("不安全"));
+        }
+    }
+
+    @Test
+    public void testWrongProgramWithUnsafeSoftRule() {
+        String text = "simple(Y) :- naive(X).[2]";
+        try {
+            PelpProgram program = PelpSyntaxParser.parseProgram(text);
+            fail("未检测到语法错误：\n" + program);
+        } catch (SyntaxErrorException e) {
+            assertTrue(e.getMessage().contains("不安全"));
+        }
+    }
 }
