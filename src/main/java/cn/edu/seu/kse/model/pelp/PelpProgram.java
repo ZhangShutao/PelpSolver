@@ -58,4 +58,10 @@ public class PelpProgram extends ObjectModel {
             return new EqualsBuilder().append(new HashSet<>(getRules()), new HashSet<>(other.getRules())).isEquals();
         }
     }
+
+    public Set<PelpParam> getHerbrandUniverse() {
+        Set<PelpParam> herbrandUniverse = new HashSet<>();
+        getRules().forEach(rule -> herbrandUniverse.addAll(rule.getHerbrandUniverse()));
+        return herbrandUniverse;
+    }
 }

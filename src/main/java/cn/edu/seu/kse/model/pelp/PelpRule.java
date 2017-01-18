@@ -4,10 +4,7 @@ import cn.edu.seu.kse.model.ObjectModel;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.StringJoiner;
+import java.util.*;
 
 /**
  * PELP规则的语法类
@@ -49,6 +46,20 @@ public class PelpRule extends ObjectModel {
 
     public void setWeight(Double weight) {
         this.weight = weight;
+    }
+
+    /**
+     * 该规则是否安全，即首部的变量在体部正字中都出现
+     * @return 规则安全则为true，否则为false
+     */
+    public boolean isSafe() {
+        Set<PelpParam> headVariable = new HashSet<>();
+        getHead().forEach(literal -> headVariable.addAll(literal.getVariableSet()));
+
+        Set<PelpParam> positiveBodyVariable = new HashSet<>();
+        getPositiveBody().forEach(literal -> positiveBodyVariable.addAll(literal.getVariableSet()));
+
+        return positiveBodyVariable.containsAll(headVariable);
     }
 
     /**
@@ -110,5 +121,28 @@ public class PelpRule extends ObjectModel {
                     .append(new HashSet<>(getBody()), new HashSet<>(other.getBody()))
                     .append(getWeight(), other.getWeight()).isEquals();
         }
+    }
+
+    public Set<PelpParam> getHerbrandUniverse() {
+        Set<PelpParam> herbrandUniverse = new HashSet<>();
+        getHead().forEach(literal -> herbrandUniverse.addAll(literal.getHerbrandUniverse()));
+        getBody().forEach(literal -> herbrandUniverse.addAll(literal.getHerbrandUniverse()));
+        return herbrandUniverse;
+    }
+
+    public Set<PelpParam> getVariableSet() {
+        Set<PelpParam> variableSet = new HashSet<>();
+        getBody().forEach(literal -> variableSet.addAll(literal.getVariableSet()));
+        return variableSet;
+    }
+
+    public Set<PelpLiteral> getPositiveBody() {
+        Set<PelpLiteral> literals = new HashSet<>();
+        getBody().forEach(literal -> {
+            if (literal.isPositive()) {
+                literals.add(literal);
+            }
+        });
+        return literals;
     }
 }
