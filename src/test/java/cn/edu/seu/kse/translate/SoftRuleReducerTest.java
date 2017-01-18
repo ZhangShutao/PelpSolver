@@ -39,7 +39,6 @@ public class SoftRuleReducerTest {
             PelpProgram originProgram = getTestProgram(0);
 
             PelpProgram translatedProgram = (PelpProgram) translator.translateProgram(originProgram);
-            System.out.println(translatedProgram);
             assertTrue(translatedProgram.toString().contains("_herbrand(jo)."));
         } catch (SyntaxErrorException e) {
             fail(e.getMessage());
@@ -52,8 +51,7 @@ public class SoftRuleReducerTest {
             PelpProgram originProgram = getTestProgram(1);
 
             PelpProgram translateProgram = (PelpProgram) translator.translateProgram(originProgram);
-            System.out.println(translateProgram);
-            assertTrue(translateProgram.getRules().get(1).toString().equals("_select(_r0,X)|not _select(_r0,X):-_herbrand(X)."));
+            assertTrue(translateProgram.toString().contains("_select(_r0,X)|not _select(_r0,X):-_herbrand(X)."));
         } catch (SyntaxErrorException e) {
             e.printStackTrace();
         }
