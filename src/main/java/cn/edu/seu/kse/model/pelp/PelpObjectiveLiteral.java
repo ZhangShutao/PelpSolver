@@ -46,6 +46,6 @@ public class PelpObjectiveLiteral extends PelpLiteral{
 
     @Override
     public boolean isPositive() {
-        return !isNegation();
+        return !isNaf();
     }
 }
