@@ -13,8 +13,15 @@ import java.util.*;
 public class SoftRuleReducer implements ModelTranslator {
     @Override
     public Set<ObjectModel> translate(ObjectModel objectModel) {
-
-        return null;
+        Set<ObjectModel> objectModelSet = new HashSet<>();
+        if (objectModel instanceof PelpProgram) {
+            objectModelSet.add(translateProgram(objectModel));
+        } else if (objectModel instanceof PelpRule && ((PelpRule) objectModel).isSoft()) {
+            objectModelSet.addAll(translateSoftRule((PelpRule) objectModel));
+        } else {
+            objectModelSet.add(objectModel);
+        }
+        return objectModelSet;
     }
 
     @Override
@@ -26,13 +33,11 @@ public class SoftRuleReducer implements ModelTranslator {
 
             rules.addAll(generateHerbrandDeclare(originProgram));
 
-            originProgram.getRules().forEach(rule -> {
-                if (!rule.isSoft()) {
-                    rules.add(rule);
-                } else {
-                    rules.addAll(translateSoftRule(rule));
-                }
-            });
+            originProgram.getRules().forEach(rule ->
+                translate(rule).forEach(translatedRule ->
+                    rules.add((PelpRule) translatedRule)
+                )
+            );
 
             return new PelpProgram(rules);
         } else {
@@ -40,7 +45,7 @@ public class SoftRuleReducer implements ModelTranslator {
         }
     }
 
-    public Set<PelpRule> translateSoftRule(PelpRule rule) {
+    private Set<PelpRule> translateSoftRule(PelpRule rule) {
         Set<PelpRule> ruleSet = new HashSet<>();
 
         ruleSet.add(generateSelectOptionRule(rule));
