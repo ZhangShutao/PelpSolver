@@ -89,7 +89,6 @@ public class PelpSubjectiveLiteral extends PelpLiteral {
 
     @Override
     public boolean isPositive() {
-        return !isNaf() &&  isLeftClose() && isRightClose()
-                && Math.abs(leftBound - 1) < 1e-6 && Math.abs(rightBound - 1) < 1e-6;
+        return false;
     }
 }
