@@ -33,29 +33,30 @@ public class PelpProgram extends ObjectModel {
      * @param rule 待添加的规则
      */
     public void addRule(PelpRule rule) {
-        rules.add(rule);
+        getRules().add(rule);
     }
 
     @Override
     public String toString() {
         StringJoiner joiner = new StringJoiner("\n");
-        rules.forEach(rule -> joiner.add(rule.toString()));
+        getRules().forEach(rule -> joiner.add(rule.toString()));
         return joiner.toString();
     }
 
     @Override
     public int hashCode() {
-        Set<PelpRule> ruleSet = new HashSet<>(rules);
-        return new HashCodeBuilder().append(ruleSet.toArray()).toHashCode();
+        return new HashCodeBuilder().append(getRules()).toHashCode();
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (null == obj || obj.getClass() != PelpProgram.class) {
+        if (this == obj) {
+            return true;
+        } else if (null == obj || obj.getClass() != PelpProgram.class) {
             return false;
         } else {
             PelpProgram other = (PelpProgram) obj;
-            return new EqualsBuilder().append(new HashSet<>(getRules()), new HashSet<>(other.getRules())).isEquals();
+            return new EqualsBuilder().append(getRules(), other.getRules()).isEquals();
         }
     }
 

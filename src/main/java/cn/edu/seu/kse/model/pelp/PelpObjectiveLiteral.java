@@ -27,16 +27,24 @@ public class PelpObjectiveLiteral extends PelpLiteral{
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(isNaf()).append(isNegation()).append(getPredicate()).append(getParams().toArray()).toHashCode();
+        return new HashCodeBuilder()
+                .append(isNaf())
+                .append(isNegation())
+                .append(getPredicate())
+                .append(getParams())
+                .toHashCode();
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (null == obj || obj.getClass() != PelpObjectiveLiteral.class) {
+        if (this == obj) {
+            return true;
+        } else if (null == obj || obj.getClass() != PelpObjectiveLiteral.class) {
             return false;
         } else {
             PelpObjectiveLiteral other = (PelpObjectiveLiteral) obj;
-            return new EqualsBuilder().append(isNaf(), other.isNaf())
+            return new EqualsBuilder()
+                    .append(isNaf(), other.isNaf())
                     .append(isNegation(), other.isNegation())
                     .append(getPredicate(), other.getPredicate())
                     .append(getParams(), other.getParams())

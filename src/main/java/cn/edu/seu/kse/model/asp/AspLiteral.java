@@ -64,14 +64,14 @@ public class AspLiteral extends ObjectModel {
     public String toString() {
         StringBuilder builder = new StringBuilder();
 
-        for (int i = 0; i != nafCount; ++i) {
+        for (int i = 0; i != getNafCount(); ++i) {
             builder.append("not ");
         }
-        builder.append(isNegation ? "-" : "").append(predicate);
+        builder.append(isNegation() ? "-" : "").append(getPredicate());
 
-        if (!params.isEmpty()) {
+        if (getParams() != null && !getParams().isEmpty()) {
             StringJoiner paramJoiner = new StringJoiner(",", "(", ")");
-            params.forEach(aspParam -> paramJoiner.add(aspParam.toString()));
+            getParams().forEach(aspParam -> paramJoiner.add(aspParam.toString()));
             builder.append(paramJoiner.toString());
         }
 
@@ -80,20 +80,22 @@ public class AspLiteral extends ObjectModel {
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(nafCount).append(isNegation)
-                .append(predicate).append(params.toArray()).toHashCode();
+        return new HashCodeBuilder().append(getNafCount()).append(isNegation())
+                .append(getPredicate()).append(getParams()).toHashCode();
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (null == obj || obj.getClass() != AspLiteral.class) {
+        if (this == obj) {
+            return true;
+        } else if (null == obj || obj.getClass() != AspLiteral.class) {
             return false;
         } else {
             AspLiteral other = (AspLiteral) obj;
-            return new EqualsBuilder().append(nafCount, other.getNafCount())
+            return new EqualsBuilder().append(getNafCount(), other.getNafCount())
                     .append(isNegation(), other.isNegation())
-                    .append(predicate, other.getPredicate())
-                    .append(params, other.getParams()).isEquals();
+                    .append(getPredicate(), other.getPredicate())
+                    .append(getParams(), other.getParams()).isEquals();
         }
     }
 }

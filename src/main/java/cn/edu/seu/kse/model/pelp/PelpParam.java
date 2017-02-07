@@ -38,7 +38,7 @@ public class PelpParam extends ObjectModel {
 
     @Override
     public String toString() {
-        return text;
+        return getText();
     }
 
     @Override

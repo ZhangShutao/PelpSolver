@@ -41,21 +41,23 @@ public class AspParam extends ObjectModel {
 
     @Override
     public String toString() {
-        return text;
+        return getText();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(type).append(true).toHashCode();
+        return new HashCodeBuilder().append(getType()).append(getText()).toHashCode();
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (null == obj || obj.getClass() != AspParam.class) {
+        if (this == obj) {
+            return true;
+        } else if (null == obj || obj.getClass() != AspParam.class) {
             return false;
         } else {
             AspParam other = (AspParam) obj;
-            return new EqualsBuilder().append(type, other.getType()).append(text, other.getText()).isEquals();
+            return new EqualsBuilder().append(getType(), other.getType()).append(getText(), other.getText()).isEquals();
         }
     }
 }

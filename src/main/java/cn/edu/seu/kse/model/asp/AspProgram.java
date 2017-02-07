@@ -33,22 +33,24 @@ public class AspProgram extends ObjectModel {
     @Override
     public String toString() {
         StringJoiner joiner = new StringJoiner("\n");
-        rules.forEach(aspRule -> joiner.add(aspRule.toString()));
+        getRules().forEach(aspRule -> joiner.add(aspRule.toString()));
         return joiner.toString();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(rules.toArray()).toHashCode();
+        return new HashCodeBuilder().append(getRules()).toHashCode();
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (null == obj || obj.getClass() != AspProgram.class) {
+        if (this == obj) {
+            return true;
+        } else if (null == obj || obj.getClass() != AspProgram.class) {
             return false;
         } else {
             AspProgram other = (AspProgram) obj;
-            return new EqualsBuilder().append(rules, other.getRules()).isEquals();
+            return new EqualsBuilder().append(getRules(), other.getRules()).isEquals();
         }
     }
 }

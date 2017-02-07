@@ -8,6 +8,7 @@
 *.ear
 
 target/
+logs/
 
 ### IntelliJ IDEA config
 PelpSolver.iml
