@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * TODO:
+ * 主观字的消除
  * Created by 张舒韬 on 2017/1/18.
  */
 public class EpistemicReducer implements ModelTranslator {
