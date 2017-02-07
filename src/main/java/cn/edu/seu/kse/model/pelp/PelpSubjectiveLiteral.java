@@ -91,4 +91,18 @@ public class PelpSubjectiveLiteral extends PelpLiteral {
     public boolean isPositive() {
         return false;
     }
+
+    public boolean isEpistemicConfirm() {
+        return isLeftClose() && isRightClose() &&
+                Math.abs(getLeftBound() - 1) < 1e-6 && Math.abs(getRightBound() - 1) < 1e-6;
+    }
+
+    public boolean isEpistemicDeny() {
+        return isLeftClose() && isRightClose() &&
+                Math.abs(getLeftBound() - 0) < 1e-6 && Math.abs(getRightBound() - 0) < 1e-6;
+    }
+
+    public PelpObjectiveLiteral getObjectiveLiteral() {
+        return new PelpObjectiveLiteral(isNaf(), isNegation(), getPredicate(), getParams());
+    }
 }
