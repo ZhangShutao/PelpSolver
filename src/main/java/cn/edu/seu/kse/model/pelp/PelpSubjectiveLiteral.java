@@ -62,23 +62,36 @@ public class PelpSubjectiveLiteral extends PelpLiteral {
 
     @Override
     public String toString() {
-        return "K" + (isLeftClose ? "[" : "(") + leftBound + "," + rightBound + (isRightClose ? "]" : ")") + getSimpleLiteral();
+        return "K" + (isLeftClose() ? "[" : "(") + getLeftBound() + "," + getRightBound() + (isRightClose() ? "]" : ")") + getSimpleLiteral();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(isLeftClose).append(leftBound).append(isRightClose).append(rightBound)
-                .append(isNaf()).append(isNegation()).append(getPredicate()).append(getParams().toArray()).toHashCode();
+        return new HashCodeBuilder()
+                .append(isLeftClose())
+                .append(getLeftBound())
+                .append(isRightClose())
+                .append(getRightBound())
+                .append(isNaf())
+                .append(isNegation())
+                .append(getPredicate())
+                .append(getParams())
+                .toHashCode();
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (null == obj || obj.getClass() != PelpSubjectiveLiteral.class) {
+        if (this == obj) {
+            return true;
+        } else if (null == obj || obj.getClass() != PelpSubjectiveLiteral.class) {
             return false;
         } else {
             PelpSubjectiveLiteral other = (PelpSubjectiveLiteral) obj;
-            return new EqualsBuilder().append(isLeftClose(), other.isLeftClose()).append(getLeftBound(), other.getLeftBound())
-                    .append(isRightClose(), other.isRightClose()).append(getRightBound(), other.getRightBound())
+            return new EqualsBuilder()
+                    .append(isLeftClose(), other.isLeftClose())
+                    .append(getLeftBound(), other.getLeftBound())
+                    .append(isRightClose(), other.isRightClose())
+                    .append(getRightBound(), other.getRightBound())
                     .append(isNaf(), other.isNaf())
                     .append(isNegation(), other.isNegation())
                     .append(getPredicate(), other.getPredicate())

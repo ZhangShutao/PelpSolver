@@ -86,11 +86,11 @@ public class AspRule extends ObjectModel {
     }
 
     public boolean isFact() {
-        return !head.isEmpty() && body.isEmpty();
+        return !getHead().isEmpty() && getBody().isEmpty();
     }
 
     public boolean isConstrain() {
-        return head.isEmpty() && !body.isEmpty();
+        return getHead().isEmpty() && !getBody().isEmpty();
     }
 
     @Override
@@ -98,24 +98,24 @@ public class AspRule extends ObjectModel {
         StringBuilder builder = new StringBuilder();
 
         StringJoiner headJoiner = new StringJoiner("|");
-        head.forEach(aspLiteral -> headJoiner.add(aspLiteral.toString()));
+        getHead().forEach(aspLiteral -> headJoiner.add(aspLiteral.toString()));
         builder.append(headJoiner.toString());
 
         if (!isFact()) {
-            if (isSoftConstrain) {
+            if (isSoftConstrain()) {
                 builder.append(":~");
             } else {
                 builder.append(":-");
             }
             StringJoiner bodyJoiner = new StringJoiner(",");
-            body.forEach(aspLiteral -> bodyJoiner.add(aspLiteral.toString()));
+            getBody().forEach(aspLiteral -> bodyJoiner.add(aspLiteral.toString()));
             builder.append(bodyJoiner.toString());
         }
         builder.append(".");
         if (isSoftConstrain()) {
             StringJoiner softJoiner = new StringJoiner(",", "[", "]");
-            softJoiner.add(String.valueOf(weight) + "@" + String.valueOf(level));
-            softConstrainParams.forEach(aspParam -> softJoiner.add(aspParam.toString()));
+            softJoiner.add(String.valueOf(getWeight()) + "@" + String.valueOf(getLevel()));
+            getSoftConstrainParams().forEach(aspParam -> softJoiner.add(aspParam.toString()));
 
             builder.append(softJoiner.toString());
         }
@@ -125,18 +125,32 @@ public class AspRule extends ObjectModel {
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(head.toArray()).append(isSoftConstrain)
-                .append(body.toArray()).append(weight).toHashCode();
+        return new HashCodeBuilder()
+                .append(getHead())
+                .append(isSoftConstrain())
+                .append(getBody())
+                .append(getWeight())
+                .append(getSoftConstrainParams())
+                .append(getLevel())
+                .toHashCode();
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (null == obj || obj.getClass() != AspRule.class) {
+        if (this == obj) {
+            return true;
+        } else if (null == obj || obj.getClass() != AspRule.class) {
             return false;
         } else {
             AspRule other = (AspRule) obj;
-            return new EqualsBuilder().append(head, other.getHead()).append(body, other.getBody())
-                    .append(isSoftConstrain, other.isSoftConstrain).append(weight, other.getWeight()).isEquals();
+            return new EqualsBuilder()
+                    .append(getHead(), other.getHead())
+                    .append(getBody(), other.getBody())
+                    .append(isSoftConstrain(), other.isSoftConstrain())
+                    .append(getWeight(), other.getWeight())
+                    .append(getLevel(), other.getLevel())
+                    .append(getSoftConstrainParams(), other.getSoftConstrainParams())
+                    .isEquals();
         }
     }
 }

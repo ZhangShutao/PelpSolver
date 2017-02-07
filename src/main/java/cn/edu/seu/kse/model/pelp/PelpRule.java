@@ -69,7 +69,7 @@ public class PelpRule extends ObjectModel {
      * @return 该规则是事实则为true，否则为false
      */
     public boolean isFact() {
-        return !head.isEmpty() && body.isEmpty();
+        return !getHead().isEmpty() && getBody().isEmpty();
     }
 
     /**
@@ -77,7 +77,7 @@ public class PelpRule extends ObjectModel {
      * @return 该规则是约束则为true，否则为false
      */
     public boolean isConstrain() {
-        return head.isEmpty() && !body.isEmpty();
+        return getHead().isEmpty() && !getBody().isEmpty();
     }
 
     /**
@@ -85,7 +85,7 @@ public class PelpRule extends ObjectModel {
      * @return 该规则是软规则则为true，否则为false
      */
     public boolean isSoft() {
-        return weight != null;
+        return getWeight() != null;
     }
 
     @Override
@@ -93,8 +93,8 @@ public class PelpRule extends ObjectModel {
         StringJoiner headJoiner = new StringJoiner("|");
         StringJoiner bodyJoiner = new StringJoiner(",");
 
-        head.forEach(literal -> headJoiner.add(literal.toString()));
-        body.forEach(literal -> bodyJoiner.add(literal.toString()));
+        getHead().forEach(literal -> headJoiner.add(literal.toString()));
+        getBody().forEach(literal -> bodyJoiner.add(literal.toString()));
 
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(headJoiner.toString());
@@ -103,25 +103,29 @@ public class PelpRule extends ObjectModel {
         }
         stringBuilder.append(".");
         if (isSoft()) {
-            stringBuilder.append("[").append(weight).append("]");
+            stringBuilder.append("[").append(getWeight()).append("]");
         }
         return stringBuilder.toString();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(getHead().toArray()).append(getBody().toArray()).append(weight).toHashCode();
+        return new HashCodeBuilder().append(getHead()).append(getBody()).append(getWeight()).toHashCode();
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (null == obj || obj.getClass() != PelpProgram.class) {
+        if (this == obj) {
+            return true;
+        } else if (null == obj || obj.getClass() != PelpProgram.class) {
             return false;
         } else {
             PelpRule other = (PelpRule) obj;
-            return new EqualsBuilder().append(new HashSet<>(getHead()), new HashSet<>(other.getHead()))
-                    .append(new HashSet<>(getBody()), new HashSet<>(other.getBody()))
-                    .append(getWeight(), other.getWeight()).isEquals();
+            return new EqualsBuilder()
+                    .append(getHead(), other.getHead())
+                    .append(getBody(), other.getBody())
+                    .append(getWeight(), other.getWeight())
+                    .isEquals();
         }
     }
 
@@ -150,7 +154,7 @@ public class PelpRule extends ObjectModel {
 
     public Set<PelpSubjectiveLiteral> getSubjectiveLiterals() {
         Set<PelpSubjectiveLiteral> subjectiveLiterals = new HashSet<>();
-        body.forEach(literal -> {
+        getBody().forEach(literal -> {
             if (literal instanceof PelpSubjectiveLiteral) {
                 subjectiveLiterals.add((PelpSubjectiveLiteral) literal);
             }

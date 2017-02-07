@@ -44,16 +44,18 @@ public class AnswerSet extends ObjectModel {
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(literals.toArray()).append(weight).toHashCode();
+        return new HashCodeBuilder().append(getLiterals()).append(getWeight()).toHashCode();
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (null == obj || obj.getClass() != AnswerSet.class) {
+        if (this == obj) {
+            return true;
+        } else if (null == obj || obj.getClass() != AnswerSet.class) {
             return false;
         } else {
             AnswerSet other = (AnswerSet) obj;
-            return new EqualsBuilder().append(literals, other.getLiterals()).append(weight, other.weight).isEquals();
+            return new EqualsBuilder().append(getLiterals(), other.getLiterals()).append(getWeight(), other.getWeight()).isEquals();
         }
     }
 
