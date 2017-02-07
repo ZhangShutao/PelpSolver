@@ -3,6 +3,7 @@ package cn.edu.seu.kse.translate.impl;
 import cn.edu.seu.kse.model.ObjectModel;
 import cn.edu.seu.kse.model.pelp.*;
 import cn.edu.seu.kse.translate.ModelTranslator;
+import cn.edu.seu.kse.util.Logger;
 
 import java.util.*;
 
@@ -11,6 +12,8 @@ import java.util.*;
  * Created by 张舒韬 on 2017/1/17.
  */
 public class SoftRuleReducer implements ModelTranslator {
+    private Logger logger = new Logger(SoftRuleReducer.class);
+
     @Override
     public Set<ObjectModel> translate(ObjectModel objectModel) {
         Set<ObjectModel> objectModelSet = new HashSet<>();
@@ -26,11 +29,11 @@ public class SoftRuleReducer implements ModelTranslator {
 
     @Override
     public ObjectModel translateProgram(ObjectModel program) {
+        logger.info("translating pelp program, reducing soft rules...\n{}", program.toString());
         if (program instanceof PelpProgram) {
             PelpProgram originProgram = (PelpProgram) program;
 
             List<PelpRule> rules = new ArrayList<>();
-
             rules.addAll(generateHerbrandDeclare(originProgram));
 
             originProgram.getRules().forEach(rule ->
@@ -39,6 +42,7 @@ public class SoftRuleReducer implements ModelTranslator {
                 )
             );
 
+            logger.info("soft rules reducing finished.");
             return new PelpProgram(rules);
         } else {
             return null;
