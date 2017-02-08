@@ -12,6 +12,7 @@ import java.util.StringJoiner;
  */
 public class PossibleWorld {
     private Set<PelpObjectiveLiteral> literals; // 可能世界中的客观字
+    private Set<PelpSubjectiveLiteral> epistemics; // 可能世界支持的主观字
     private Double weight;  // 可能世界在世界观中的权重，在(0, 1]上
 
     public Set<PelpObjectiveLiteral> getLiterals() {

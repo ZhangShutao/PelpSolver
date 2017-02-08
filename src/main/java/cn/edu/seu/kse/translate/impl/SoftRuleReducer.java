@@ -14,6 +14,10 @@ import java.util.*;
 public class SoftRuleReducer implements ModelTranslator {
     private Logger logger = new Logger(SoftRuleReducer.class);
 
+    private Logger getLogger() {
+        return logger;
+    }
+
     @Override
     public Set<ObjectModel> translate(ObjectModel objectModel) {
         Set<ObjectModel> objectModelSet = new HashSet<>();
@@ -29,7 +33,7 @@ public class SoftRuleReducer implements ModelTranslator {
 
     @Override
     public ObjectModel translateProgram(ObjectModel program) {
-        logger.info("translating pelp program, reducing soft rules...\n{}", program.toString());
+        getLogger().info("translating pelp program, reducing soft rules...\n{}", program.toString());
         if (program instanceof PelpProgram) {
             PelpProgram originProgram = (PelpProgram) program;
 
@@ -42,8 +46,9 @@ public class SoftRuleReducer implements ModelTranslator {
                 )
             );
 
-            logger.info("soft rules reducing finished.");
-            return new PelpProgram(rules);
+            PelpProgram result = new PelpProgram(rules);
+            getLogger().info("soft rules reducing finished:\n{}.", result);
+            return result;
         } else {
             return null;
         }

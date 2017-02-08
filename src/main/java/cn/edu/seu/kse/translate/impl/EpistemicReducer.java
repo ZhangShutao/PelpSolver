@@ -3,20 +3,25 @@ package cn.edu.seu.kse.translate.impl;
 import cn.edu.seu.kse.model.ObjectModel;
 import cn.edu.seu.kse.model.asp.AspLiteral;
 import cn.edu.seu.kse.model.asp.AspParam;
+import cn.edu.seu.kse.model.asp.AspProgram;
 import cn.edu.seu.kse.model.asp.AspRule;
 import cn.edu.seu.kse.model.pelp.*;
 import cn.edu.seu.kse.translate.ModelTranslator;
+import cn.edu.seu.kse.util.Logger;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * 主观字的消除
  * Created by 张舒韬 on 2017/1/18.
  */
 public class EpistemicReducer implements ModelTranslator {
+    private Logger logger = new Logger(EpistemicReducer.class);
+
+    private Logger getLogger() {
+        return logger;
+    }
+
     @Override
     public Set<ObjectModel> translate(ObjectModel objectModel) {
         return null;
@@ -24,7 +29,19 @@ public class EpistemicReducer implements ModelTranslator {
 
     @Override
     public ObjectModel translateProgram(ObjectModel program) {
-        return null;
+        getLogger().info("reducing subjective literals...\n{}", program.toString());
+        Set<AspRule> rules = new HashSet<>();
+        ((PelpProgram) program).getRules().forEach(pelpRule -> {
+            if (pelpRule.isSoft()) {
+                rules.add(translateSoftConstrain(pelpRule));
+            } else {
+                rules.addAll(replaceEpistemicLiteral(pelpRule));
+            }
+            rules.addAll(getEpistemicSelectRules(pelpRule));
+        });
+        AspProgram result = new AspProgram(new ArrayList<>(rules));
+        getLogger().info("subjective literal reducing finished.\n{}", result.toString());
+        return result;
     }
 
     private Set<AspRule> getEpistemicSelectRules(PelpRule rule) {
@@ -115,13 +132,23 @@ public class EpistemicReducer implements ModelTranslator {
 
     private AspLiteral getNegativeEpistemicLiteral(PelpSubjectiveLiteral literal) {
         AspLiteral negativeLiteral = translateSubjectiveLiteral(literal);
-        literal.setNegation(true);
+        negativeLiteral.setNegation(true);
         return negativeLiteral;
     }
 
-    private List<AspParam> translateLiteralParam(List<PelpParam> params) {
+    private List<AspParam> translateLiteralParam(Collection<PelpParam> params) {
         List<AspParam> aspParams = new ArrayList<>();
         params.forEach(pelpParam -> aspParams.add(new AspParam(pelpParam.getType(), pelpParam.getText())));
         return aspParams;
+    }
+
+    private AspRule translateSoftConstrain(PelpRule pelpRule) {
+        List<AspLiteral> constrainBody = new ArrayList<>();
+        pelpRule.getBody().forEach(literal -> {
+            if (literal instanceof PelpObjectiveLiteral) {
+                constrainBody.add(translateObjectiveLiteral((PelpObjectiveLiteral) literal));
+            }
+        });
+        return new AspRule(constrainBody, (int)(pelpRule.getWeight() * 1000), 1, translateLiteralParam(pelpRule.getVariableSet()));
     }
 }
