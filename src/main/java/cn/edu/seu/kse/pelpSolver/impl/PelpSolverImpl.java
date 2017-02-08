@@ -16,6 +16,7 @@ import cn.edu.seu.kse.translate.impl.KNotReducer;
 import cn.edu.seu.kse.translate.impl.SoftRuleReducer;
 import cn.edu.seu.kse.util.Logger;
 
+import java.io.IOException;
 import java.util.Set;
 
 /**
@@ -51,7 +52,11 @@ public class PelpSolverImpl implements PelpSolver {
     }
 
     public Set<AnswerSet> solveAspProgram(AspProgram aspProgram) throws ReasoningErrorException, UnsatisfiableException, ReasoningErrorException {
-        return null;
+        try {
+            return aspSolver.reason(aspProgram);
+        } catch (IOException e) {
+            throw new ReasoningErrorException(e.getMessage());
+        }
     }
 
     public Set<PossibleWorld> answerset2PossibleWorld(Set<AnswerSet> answerSets) throws ReasoningErrorException {

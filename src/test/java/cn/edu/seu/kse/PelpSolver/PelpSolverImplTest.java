@@ -1,13 +1,20 @@
 package cn.edu.seu.kse.PelpSolver;
 
+import cn.edu.seu.kse.exception.ReasoningErrorException;
 import cn.edu.seu.kse.exception.SyntaxErrorException;
+import cn.edu.seu.kse.exception.UnsatisfiableException;
+import cn.edu.seu.kse.model.asp.AnswerSet;
 import cn.edu.seu.kse.model.asp.AspProgram;
 import cn.edu.seu.kse.model.pelp.PelpProgram;
 import cn.edu.seu.kse.pelpSolver.impl.PelpSolverImpl;
+import cn.edu.seu.kse.syntax.parser.AspSyntaxParser;
 import cn.edu.seu.kse.syntax.parser.PelpSyntaxParser;
 import org.junit.Test;
 
+import java.util.Set;
+
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /**
  * TODO:
@@ -20,10 +27,11 @@ public class PelpSolverImplTest {
                     "q :- not p.[1]"
     };
 
+    private PelpSolverImpl solver = new PelpSolverImpl();
+
     @Test
     public void testTranslatePelp2AspCase0() {
         try {
-            PelpSolverImpl solver = new PelpSolverImpl();
             PelpProgram pelpProgram = PelpSyntaxParser.parseProgram(text[0]);
             AspProgram aspProgram = solver.pelp2Asp(pelpProgram);
 
@@ -31,14 +39,13 @@ public class PelpSolverImplTest {
                     "p:-_kcc10001000tp.";
             assertTrue(standardOutput.equals(aspProgram.toString()));
         } catch (SyntaxErrorException e) {
-            e.printStackTrace();
+            fail("语法错误");
         }
     }
 
     @Test
     public void testTranslatePelp2AspCase1() {
         try {
-            PelpSolverImpl solver = new PelpSolverImpl();
             PelpProgram pelpProgram = PelpSyntaxParser.parseProgram(text[1]);
             AspProgram aspProgram = solver.pelp2Asp(pelpProgram);
 
@@ -61,7 +68,24 @@ public class PelpSolverImplTest {
                     "_select(_r0)|not _select(_r0).";
             assertTrue(standardOutput.equals(aspProgram.toString()));
         } catch (SyntaxErrorException e) {
-            e.printStackTrace();
+            fail("语法错误");
+        }
+    }
+
+    @Test
+    public void testSolveAspCase0() {
+        try {
+            AspProgram aspProgram = AspSyntaxParser.parseProgram("_kcc10001000tp|-_kcc10001000tp:-p.\np:-_kcc10001000tp.");
+            Set<AnswerSet> answerSets = solver.solveAspProgram(aspProgram);
+
+            assertTrue(answerSets.size() == 1);
+            assertTrue(((AnswerSet)answerSets.toArray()[0]).getLiterals().size() == 0);
+        } catch (SyntaxErrorException e) {
+            fail("语法错误");
+        } catch (UnsatisfiableException e) {
+            fail("程序不可满足");
+        } catch (ReasoningErrorException e) {
+            fail("求解出错");
         }
     }
 }
