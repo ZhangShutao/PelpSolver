@@ -1,5 +1,7 @@
 package cn.edu.seu.kse.pelpSolver.impl;
 
+import cn.edu.seu.kse.aspSolver.AspSolver;
+import cn.edu.seu.kse.aspSolver.impl.AspSolverClingo4Impl;
 import cn.edu.seu.kse.exception.ReasoningErrorException;
 import cn.edu.seu.kse.exception.SyntaxErrorException;
 import cn.edu.seu.kse.exception.UnsatisfiableException;
@@ -12,6 +14,7 @@ import cn.edu.seu.kse.pelpSolver.PelpSolver;
 import cn.edu.seu.kse.translate.impl.EpistemicReducer;
 import cn.edu.seu.kse.translate.impl.KNotReducer;
 import cn.edu.seu.kse.translate.impl.SoftRuleReducer;
+import cn.edu.seu.kse.util.Logger;
 
 import java.util.Set;
 
@@ -20,6 +23,13 @@ import java.util.Set;
  * Created by 张舒韬 on 2017/2/7.
  */
 public class PelpSolverImpl implements PelpSolver {
+    private AspSolver aspSolver = new AspSolverClingo4Impl();
+    private Logger logger = new Logger(PelpSolverImpl.class);
+
+    private Logger getLogger() {
+        return logger;
+    }
+
     @Override
     public Set<WorldView> solve(PelpProgram program) throws SyntaxErrorException, ReasoningErrorException {
         return null;
@@ -32,9 +42,12 @@ public class PelpSolverImpl implements PelpSolver {
      * @throws SyntaxErrorException 原程序中存在语法错误
      */
     public AspProgram pelp2Asp(PelpProgram pelpProgram) throws SyntaxErrorException {
+        getLogger().info("translating PELP program into ASP program:\n{}", pelpProgram.toString());
         PelpProgram noSoftProgram = (PelpProgram) new SoftRuleReducer().translateProgram(pelpProgram);
         PelpProgram noKNotProgram = (PelpProgram) new KNotReducer().translateProgram(noSoftProgram);
-        return (AspProgram) new EpistemicReducer().translateProgram(noKNotProgram);
+        AspProgram aspProgram = (AspProgram) new EpistemicReducer().translateProgram(noKNotProgram);
+        getLogger().info("translating finished.\n{}", aspProgram.toString());
+        return aspProgram;
     }
 
     public Set<AnswerSet> solveAspProgram(AspProgram aspProgram) throws ReasoningErrorException, UnsatisfiableException, ReasoningErrorException {

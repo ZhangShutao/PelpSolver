@@ -38,13 +38,13 @@ public class KNotReducer implements ModelTranslator {
 
     @Override
     public ObjectModel translateProgram(ObjectModel program) {
-        getLogger().info("reducing subjective literals with K not...\n{}", program.toString());
+        getLogger().debug("reducing subjective literals with K not...\n{}", program.toString());
         List<PelpRule> rules = new ArrayList<>();
         for (PelpRule rule : ((PelpProgram) program).getRules()) {
             translate(rule).forEach(translatedRule -> rules.add((PelpRule) translatedRule));
         }
         PelpProgram result = new PelpProgram(rules);
-        getLogger().info("subjective literals with K not reducing finished.\n{}", result.toString());
+        getLogger().debug("subjective literals with K not reducing finished.\n{}", result.toString());
         return result;
     }
 

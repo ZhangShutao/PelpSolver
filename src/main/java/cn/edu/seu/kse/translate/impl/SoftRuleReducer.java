@@ -33,7 +33,7 @@ public class SoftRuleReducer implements ModelTranslator {
 
     @Override
     public ObjectModel translateProgram(ObjectModel program) {
-        getLogger().info("translating pelp program, reducing soft rules...\n{}", program.toString());
+        getLogger().debug("translating pelp program, reducing soft rules...\n{}", program.toString());
         if (program instanceof PelpProgram) {
             PelpProgram originProgram = (PelpProgram) program;
 
@@ -47,7 +47,7 @@ public class SoftRuleReducer implements ModelTranslator {
             );
 
             PelpProgram result = new PelpProgram(rules);
-            getLogger().info("soft rules reducing finished:\n{}.", result);
+            getLogger().debug("soft rules reducing finished:\n{}.", result);
             return result;
         } else {
             return null;
