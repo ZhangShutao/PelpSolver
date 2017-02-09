@@ -7,8 +7,8 @@ import cn.edu.seu.kse.model.asp.AnswerSet;
 import cn.edu.seu.kse.model.asp.AspProgram;
 import cn.edu.seu.kse.model.pelp.PelpProgram;
 import cn.edu.seu.kse.pelpSolver.impl.PelpSolverImpl;
-import cn.edu.seu.kse.syntax.parser.AspSyntaxParser;
 import cn.edu.seu.kse.syntax.parser.PelpSyntaxParser;
+import cn.edu.seu.kse.translate.AnswerSet2PossibleWorldTranslator;
 import org.junit.Test;
 
 import java.util.Set;
@@ -24,10 +24,13 @@ public class PelpSolverImplTest {
     private final static String text[] = {
             "p :- K[0, 0] not p.",
             "p :- K[0, 0] not p.[2]\n" +
-                    "q :- not p.[1]"
+                    "q :- not p.[1]",
+            "a | b.\n" +
+                    ":- K[0.5, 1]b."
     };
 
     private PelpSolverImpl solver = new PelpSolverImpl();
+    private AnswerSet2PossibleWorldTranslator a2pTranslator = new AnswerSet2PossibleWorldTranslator();
 
     @Test
     public void testTranslatePelp2AspCase0() {
@@ -75,7 +78,8 @@ public class PelpSolverImplTest {
     @Test
     public void testSolveAspCase0() {
         try {
-            AspProgram aspProgram = AspSyntaxParser.parseProgram("_kcc10001000tp|-_kcc10001000tp:-p.\np:-_kcc10001000tp.");
+            PelpProgram pelpProgram = PelpSyntaxParser.parseProgram(text[0]);
+            AspProgram aspProgram = solver.pelp2Asp(pelpProgram);
             Set<AnswerSet> answerSets = solver.solveAspProgram(aspProgram);
 
             assertTrue(answerSets.size() == 1);
@@ -88,4 +92,36 @@ public class PelpSolverImplTest {
             fail("求解出错");
         }
     }
+
+    @Test
+    public void testSolveAspCase1() {
+        try {
+            PelpProgram pelpProgram = PelpSyntaxParser.parseProgram(text[1]);
+            AspProgram aspProgram = solver.pelp2Asp(pelpProgram);
+            Set<AnswerSet> answerSets = solver.solveAspProgram(aspProgram);
+        } catch (SyntaxErrorException e) {
+            fail("语法错误");
+        } catch (UnsatisfiableException e) {
+            fail("程序不可满足");
+        } catch (ReasoningErrorException e) {
+            fail("求解出错");
+        }
+    }
+    @Test
+    public void testSolveAspCase2() {
+        try {
+            PelpProgram pelpProgram = PelpSyntaxParser.parseProgram(text[2]);
+            AspProgram aspProgram = solver.pelp2Asp(pelpProgram);
+            Set<AnswerSet> answerSets = solver.solveAspProgram(aspProgram);
+
+            AnswerSet2PossibleWorldTranslator a2pTranslator = new AnswerSet2PossibleWorldTranslator();
+        } catch (SyntaxErrorException e) {
+            fail("语法错误");
+        } catch (UnsatisfiableException e) {
+            fail("程序不可满足");
+        } catch (ReasoningErrorException e) {
+            fail("求解出错");
+        }
+    }
+
 }

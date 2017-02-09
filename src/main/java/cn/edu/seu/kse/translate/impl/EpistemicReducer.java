@@ -145,13 +145,14 @@ public class EpistemicReducer implements ProgramTranslator {
     }
 
     private AspLiteral translateSubjectiveLiteral(PelpSubjectiveLiteral literal) {
-        String predicateStr = "_k" +
-                (literal.isLeftClose() ? "c" : "o") +
-                (literal.isRightClose() ? "c" : "o") +
-                (int) (literal.getLeftBound() * 1000) +
-                (int) (literal.getRightBound() * 1000) +
-                (literal.isNegation() ? "f" : "t") +
-                literal.getPredicate();
+
+        String predicateStr = String.format("_k%s%s%04d%04d%c%s",
+                (literal.isLeftClose() ? 'c' : 'o'),
+                (literal.isRightClose() ? 'c' : 'o'),
+                (int) (literal.getLeftBound() * 1000),
+                (int) (literal.getRightBound() * 1000),
+                (literal.isNegation() ? 'f' : 't'),
+                literal.getPredicate());
         return new AspLiteral(0, false, predicateStr, translateLiteralParam(literal.getParams()));
     }
 

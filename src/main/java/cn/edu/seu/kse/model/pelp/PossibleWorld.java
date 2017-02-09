@@ -12,8 +12,16 @@ import java.util.StringJoiner;
  */
 public class PossibleWorld {
     private Set<PelpObjectiveLiteral> literals; // 可能世界中的客观字
-    private Set<PelpSubjectiveLiteral> epistemics; // 可能世界支持的主观字
+    private Set<PelpSubjectiveLiteral> supportedEpistemic; // 可能世界支持的主观字
+    private Set<PelpSubjectiveLiteral> unsupportedEpistemic; // 可能世界否定的主观字
     private Double weight;  // 可能世界在世界观中的权重，在(0, 1]上
+
+    public PossibleWorld(Set<PelpObjectiveLiteral> literals, Set<PelpSubjectiveLiteral> supportedEpistemic, Set<PelpSubjectiveLiteral> unsupportedEpistemic, Double weight) {
+        this.literals = literals;
+        this.supportedEpistemic = supportedEpistemic;
+        this.unsupportedEpistemic = unsupportedEpistemic;
+        this.weight = weight;
+    }
 
     public Set<PelpObjectiveLiteral> getLiterals() {
         return literals;
@@ -29,6 +37,22 @@ public class PossibleWorld {
 
     public void setWeight(Double weight) {
         this.weight = weight;
+    }
+
+    public Set<PelpSubjectiveLiteral> getSupportedEpistemic() {
+        return supportedEpistemic;
+    }
+
+    public void setSupportedEpistemic(Set<PelpSubjectiveLiteral> supportedEpistemic) {
+        this.supportedEpistemic = supportedEpistemic;
+    }
+
+    public Set<PelpSubjectiveLiteral> getUnsupportedEpistemic() {
+        return unsupportedEpistemic;
+    }
+
+    public void setUnsupportedEpistemic(Set<PelpSubjectiveLiteral> unsupportedEpistemic) {
+        this.unsupportedEpistemic = unsupportedEpistemic;
     }
 
     @Override
