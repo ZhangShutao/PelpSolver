@@ -2,7 +2,7 @@ package cn.edu.seu.kse.translate.impl;
 
 import cn.edu.seu.kse.model.ObjectModel;
 import cn.edu.seu.kse.model.pelp.*;
-import cn.edu.seu.kse.translate.ModelTranslator;
+import cn.edu.seu.kse.translate.ProgramTranslator;
 import cn.edu.seu.kse.util.Logger;
 
 import java.util.ArrayList;
@@ -14,7 +14,7 @@ import java.util.Set;
  * 消除主观字中的NAF
  * Created by 张舒韬 on 2017/1/20.
  */
-public class KNotReducer implements ModelTranslator {
+public class KNotReducer implements ProgramTranslator {
     private Logger logger = new Logger(KNotReducer.class);
 
     private Logger getLogger() {

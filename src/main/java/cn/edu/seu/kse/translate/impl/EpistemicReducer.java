@@ -6,7 +6,7 @@ import cn.edu.seu.kse.model.asp.AspParam;
 import cn.edu.seu.kse.model.asp.AspProgram;
 import cn.edu.seu.kse.model.asp.AspRule;
 import cn.edu.seu.kse.model.pelp.*;
-import cn.edu.seu.kse.translate.ModelTranslator;
+import cn.edu.seu.kse.translate.ProgramTranslator;
 import cn.edu.seu.kse.util.Logger;
 
 import java.util.*;
@@ -15,7 +15,7 @@ import java.util.*;
  * 主观字的消除
  * Created by 张舒韬 on 2017/1/18.
  */
-public class EpistemicReducer implements ModelTranslator {
+public class EpistemicReducer implements ProgramTranslator {
     private Logger logger = new Logger(EpistemicReducer.class);
 
     private Logger getLogger() {

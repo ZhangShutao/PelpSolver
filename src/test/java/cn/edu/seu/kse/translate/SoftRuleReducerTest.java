@@ -27,7 +27,7 @@ public class SoftRuleReducerTest {
             "rest(X) :- K[0.6, 1] ill(X), student(X).\n" +
             "feelGood(X) :- -ill(X).\n" +
             "not feelGood(X) :- rest(X). [1]"};
-    private ModelTranslator translator = new SoftRuleReducer();
+    private ProgramTranslator translator = new SoftRuleReducer();
 
     private static PelpProgram getTestProgram(int id) throws SyntaxErrorException {
         return PelpSyntaxParser.parseProgram(text[id]);

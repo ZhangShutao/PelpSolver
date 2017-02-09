@@ -2,7 +2,7 @@ package cn.edu.seu.kse.translate.impl;
 
 import cn.edu.seu.kse.model.ObjectModel;
 import cn.edu.seu.kse.model.pelp.*;
-import cn.edu.seu.kse.translate.ModelTranslator;
+import cn.edu.seu.kse.translate.ProgramTranslator;
 import cn.edu.seu.kse.util.Logger;
 
 import java.util.*;
@@ -11,7 +11,7 @@ import java.util.*;
  * 将一个包含软规则的PELP语法单元翻译成不包含软规则的语法单元。由于翻译中引入了以下划线开头的谓词，故所得的程序不符合Pelp程序的语法
  * Created by 张舒韬 on 2017/1/17.
  */
-public class SoftRuleReducer implements ModelTranslator {
+public class SoftRuleReducer implements ProgramTranslator {
     private Logger logger = new Logger(SoftRuleReducer.class);
 
     private Logger getLogger() {

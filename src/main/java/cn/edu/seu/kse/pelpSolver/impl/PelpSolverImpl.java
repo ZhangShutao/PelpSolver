@@ -11,6 +11,7 @@ import cn.edu.seu.kse.model.pelp.PelpProgram;
 import cn.edu.seu.kse.model.pelp.PossibleWorld;
 import cn.edu.seu.kse.model.pelp.WorldView;
 import cn.edu.seu.kse.pelpSolver.PelpSolver;
+import cn.edu.seu.kse.translate.ProgramTranslator;
 import cn.edu.seu.kse.translate.impl.EpistemicReducer;
 import cn.edu.seu.kse.translate.impl.KNotReducer;
 import cn.edu.seu.kse.translate.impl.SoftRuleReducer;
@@ -26,9 +27,28 @@ import java.util.Set;
 public class PelpSolverImpl implements PelpSolver {
     private AspSolver aspSolver = new AspSolverClingo4Impl();
     private Logger logger = new Logger(PelpSolverImpl.class);
+    private ProgramTranslator softReducer = new SoftRuleReducer();
+    private ProgramTranslator kNotReducer = new KNotReducer();
+    private ProgramTranslator epistemicReducer = new EpistemicReducer();
 
     private Logger getLogger() {
         return logger;
+    }
+
+    private AspSolver getAspSolver() {
+        return aspSolver;
+    }
+
+    private ProgramTranslator getSoftReducer() {
+        return softReducer;
+    }
+
+    private ProgramTranslator getkNotReducer() {
+        return kNotReducer;
+    }
+
+    private ProgramTranslator getEpistemicReducer() {
+        return epistemicReducer;
     }
 
     @Override
@@ -44,16 +64,16 @@ public class PelpSolverImpl implements PelpSolver {
      */
     public AspProgram pelp2Asp(PelpProgram pelpProgram) throws SyntaxErrorException {
         getLogger().info("translating PELP program into ASP program:\n{}", pelpProgram.toString());
-        PelpProgram noSoftProgram = (PelpProgram) new SoftRuleReducer().translateProgram(pelpProgram);
-        PelpProgram noKNotProgram = (PelpProgram) new KNotReducer().translateProgram(noSoftProgram);
-        AspProgram aspProgram = (AspProgram) new EpistemicReducer().translateProgram(noKNotProgram);
+        PelpProgram noSoftProgram = (PelpProgram) getSoftReducer().translateProgram(pelpProgram);
+        PelpProgram noKNotProgram = (PelpProgram) getkNotReducer().translateProgram(noSoftProgram);
+        AspProgram aspProgram = (AspProgram) getEpistemicReducer().translateProgram(noKNotProgram);
         getLogger().info("translating finished.\n{}", aspProgram.toString());
         return aspProgram;
     }
 
     public Set<AnswerSet> solveAspProgram(AspProgram aspProgram) throws ReasoningErrorException, UnsatisfiableException, ReasoningErrorException {
         try {
-            return aspSolver.reason(aspProgram);
+            return getAspSolver().reason(aspProgram);
         } catch (IOException e) {
             throw new ReasoningErrorException(e.getMessage());
         }
