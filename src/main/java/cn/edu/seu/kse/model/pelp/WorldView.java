@@ -3,6 +3,7 @@ package cn.edu.seu.kse.model.pelp;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
+import java.util.HashSet;
 import java.util.Set;
 import java.util.StringJoiner;
 
@@ -11,7 +12,14 @@ import java.util.StringJoiner;
  * Created by 张舒韬 on 2017/2/7.
  */
 public class WorldView {
-    private Set<PossibleWorld> possibleWorldSet;
+    private Set<PossibleWorld> possibleWorldSet = new HashSet<>();
+    private Set<PelpSubjectiveLiteral> supportedEpistemic = new HashSet<>(); // 世界观支持的主观字
+    private Set<PelpSubjectiveLiteral> unsupportedEpistemic = new HashSet<>(); // 世界观否定的主观字
+
+    public WorldView(Set<PelpSubjectiveLiteral> supportedEpistemic, Set<PelpSubjectiveLiteral> unsupportedEpistemic) {
+        this.supportedEpistemic = supportedEpistemic;
+        this.unsupportedEpistemic = unsupportedEpistemic;
+    }
 
     public Set<PossibleWorld> getPossibleWorldSet() {
         return possibleWorldSet;
@@ -19,6 +27,26 @@ public class WorldView {
 
     public void setPossibleWorldSet(Set<PossibleWorld> possibleWorldSet) {
         this.possibleWorldSet = possibleWorldSet;
+    }
+
+    public Set<PelpSubjectiveLiteral> getSupportedEpistemic() {
+        return supportedEpistemic;
+    }
+
+    public void setSupportedEpistemic(Set<PelpSubjectiveLiteral> supportedEpistemic) {
+        this.supportedEpistemic = supportedEpistemic;
+    }
+
+    public Set<PelpSubjectiveLiteral> getUnsupportedEpistemic() {
+        return unsupportedEpistemic;
+    }
+
+    public void setUnsupportedEpistemic(Set<PelpSubjectiveLiteral> unsupportedEpistemic) {
+        this.unsupportedEpistemic = unsupportedEpistemic;
+    }
+
+    public void addPossibleWorld(PossibleWorld possibleWorld) {
+        getPossibleWorldSet().add(possibleWorld);
     }
 
     @Override

@@ -1,4 +1,4 @@
-package cn.edu.seu.kse.PelpSolver;
+package cn.edu.seu.kse.pelpSolver;
 
 import cn.edu.seu.kse.exception.ReasoningErrorException;
 import cn.edu.seu.kse.exception.SyntaxErrorException;
@@ -6,6 +6,7 @@ import cn.edu.seu.kse.exception.UnsatisfiableException;
 import cn.edu.seu.kse.model.asp.AnswerSet;
 import cn.edu.seu.kse.model.asp.AspProgram;
 import cn.edu.seu.kse.model.pelp.PelpProgram;
+import cn.edu.seu.kse.model.pelp.WorldView;
 import cn.edu.seu.kse.pelpSolver.impl.PelpSolverImpl;
 import cn.edu.seu.kse.syntax.parser.PelpSyntaxParser;
 import cn.edu.seu.kse.translate.AnswerSet2PossibleWorldTranslator;
@@ -99,6 +100,8 @@ public class PelpSolverImplTest {
             PelpProgram pelpProgram = PelpSyntaxParser.parseProgram(text[1]);
             AspProgram aspProgram = solver.pelp2Asp(pelpProgram);
             Set<AnswerSet> answerSets = solver.solveAspProgram(aspProgram);
+
+            Set<WorldView> worldViews = solver.getCandidateWorldView(answerSets);
         } catch (SyntaxErrorException e) {
             fail("语法错误");
         } catch (UnsatisfiableException e) {
@@ -121,6 +124,17 @@ public class PelpSolverImplTest {
             fail("程序不可满足");
         } catch (ReasoningErrorException e) {
             fail("求解出错");
+        }
+    }
+
+    @Test
+    public void testSolveCase0() {
+        try {
+            PelpProgram pelpProgram = PelpSyntaxParser.parseProgram(text[1]);
+            Set<WorldView> worldViews = solver.solve(pelpProgram);
+            worldViews.forEach(System.out::println);
+        } catch (SyntaxErrorException | ReasoningErrorException e) {
+            e.printStackTrace();
         }
     }
 

@@ -13,4 +13,6 @@ import java.util.Set;
  */
 public interface PelpSolver {
     Set<WorldView> solve(PelpProgram program) throws SyntaxErrorException, ReasoningErrorException;
+
+    String solve(String program) throws SyntaxErrorException, ReasoningErrorException;
 }

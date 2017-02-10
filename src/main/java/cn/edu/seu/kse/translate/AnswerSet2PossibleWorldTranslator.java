@@ -20,20 +20,33 @@ import java.util.Set;
 public class AnswerSet2PossibleWorldTranslator {
     public PossibleWorld translate(AnswerSet answerSet) {
         Set<PelpObjectiveLiteral> pelpLiterals = new HashSet<>();
-        Set<PelpSubjectiveLiteral> supportedEpistemic = new HashSet<>();
         Set<PelpSubjectiveLiteral> unsupportedEpistemic = new HashSet<>();
         answerSet.getLiterals().forEach(aspLiteral -> {
             if (!aspLiteral.getPredicate().startsWith("_")) {
                 pelpLiterals.add(translateLiteral(aspLiteral));
-            } else if (aspLiteral.getPredicate().startsWith("_k")) {
-                if (aspLiteral.isNegation()) {
-                    unsupportedEpistemic.add(translateEpistemic(aspLiteral));
-                } else {
-                    supportedEpistemic.add(translateEpistemic(aspLiteral));
-                }
             }
         });
-        return new PossibleWorld(pelpLiterals, supportedEpistemic, unsupportedEpistemic, answerSet.getWeight() * 0.001);
+        return new PossibleWorld(pelpLiterals, answerSet.getWeight() * 0.001);
+    }
+
+    public Set<PelpSubjectiveLiteral> getSupportedEpistemic(AnswerSet answerSet) {
+        Set<PelpSubjectiveLiteral> supportedEpistemic = new HashSet<>();
+        answerSet.getLiterals().forEach(aspLiteral -> {
+            if (aspLiteral.getPredicate().startsWith("_k") &&!aspLiteral.isNegation()) {
+                supportedEpistemic.add(translateEpistemic(aspLiteral));
+            }
+        });
+        return supportedEpistemic;
+    }
+
+    public Set<PelpSubjectiveLiteral> getNotSupportedEpistemic(AnswerSet answerSet) {
+        Set<PelpSubjectiveLiteral> notSupportedEpistemic = new HashSet<>();
+        answerSet.getLiterals().forEach(aspLiteral -> {
+            if (aspLiteral.getPredicate().startsWith("_k") && aspLiteral.isNegation()) {
+                notSupportedEpistemic.add(translateEpistemic(aspLiteral));
+            }
+        });
+        return notSupportedEpistemic;
     }
 
     public Set<PossibleWorld> translate(Set<AnswerSet> answerSets) {
