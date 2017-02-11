@@ -26,15 +26,10 @@ import java.util.*;
  */
 public class PelpSolverImpl implements PelpSolver {
     private AspSolver aspSolver = new AspSolverClingo4Impl();
-    private Logger logger = new Logger(PelpSolverImpl.class);
     private ProgramTranslator softReducer = new SoftRuleReducer();
     private ProgramTranslator kNotReducer = new KNotReducer();
     private ProgramTranslator epistemicReducer = new EpistemicReducer();
     private AnswerSet2PossibleWorldTranslator answerSetTranslator = new AnswerSet2PossibleWorldTranslator();
-
-    private Logger getLogger() {
-        return logger;
-    }
 
     public AspSolver getAspSolver() {
         return aspSolver;
@@ -89,24 +84,27 @@ public class PelpSolverImpl implements PelpSolver {
                 }
             });
         } catch (UnsatisfiableException e) {
-            logger.info("PELP程序{}对应的ASP程序不可满足。", program.toString());
+            Logger.info("PELP程序{}对应的ASP程序不可满足。", program.toString());
         }
         return worldViews;
     }
 
     @Override
     public String solve(String program) throws SyntaxErrorException, ReasoningErrorException {
+        Logger.info("solving program...\n{}", program);
         PelpProgram pelpProgram = PelpSyntaxParser.parseProgram(program);
         Set<WorldView> worldViews = solve(pelpProgram);
         StringJoiner outputJoiner = new StringJoiner("\n");
 
         Integer counter = 1;
         for (WorldView worldView : worldViews) {
-            outputJoiner.add("WorldView " + counter);
+            outputJoiner.add("WorldView " + counter + ":");
             outputJoiner.add(worldView.toString());
             counter++;
         }
-        return outputJoiner.toString();
+        String output = outputJoiner.toString();
+        Logger.info("program solved:\n{}", output);
+        return output;
     }
 
     /**
@@ -116,11 +114,11 @@ public class PelpSolverImpl implements PelpSolver {
      * @throws SyntaxErrorException 原程序中存在语法错误
      */
     public AspProgram pelp2Asp(PelpProgram pelpProgram) throws SyntaxErrorException {
-        getLogger().info("translating PELP program into ASP program:\n{}", pelpProgram.toString());
+        Logger.info("translating PELP program into ASP program:\n{}", pelpProgram.toString());
         PelpProgram noSoftProgram = (PelpProgram) getSoftReducer().translateProgram(pelpProgram);
         PelpProgram noKNotProgram = (PelpProgram) getkNotReducer().translateProgram(noSoftProgram);
         AspProgram aspProgram = (AspProgram) getEpistemicReducer().translateProgram(noKNotProgram);
-        getLogger().info("translating finished.\n{}", aspProgram.toString());
+        Logger.info("translating finished.\n{}", aspProgram.toString());
         return aspProgram;
     }
 

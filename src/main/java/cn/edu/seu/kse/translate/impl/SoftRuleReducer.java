@@ -12,11 +12,6 @@ import java.util.*;
  * Created by 张舒韬 on 2017/1/17.
  */
 public class SoftRuleReducer implements ProgramTranslator {
-    private Logger logger = new Logger(SoftRuleReducer.class);
-
-    private Logger getLogger() {
-        return logger;
-    }
 
     @Override
     public Set<ObjectModel> translate(ObjectModel objectModel) {
@@ -33,7 +28,7 @@ public class SoftRuleReducer implements ProgramTranslator {
 
     @Override
     public ObjectModel translateProgram(ObjectModel program) {
-        getLogger().debug("translating pelp program, reducing soft rules...\n{}", program.toString());
+        Logger.debug("translating pelp program, reducing soft rules...\n{}", program.toString());
         if (program instanceof PelpProgram) {
             PelpProgram originProgram = (PelpProgram) program;
 
@@ -47,7 +42,7 @@ public class SoftRuleReducer implements ProgramTranslator {
             );
 
             PelpProgram result = new PelpProgram(rules);
-            getLogger().debug("soft rules reducing finished:\n{}.", result);
+            Logger.debug("soft rules reducing finished:\n{}.", result);
             return result;
         } else {
             return null;

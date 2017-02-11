@@ -16,11 +16,6 @@ import java.util.*;
  * Created by 张舒韬 on 2017/1/18.
  */
 public class EpistemicReducer implements ProgramTranslator {
-    private Logger logger = new Logger(EpistemicReducer.class);
-
-    private Logger getLogger() {
-        return logger;
-    }
 
     @Override
     public Set<ObjectModel> translate(ObjectModel objectModel) {
@@ -43,7 +38,7 @@ public class EpistemicReducer implements ProgramTranslator {
 
     @Override
     public ObjectModel translateProgram(ObjectModel program) {
-        getLogger().debug("reducing subjective literals...\n{}", program.toString());
+        Logger.debug("reducing subjective literals...\n{}", program.toString());
         Set<AspRule> rules = new HashSet<>();
         ((PelpProgram) program).getRules().forEach(pelpRule -> {
             if (pelpRule.isSoft()) {
@@ -54,7 +49,7 @@ public class EpistemicReducer implements ProgramTranslator {
             rules.addAll(getEpistemicSelectRules(pelpRule));
         });
         AspProgram result = new AspProgram(new ArrayList<>(rules));
-        getLogger().debug("subjective literal reducing finished.\n{}", result.toString());
+        Logger.debug("subjective literal reducing finished.\n{}", result.toString());
         return result;
     }
 

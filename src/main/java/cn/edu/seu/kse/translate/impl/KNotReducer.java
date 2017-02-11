@@ -15,12 +15,6 @@ import java.util.Set;
  * Created by 张舒韬 on 2017/1/20.
  */
 public class KNotReducer implements ProgramTranslator {
-    private Logger logger = new Logger(KNotReducer.class);
-
-    private Logger getLogger() {
-        return logger;
-    }
-
     @Override
     public Set<ObjectModel> translate(ObjectModel objectModel) {
         Set<ObjectModel> objectModelSet = new HashSet<>();
@@ -38,13 +32,13 @@ public class KNotReducer implements ProgramTranslator {
 
     @Override
     public ObjectModel translateProgram(ObjectModel program) {
-        getLogger().debug("reducing subjective literals with K not...\n{}", program.toString());
+        Logger.debug("reducing subjective literals with K not...\n{}", program.toString());
         List<PelpRule> rules = new ArrayList<>();
         for (PelpRule rule : ((PelpProgram) program).getRules()) {
             translate(rule).forEach(translatedRule -> rules.add((PelpRule) translatedRule));
         }
         PelpProgram result = new PelpProgram(rules);
-        getLogger().debug("subjective literals with K not reducing finished.\n{}", result.toString());
+        Logger.debug("subjective literals with K not reducing finished.\n{}", result.toString());
         return result;
     }
 
