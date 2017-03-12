@@ -1,7 +1,5 @@
 package cn.edu.seu.kse.util;
 
-import com.sun.istack.internal.NotNull;
-
 import java.lang.reflect.Field;
 
 /**
@@ -9,13 +7,13 @@ import java.lang.reflect.Field;
  * Created by 张舒韬 on 2017/2/11.
  */
 public class ReflectionUtil {
-    public static <T> T getFieldValue(@NotNull Object object,
-                                      @NotNull String fullName) throws IllegalAccessException {
+    public static <T> T getFieldValue(Object object,
+                                      String fullName) throws IllegalAccessException {
         return getFieldValue(object, fullName, false);
     }
 
-    public static <T> T getFieldValue(@NotNull Object object,
-                                      @NotNull String fieldName,
+    public static <T> T getFieldValue(Object object,
+                                      String fieldName,
                                       boolean traceable) throws IllegalAccessException {
         Field field;
         String[] fieldNames = fieldName.split("\\.");
@@ -51,15 +49,15 @@ public class ReflectionUtil {
         return (T) field.get(target);
     }
 
-    public static boolean setFieldValue(@NotNull Object target,
-                                        @NotNull String fieldName,
-                                        @NotNull Object value) throws IllegalAccessException {
+    public static boolean setFieldValue(Object target,
+                                        String fieldName,
+                                        Object value) throws IllegalAccessException {
         return setFieldValue(target, fieldName, value, false);
     }
 
-    public static boolean setFieldValue(@NotNull Object target,
-                                        @NotNull String fieldName,
-                                        @NotNull Object value,
+    public static boolean setFieldValue(Object target,
+                                        String fieldName,
+                                        Object value,
                                         boolean traceable) throws IllegalAccessException {
         Field field = searchField(target.getClass(), fieldName, traceable);
         if (field != null)
