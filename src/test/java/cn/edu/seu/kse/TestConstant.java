@@ -7,5 +7,5 @@ import java.io.File;
  * Created by 张舒韬 on 2017/1/12.
  */
 public class TestConstant {
-    public final static String testDir = File.pathSeparator + "test" + File.pathSeparator + "PelpSolver";
+    public final static String testDir = File.separator + "test" + File.separator + "PelpSolver";
 }

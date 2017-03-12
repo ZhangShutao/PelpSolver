@@ -21,8 +21,8 @@ public class KNotReducerTest {
             "p :- K[0, 0] not p.[2]\n" +
                     "q :- not p.[1]"
     };
-    private ModelTranslator translator = new KNotReducer();
-    private ModelTranslator softTranslator = new SoftRuleReducer();
+    private ProgramTranslator translator = new KNotReducer();
+    private ProgramTranslator softTranslator = new SoftRuleReducer();
 
     private static PelpProgram getTestProgram(int id) throws SyntaxErrorException {
         return PelpSyntaxParser.parseProgram(text[id]);
