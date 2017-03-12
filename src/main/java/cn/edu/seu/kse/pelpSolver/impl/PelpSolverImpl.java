@@ -161,14 +161,19 @@ public class PelpSolverImpl implements PelpSolver {
     }
 
     public boolean testWorldView(WorldView worldView) {
+        System.out.println(worldView);
+        System.out.println("support");
         for (PelpSubjectiveLiteral supported : worldView.getSupportedEpistemic()) {
+            System.out.println(supported);
             double weight = getSupportedWeight(supported, worldView);
             if (!isInEpistemicRange(supported, weight)) {
                 return false;
             }
         }
 
+        System.out.println("not support:");
         for (PelpSubjectiveLiteral unsupported  : worldView.getUnsupportedEpistemic()) {
+            System.out.println(unsupported);
             double weight = getSupportedWeight(unsupported, worldView);
             if (isInEpistemicRange(unsupported, weight)) {
                 return false;
