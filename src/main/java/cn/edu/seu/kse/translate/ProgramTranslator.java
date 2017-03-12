@@ -8,7 +8,7 @@ import java.util.Set;
  * 翻译器的通用接口
  * Created by 张舒韬 on 2017/1/17.
  */
-public interface ModelTranslator {
+public interface ProgramTranslator {
     /**
      * 翻译任意语法单元
      * @param objectModel 待翻译的语法单元

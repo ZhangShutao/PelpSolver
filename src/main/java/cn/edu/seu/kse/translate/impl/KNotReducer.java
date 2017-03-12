@@ -2,7 +2,8 @@ package cn.edu.seu.kse.translate.impl;
 
 import cn.edu.seu.kse.model.ObjectModel;
 import cn.edu.seu.kse.model.pelp.*;
-import cn.edu.seu.kse.translate.ModelTranslator;
+import cn.edu.seu.kse.translate.ProgramTranslator;
+import cn.edu.seu.kse.util.Logger;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -13,7 +14,7 @@ import java.util.Set;
  * 消除主观字中的NAF
  * Created by 张舒韬 on 2017/1/20.
  */
-public class KNotReducer implements ModelTranslator {
+public class KNotReducer implements ProgramTranslator {
     @Override
     public Set<ObjectModel> translate(ObjectModel objectModel) {
         Set<ObjectModel> objectModelSet = new HashSet<>();
@@ -31,11 +32,14 @@ public class KNotReducer implements ModelTranslator {
 
     @Override
     public ObjectModel translateProgram(ObjectModel program) {
+        Logger.debug("reducing subjective literals with K not...\n{}", program.toString());
         List<PelpRule> rules = new ArrayList<>();
         for (PelpRule rule : ((PelpProgram) program).getRules()) {
             translate(rule).forEach(translatedRule -> rules.add((PelpRule) translatedRule));
         }
-        return new PelpProgram(rules);
+        PelpProgram result = new PelpProgram(rules);
+        Logger.debug("subjective literals with K not reducing finished.\n{}", result.toString());
+        return result;
     }
 
     private PelpRule translateRule(PelpRule rule) {
