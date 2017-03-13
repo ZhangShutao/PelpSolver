@@ -80,12 +80,12 @@ public class SoftRuleReducer implements ProgramTranslator {
 
     private PelpObjectiveLiteral generateRuleSelectedLiteral(PelpRule rule) {
         List<PelpParam> selectTerms = generateGroundedRuleIdentifyParams(rule);
-        return new PelpObjectiveLiteral(false, false, "_select", selectTerms);
+        return new PelpObjectiveLiteral(0, false, "_select", selectTerms);
     }
 
     private PelpObjectiveLiteral generateRuleNotSelectedLiteral(PelpRule rule) {
         List<PelpParam> selectTerms = generateGroundedRuleIdentifyParams(rule);
-        return new PelpObjectiveLiteral(true, false, "_select", selectTerms);
+        return new PelpObjectiveLiteral(1, false, "_select", selectTerms);
     }
 
     private PelpObjectiveLiteral generateRuleSatisfiedLiteral(PelpRule rule) {
@@ -94,7 +94,7 @@ public class SoftRuleReducer implements ProgramTranslator {
         List<PelpParam> selectTerms = new ArrayList<>();
         selectTerms.add(new PelpParam(PelpParam.CONSTANT, rule.getId()));
         selectTerms.addAll(variableSet);
-        return new PelpObjectiveLiteral(false, false, "_sat", selectTerms);
+        return new PelpObjectiveLiteral(0, false, "_sat", selectTerms);
     }
 
     /**
@@ -108,7 +108,7 @@ public class SoftRuleReducer implements ProgramTranslator {
         } else {
             List<PelpParam> paramList = new ArrayList<>();
             paramList.add(groundedTerm);
-            PelpObjectiveLiteral literal = new PelpObjectiveLiteral(false, false, "_herbrand", paramList);
+            PelpObjectiveLiteral literal = new PelpObjectiveLiteral(0, false, "_herbrand", paramList);
 
             List<PelpObjectiveLiteral> head = new ArrayList<>();
             head.add(literal);
@@ -146,7 +146,7 @@ public class SoftRuleReducer implements ProgramTranslator {
 
         List<PelpLiteral> herbrandBody = new ArrayList<>();
         selectLiteral.getVariableSet().forEach(variable ->
-            herbrandBody.add(new PelpObjectiveLiteral(false, false, "_herbrand", Collections.singletonList(variable)))
+            herbrandBody.add(new PelpObjectiveLiteral(0, false, "_herbrand", Collections.singletonList(variable)))
         );
 
         return new PelpRule(Arrays.asList(selectLiteral, notSelectLiteral), herbrandBody, null);
@@ -172,7 +172,7 @@ public class SoftRuleReducer implements ProgramTranslator {
 
     private Set<PelpRule> generateHeadRules(PelpRule rule) {
         Set<PelpRule> headRules = new HashSet<>();
-        PelpObjectiveLiteral headLiteral = new PelpObjectiveLiteral(false, false, "_head", generateGroundedRuleIdentifyParams(rule));
+        PelpObjectiveLiteral headLiteral = new PelpObjectiveLiteral(0, false, "_head", generateGroundedRuleIdentifyParams(rule));
         List<PelpObjectiveLiteral> headList = Collections.singletonList(headLiteral);
 
         rule.getHead().forEach(head -> {
@@ -183,22 +183,22 @@ public class SoftRuleReducer implements ProgramTranslator {
     }
 
     private PelpRule generateBodyRule(PelpRule rule) {
-        PelpObjectiveLiteral bodyLiteral = new PelpObjectiveLiteral(false, false, "_body", generateGroundedRuleIdentifyParams(rule));
+        PelpObjectiveLiteral bodyLiteral = new PelpObjectiveLiteral(0, false, "_body", generateGroundedRuleIdentifyParams(rule));
         return new PelpRule(Collections.singletonList(bodyLiteral), rule.getBody(), null);
     }
 
     private PelpRule generateHeadSatisfyRule(PelpRule rule) {
-        PelpObjectiveLiteral satisfy = new PelpObjectiveLiteral(false, false, "_sat", generateGroundedRuleIdentifyParams(rule));
-        PelpObjectiveLiteral head = new PelpObjectiveLiteral(false, false, "_head", generateGroundedRuleIdentifyParams(rule));
+        PelpObjectiveLiteral satisfy = new PelpObjectiveLiteral(0, false, "_sat", generateGroundedRuleIdentifyParams(rule));
+        PelpObjectiveLiteral head = new PelpObjectiveLiteral(0, false, "_head", generateGroundedRuleIdentifyParams(rule));
         return new PelpRule(Collections.singletonList(satisfy), Collections.singletonList(head), null);
     }
 
     private PelpRule generateBodySatisfyRule(PelpRule rule) {
-        PelpObjectiveLiteral satisfy = new PelpObjectiveLiteral(false, false, "_sat", generateGroundedRuleIdentifyParams(rule));
+        PelpObjectiveLiteral satisfy = new PelpObjectiveLiteral(0, false, "_sat", generateGroundedRuleIdentifyParams(rule));
         List<PelpLiteral> bodyList = new ArrayList<>();
-        bodyList.add(new PelpObjectiveLiteral(true, false, "_body", generateGroundedRuleIdentifyParams(rule)));
+        bodyList.add(new PelpObjectiveLiteral(1, false, "_body", generateGroundedRuleIdentifyParams(rule)));
         satisfy.getVariableSet().forEach(variable ->
-            bodyList.add(new PelpObjectiveLiteral(false, false, "_herbrand", Collections.singletonList(variable)))
+            bodyList.add(new PelpObjectiveLiteral(0, false, "_herbrand", Collections.singletonList(variable)))
         );
         return new PelpRule(Collections.singletonList(satisfy), bodyList, null);
     }
@@ -211,7 +211,7 @@ public class SoftRuleReducer implements ProgramTranslator {
     }
 
     private PelpRule generateWeightRule(PelpRule rule) {
-        PelpObjectiveLiteral satisfy = new PelpObjectiveLiteral(false, false, "_sat", generateGroundedRuleIdentifyParams(rule));
+        PelpObjectiveLiteral satisfy = new PelpObjectiveLiteral(0, false, "_sat", generateGroundedRuleIdentifyParams(rule));
         return new PelpRule(new ArrayList<>(), Collections.singletonList(satisfy), rule.getWeight());
     }
 }

@@ -56,7 +56,7 @@ public class AnswerSet2PossibleWorldTranslator {
     }
 
     private PelpObjectiveLiteral translateLiteral(AspLiteral aspLiteral) {
-        return new PelpObjectiveLiteral(aspLiteral.getNafCount() == 1,
+        return new PelpObjectiveLiteral(aspLiteral.getNafCount(),
                 aspLiteral.isNegation(),
                 aspLiteral.getPredicate(),
                 translateLiteralParams(aspLiteral.getParams()));
@@ -70,7 +70,7 @@ public class AnswerSet2PossibleWorldTranslator {
         int rightBound = Integer.parseInt(literalStr.substring(8, 12));
         boolean negative = literalStr.codePointAt(13) == 'f';
         String predicate = literalStr.substring(13);
-        PelpObjectiveLiteral objectiveLiteral = new PelpObjectiveLiteral(false, negative, predicate, translateLiteralParams(aspLiteral.getParams()));
+        PelpObjectiveLiteral objectiveLiteral = new PelpObjectiveLiteral(0, negative, predicate, translateLiteralParams(aspLiteral.getParams()));
         return new PelpSubjectiveLiteral(leftClose, rightClose, leftBound * 0.001, rightBound * 0.001, objectiveLiteral);
     }
 

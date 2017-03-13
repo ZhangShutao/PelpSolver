@@ -3,8 +3,11 @@ package cn.edu.seu.kse.syntax.pelp;
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
 import org.antlr.v4.runtime.*;
+import org.antlr.v4.runtime.misc.*;
 import org.antlr.v4.runtime.tree.*;
 import java.util.List;
+import java.util.Iterator;
+import java.util.ArrayList;
 
 @SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast"})
 public class PelpParser extends Parser {
@@ -465,7 +468,10 @@ public class PelpParser extends Parser {
 		public PredicateContext predicate() {
 			return getRuleContext(PredicateContext.class,0);
 		}
-		public TerminalNode NAF() { return getToken(PelpParser.NAF, 0); }
+		public List<TerminalNode> NAF() { return getTokens(PelpParser.NAF); }
+		public TerminalNode NAF(int i) {
+			return getToken(PelpParser.NAF, i);
+		}
 		public TerminalNode MINUS() { return getToken(PelpParser.MINUS, 0); }
 		public TerminalNode LPAREN() { return getToken(PelpParser.LPAREN, 0); }
 		public TerminalNode RPAREN() { return getToken(PelpParser.RPAREN, 0); }
@@ -505,58 +511,63 @@ public class PelpParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(50);
+			setState(52);
+			_errHandler.sync(this);
 			_la = _input.LA(1);
-			if (_la==NAF) {
+			while (_la==NAF) {
+				{
 				{
 				setState(49);
 				match(NAF);
 				}
+				}
+				setState(54);
+				_errHandler.sync(this);
+				_la = _input.LA(1);
 			}
-
-			setState(53);
+			setState(56);
 			_la = _input.LA(1);
 			if (_la==MINUS) {
 				{
-				setState(52);
+				setState(55);
 				match(MINUS);
 				}
 			}
 
-			setState(55);
+			setState(58);
 			predicate();
-			setState(68);
+			setState(71);
 			_la = _input.LA(1);
 			if (_la==LPAREN) {
 				{
-				setState(56);
+				setState(59);
 				match(LPAREN);
-				setState(65);
+				setState(68);
 				_la = _input.LA(1);
 				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << MINUS) | (1L << KNOW) | (1L << POSITIVE_INT) | (1L << ZERO) | (1L << STRING) | (1L << PREDICATE) | (1L << VAR))) != 0)) {
 					{
-					setState(57);
+					setState(60);
 					param();
-					setState(62);
+					setState(65);
 					_errHandler.sync(this);
 					_la = _input.LA(1);
 					while (_la==COMMA) {
 						{
 						{
-						setState(58);
+						setState(61);
 						match(COMMA);
-						setState(59);
+						setState(62);
 						param();
 						}
 						}
-						setState(64);
+						setState(67);
 						_errHandler.sync(this);
 						_la = _input.LA(1);
 					}
 					}
 				}
 
-				setState(67);
+				setState(70);
 				match(RPAREN);
 				}
 			}
@@ -616,29 +627,29 @@ public class PelpParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(70);
+			setState(73);
 			match(KNOW);
-			setState(71);
+			setState(74);
 			_la = _input.LA(1);
 			if ( !(_la==LPAREN || _la==LSBRACK) ) {
 			_errHandler.recoverInline(this);
 			} else {
 				consume();
 			}
-			setState(72);
-			decimal();
-			setState(73);
-			match(COMMA);
-			setState(74);
-			decimal();
 			setState(75);
+			decimal();
+			setState(76);
+			match(COMMA);
+			setState(77);
+			decimal();
+			setState(78);
 			_la = _input.LA(1);
 			if ( !(_la==RPAREN || _la==RSBRACK) ) {
 			_errHandler.recoverInline(this);
 			} else {
 				consume();
 			}
-			setState(76);
+			setState(79);
 			objective_literal();
 			}
 		}
@@ -690,21 +701,21 @@ public class PelpParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(78);
+			setState(81);
 			objective_literal();
-			setState(83);
+			setState(86);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while (_la==VBAR) {
 				{
 				{
-				setState(79);
+				setState(82);
 				match(VBAR);
-				setState(80);
+				setState(83);
 				objective_literal();
 				}
 				}
-				setState(85);
+				setState(88);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
@@ -764,46 +775,46 @@ public class PelpParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(88);
+			setState(91);
 			switch (_input.LA(1)) {
 			case MINUS:
 			case NAF:
 			case PREDICATE:
 				{
-				setState(86);
+				setState(89);
 				objective_literal();
 				}
 				break;
 			case KNOW:
 				{
-				setState(87);
+				setState(90);
 				subjective_literal();
 				}
 				break;
 			default:
 				throw new NoViableAltException(this);
 			}
-			setState(97);
+			setState(100);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while (_la==COMMA) {
 				{
 				{
-				setState(90);
-				match(COMMA);
 				setState(93);
+				match(COMMA);
+				setState(96);
 				switch (_input.LA(1)) {
 				case MINUS:
 				case NAF:
 				case PREDICATE:
 					{
-					setState(91);
+					setState(94);
 					objective_literal();
 					}
 					break;
 				case KNOW:
 					{
-					setState(92);
+					setState(95);
 					subjective_literal();
 					}
 					break;
@@ -812,7 +823,7 @@ public class PelpParser extends Parser {
 				}
 				}
 				}
-				setState(99);
+				setState(102);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
@@ -910,16 +921,16 @@ public class PelpParser extends Parser {
 		Hard_ruleContext _localctx = new Hard_ruleContext(_ctx, getState());
 		enterRule(_localctx, 20, RULE_hard_rule);
 		try {
-			setState(112);
+			setState(115);
 			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,13,_ctx) ) {
 			case 1:
 				_localctx = new Fact_ruleContext(_localctx);
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(100);
+				setState(103);
 				rule_head();
-				setState(101);
+				setState(104);
 				match(DOT);
 				}
 				break;
@@ -927,11 +938,11 @@ public class PelpParser extends Parser {
 				_localctx = new Constrain_ruleContext(_localctx);
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(103);
+				setState(106);
 				match(IF);
-				setState(104);
+				setState(107);
 				rule_body();
-				setState(105);
+				setState(108);
 				match(DOT);
 				}
 				break;
@@ -939,13 +950,13 @@ public class PelpParser extends Parser {
 				_localctx = new Normal_ruleContext(_localctx);
 				enterOuterAlt(_localctx, 3);
 				{
-				setState(107);
-				rule_head();
-				setState(108);
-				match(IF);
-				setState(109);
-				rule_body();
 				setState(110);
+				rule_head();
+				setState(111);
+				match(IF);
+				setState(112);
+				rule_body();
+				setState(113);
 				match(DOT);
 				}
 				break;
@@ -996,13 +1007,13 @@ public class PelpParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(114);
-			hard_rule();
-			setState(115);
-			match(LSBRACK);
-			setState(116);
-			decimal();
 			setState(117);
+			hard_rule();
+			setState(118);
+			match(LSBRACK);
+			setState(119);
+			decimal();
+			setState(120);
 			match(RSBRACK);
 			}
 		}
@@ -1056,29 +1067,29 @@ public class PelpParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(123);
+			setState(126);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << MINUS) | (1L << NAF) | (1L << IF) | (1L << PREDICATE))) != 0)) {
 				{
-				setState(121);
+				setState(124);
 				_errHandler.sync(this);
 				switch ( getInterpreter().adaptivePredict(_input,14,_ctx) ) {
 				case 1:
 					{
-					setState(119);
+					setState(122);
 					soft_rule();
 					}
 					break;
 				case 2:
 					{
-					setState(120);
+					setState(123);
 					hard_rule();
 					}
 					break;
 				}
 				}
-				setState(125);
+				setState(128);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
@@ -1096,38 +1107,40 @@ public class PelpParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\u0430\ud6d1\u8206\uad2d\u4417\uaef1\u8d80\uaadd\3\30\u0081\4\2\t\2"+
+		"\3\u0430\ud6d1\u8206\uad2d\u4417\uaef1\u8d80\uaadd\3\30\u0084\4\2\t\2"+
 		"\4\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\4\13"+
 		"\t\13\4\f\t\f\4\r\t\r\4\16\t\16\3\2\5\2\36\n\2\3\2\3\2\3\3\3\3\5\3$\n"+
-		"\3\3\4\3\4\3\5\3\5\3\6\3\6\3\7\3\7\3\7\5\7/\n\7\3\7\5\7\62\n\7\3\b\5\b"+
-		"\65\n\b\3\b\5\b8\n\b\3\b\3\b\3\b\3\b\3\b\7\b?\n\b\f\b\16\bB\13\b\5\bD"+
-		"\n\b\3\b\5\bG\n\b\3\t\3\t\3\t\3\t\3\t\3\t\3\t\3\t\3\n\3\n\3\n\7\nT\n\n"+
-		"\f\n\16\nW\13\n\3\13\3\13\5\13[\n\13\3\13\3\13\3\13\5\13`\n\13\7\13b\n"+
-		"\13\f\13\16\13e\13\13\3\f\3\f\3\f\3\f\3\f\3\f\3\f\3\f\3\f\3\f\3\f\3\f"+
-		"\5\fs\n\f\3\r\3\r\3\r\3\r\3\r\3\16\3\16\7\16|\n\16\f\16\16\16\177\13\16"+
-		"\3\16\2\2\17\2\4\6\b\n\f\16\20\22\24\26\30\32\2\6\3\2\22\23\4\2\20\20"+
-		"\26\26\4\2\3\3\5\5\4\2\4\4\6\6\u0085\2\35\3\2\2\2\4#\3\2\2\2\6%\3\2\2"+
-		"\2\b\'\3\2\2\2\n)\3\2\2\2\f\61\3\2\2\2\16\64\3\2\2\2\20H\3\2\2\2\22P\3"+
-		"\2\2\2\24Z\3\2\2\2\26r\3\2\2\2\30t\3\2\2\2\32}\3\2\2\2\34\36\7\r\2\2\35"+
-		"\34\3\2\2\2\35\36\3\2\2\2\36\37\3\2\2\2\37 \t\2\2\2 \3\3\2\2\2!$\7\21"+
-		"\2\2\"$\5\2\2\2#!\3\2\2\2#\"\3\2\2\2$\5\3\2\2\2%&\7\24\2\2&\7\3\2\2\2"+
-		"\'(\7\25\2\2(\t\3\2\2\2)*\t\3\2\2*\13\3\2\2\2+/\5\2\2\2,/\5\6\4\2-/\5"+
-		"\b\5\2.+\3\2\2\2.,\3\2\2\2.-\3\2\2\2/\62\3\2\2\2\60\62\5\n\6\2\61.\3\2"+
-		"\2\2\61\60\3\2\2\2\62\r\3\2\2\2\63\65\7\16\2\2\64\63\3\2\2\2\64\65\3\2"+
-		"\2\2\65\67\3\2\2\2\668\7\r\2\2\67\66\3\2\2\2\678\3\2\2\289\3\2\2\29F\5"+
-		"\b\5\2:C\7\3\2\2;@\5\f\7\2<=\7\t\2\2=?\5\f\7\2><\3\2\2\2?B\3\2\2\2@>\3"+
-		"\2\2\2@A\3\2\2\2AD\3\2\2\2B@\3\2\2\2C;\3\2\2\2CD\3\2\2\2DE\3\2\2\2EG\7"+
-		"\4\2\2F:\3\2\2\2FG\3\2\2\2G\17\3\2\2\2HI\7\20\2\2IJ\t\4\2\2JK\5\4\3\2"+
-		"KL\7\t\2\2LM\5\4\3\2MN\t\5\2\2NO\5\16\b\2O\21\3\2\2\2PU\5\16\b\2QR\7\13"+
-		"\2\2RT\5\16\b\2SQ\3\2\2\2TW\3\2\2\2US\3\2\2\2UV\3\2\2\2V\23\3\2\2\2WU"+
-		"\3\2\2\2X[\5\16\b\2Y[\5\20\t\2ZX\3\2\2\2ZY\3\2\2\2[c\3\2\2\2\\_\7\t\2"+
-		"\2]`\5\16\b\2^`\5\20\t\2_]\3\2\2\2_^\3\2\2\2`b\3\2\2\2a\\\3\2\2\2be\3"+
-		"\2\2\2ca\3\2\2\2cd\3\2\2\2d\25\3\2\2\2ec\3\2\2\2fg\5\22\n\2gh\7\n\2\2"+
-		"hs\3\2\2\2ij\7\17\2\2jk\5\24\13\2kl\7\n\2\2ls\3\2\2\2mn\5\22\n\2no\7\17"+
-		"\2\2op\5\24\13\2pq\7\n\2\2qs\3\2\2\2rf\3\2\2\2ri\3\2\2\2rm\3\2\2\2s\27"+
-		"\3\2\2\2tu\5\26\f\2uv\7\5\2\2vw\5\4\3\2wx\7\6\2\2x\31\3\2\2\2y|\5\30\r"+
-		"\2z|\5\26\f\2{y\3\2\2\2{z\3\2\2\2|\177\3\2\2\2}{\3\2\2\2}~\3\2\2\2~\33"+
-		"\3\2\2\2\177}\3\2\2\2\22\35#.\61\64\67@CFUZ_cr{}";
+		"\3\3\4\3\4\3\5\3\5\3\6\3\6\3\7\3\7\3\7\5\7/\n\7\3\7\5\7\62\n\7\3\b\7\b"+
+		"\65\n\b\f\b\16\b8\13\b\3\b\5\b;\n\b\3\b\3\b\3\b\3\b\3\b\7\bB\n\b\f\b\16"+
+		"\bE\13\b\5\bG\n\b\3\b\5\bJ\n\b\3\t\3\t\3\t\3\t\3\t\3\t\3\t\3\t\3\n\3\n"+
+		"\3\n\7\nW\n\n\f\n\16\nZ\13\n\3\13\3\13\5\13^\n\13\3\13\3\13\3\13\5\13"+
+		"c\n\13\7\13e\n\13\f\13\16\13h\13\13\3\f\3\f\3\f\3\f\3\f\3\f\3\f\3\f\3"+
+		"\f\3\f\3\f\3\f\5\fv\n\f\3\r\3\r\3\r\3\r\3\r\3\16\3\16\7\16\177\n\16\f"+
+		"\16\16\16\u0082\13\16\3\16\2\2\17\2\4\6\b\n\f\16\20\22\24\26\30\32\2\6"+
+		"\3\2\22\23\4\2\20\20\26\26\4\2\3\3\5\5\4\2\4\4\6\6\u0088\2\35\3\2\2\2"+
+		"\4#\3\2\2\2\6%\3\2\2\2\b\'\3\2\2\2\n)\3\2\2\2\f\61\3\2\2\2\16\66\3\2\2"+
+		"\2\20K\3\2\2\2\22S\3\2\2\2\24]\3\2\2\2\26u\3\2\2\2\30w\3\2\2\2\32\u0080"+
+		"\3\2\2\2\34\36\7\r\2\2\35\34\3\2\2\2\35\36\3\2\2\2\36\37\3\2\2\2\37 \t"+
+		"\2\2\2 \3\3\2\2\2!$\7\21\2\2\"$\5\2\2\2#!\3\2\2\2#\"\3\2\2\2$\5\3\2\2"+
+		"\2%&\7\24\2\2&\7\3\2\2\2\'(\7\25\2\2(\t\3\2\2\2)*\t\3\2\2*\13\3\2\2\2"+
+		"+/\5\2\2\2,/\5\6\4\2-/\5\b\5\2.+\3\2\2\2.,\3\2\2\2.-\3\2\2\2/\62\3\2\2"+
+		"\2\60\62\5\n\6\2\61.\3\2\2\2\61\60\3\2\2\2\62\r\3\2\2\2\63\65\7\16\2\2"+
+		"\64\63\3\2\2\2\658\3\2\2\2\66\64\3\2\2\2\66\67\3\2\2\2\67:\3\2\2\28\66"+
+		"\3\2\2\29;\7\r\2\2:9\3\2\2\2:;\3\2\2\2;<\3\2\2\2<I\5\b\5\2=F\7\3\2\2>"+
+		"C\5\f\7\2?@\7\t\2\2@B\5\f\7\2A?\3\2\2\2BE\3\2\2\2CA\3\2\2\2CD\3\2\2\2"+
+		"DG\3\2\2\2EC\3\2\2\2F>\3\2\2\2FG\3\2\2\2GH\3\2\2\2HJ\7\4\2\2I=\3\2\2\2"+
+		"IJ\3\2\2\2J\17\3\2\2\2KL\7\20\2\2LM\t\4\2\2MN\5\4\3\2NO\7\t\2\2OP\5\4"+
+		"\3\2PQ\t\5\2\2QR\5\16\b\2R\21\3\2\2\2SX\5\16\b\2TU\7\13\2\2UW\5\16\b\2"+
+		"VT\3\2\2\2WZ\3\2\2\2XV\3\2\2\2XY\3\2\2\2Y\23\3\2\2\2ZX\3\2\2\2[^\5\16"+
+		"\b\2\\^\5\20\t\2][\3\2\2\2]\\\3\2\2\2^f\3\2\2\2_b\7\t\2\2`c\5\16\b\2a"+
+		"c\5\20\t\2b`\3\2\2\2ba\3\2\2\2ce\3\2\2\2d_\3\2\2\2eh\3\2\2\2fd\3\2\2\2"+
+		"fg\3\2\2\2g\25\3\2\2\2hf\3\2\2\2ij\5\22\n\2jk\7\n\2\2kv\3\2\2\2lm\7\17"+
+		"\2\2mn\5\24\13\2no\7\n\2\2ov\3\2\2\2pq\5\22\n\2qr\7\17\2\2rs\5\24\13\2"+
+		"st\7\n\2\2tv\3\2\2\2ui\3\2\2\2ul\3\2\2\2up\3\2\2\2v\27\3\2\2\2wx\5\26"+
+		"\f\2xy\7\5\2\2yz\5\4\3\2z{\7\6\2\2{\31\3\2\2\2|\177\5\30\r\2}\177\5\26"+
+		"\f\2~|\3\2\2\2~}\3\2\2\2\177\u0082\3\2\2\2\u0080~\3\2\2\2\u0080\u0081"+
+		"\3\2\2\2\u0081\33\3\2\2\2\u0082\u0080\3\2\2\2\22\35#.\61\66:CFIX]bfu~"+
+		"\u0080";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

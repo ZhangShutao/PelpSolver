@@ -55,14 +55,14 @@ public class PelpVisitorImpl extends PelpBaseVisitor {
 
     @Override
     public Object visitObjective_literal(PelpParser.Objective_literalContext ctx) {
-        boolean isNaf = ctx.NAF() != null;
+        Integer nafCount = ctx.NAF().size();
         boolean isNegation = ctx.MINUS() != null;
         String predicate = ctx.predicate().getText();
 
         List<PelpParam> params = new ArrayList<>();
         ctx.param().forEach(paramContext -> params.add((PelpParam) visit(paramContext)));
 
-        return new PelpObjectiveLiteral(isNaf, isNegation, predicate, params);
+        return new PelpObjectiveLiteral(nafCount, isNegation, predicate, params);
     }
 
     @Override

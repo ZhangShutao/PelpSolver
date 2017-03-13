@@ -152,7 +152,7 @@ public class EpistemicReducer implements ProgramTranslator {
     }
 
     private AspLiteral translateObjectiveLiteral(PelpObjectiveLiteral literal) {
-        return new AspLiteral(literal.isNaf() ? 1 : 0, literal.isNegation(), literal.getPredicate(), translateLiteralParam(literal.getParams()));
+        return new AspLiteral(literal.getNafCount(), literal.isNegation(), literal.getPredicate(), translateLiteralParam(literal.getParams()));
     }
 
     private AspLiteral getNegativeEpistemicLiteral(PelpSubjectiveLiteral literal) {

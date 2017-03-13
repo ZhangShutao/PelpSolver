@@ -96,12 +96,17 @@ public class PelpSolverImpl implements PelpSolver {
         Set<WorldView> worldViews = solve(pelpProgram);
         StringJoiner outputJoiner = new StringJoiner("\n");
 
+        if (worldViews.isEmpty()) {
+            worldViews.add(new WorldView(new HashSet<>(), new HashSet<>()));
+        }
+
         Integer counter = 1;
         for (WorldView worldView : worldViews) {
             outputJoiner.add("WorldView " + counter + ":");
             outputJoiner.add(worldView.toString());
             counter++;
         }
+
         String output = outputJoiner.toString();
         Logger.info("program solved:\n{}", output);
         return output;
@@ -161,19 +166,14 @@ public class PelpSolverImpl implements PelpSolver {
     }
 
     public boolean testWorldView(WorldView worldView) {
-        System.out.println(worldView);
-        System.out.println("support");
         for (PelpSubjectiveLiteral supported : worldView.getSupportedEpistemic()) {
-            System.out.println(supported);
             double weight = getSupportedWeight(supported, worldView);
             if (!isInEpistemicRange(supported, weight)) {
                 return false;
             }
         }
 
-        System.out.println("not support:");
         for (PelpSubjectiveLiteral unsupported  : worldView.getUnsupportedEpistemic()) {
-            System.out.println(unsupported);
             double weight = getSupportedWeight(unsupported, worldView);
             if (isInEpistemicRange(unsupported, weight)) {
                 return false;

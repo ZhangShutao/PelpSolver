@@ -79,7 +79,7 @@ param : (integer | string | predicate) # const_param
       | var                            # var_param;
 
 // 客观字
-objective_literal : NAF? MINUS? predicate (LPAREN (param (COMMA param)*)? RPAREN)?;
+objective_literal : (NAF)* MINUS? predicate (LPAREN (param (COMMA param)*)? RPAREN)?;
 // 主观字
 subjective_literal : KNOW (LPAREN | LSBRACK) decimal COMMA decimal (RPAREN | RSBRACK) objective_literal;
 

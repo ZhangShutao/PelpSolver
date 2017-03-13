@@ -59,7 +59,7 @@ public class KNotReducer implements ProgramTranslator {
 
     private PelpSubjectiveLiteral translateSubjectiveLiteral(PelpSubjectiveLiteral literal) {
         if (literal.isNaf()) {
-            PelpObjectiveLiteral objectiveLiteral = new PelpObjectiveLiteral(false, literal.isNegation(), literal.getPredicate(), literal.getParams());
+            PelpObjectiveLiteral objectiveLiteral = new PelpObjectiveLiteral(0, literal.isNegation(), literal.getPredicate(), literal.getParams());
             return new PelpSubjectiveLiteral(
                     literal.isRightClose(),
                     literal.isLeftClose(),

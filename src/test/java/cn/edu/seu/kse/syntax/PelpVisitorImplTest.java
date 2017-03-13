@@ -2,7 +2,6 @@ package cn.edu.seu.kse.syntax;
 
 import cn.edu.seu.kse.model.ObjectModel;
 import cn.edu.seu.kse.model.pelp.*;
-import cn.edu.seu.kse.syntax.SyntaxErrorListener;
 import cn.edu.seu.kse.syntax.pelp.PelpLexer;
 import cn.edu.seu.kse.syntax.pelp.PelpParser;
 import cn.edu.seu.kse.syntax.pelp.PelpVisitorImpl;

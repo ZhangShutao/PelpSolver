@@ -34,6 +34,7 @@ public class PelpSolverImplTest {
     private void testProgram(File inputFile, File outputFile) {
         try {
             String output = solver.solve(readFile(inputFile));
+            System.out.println(output);
             assertTrue(output.equals(readFile(outputFile)));
         } catch (SyntaxErrorException e) {
             fail("语法错误：" + e.getMessage());
@@ -54,5 +55,11 @@ public class PelpSolverImplTest {
     public void testCase1() {
         testProgram(new File("test" + File.separator + "case1.lp"),
                 new File("test" + File.separator + "case1.out"));
+    }
+
+    @Test
+    public void testCase2() {
+        testProgram(new File("test" + File.separator + "case2.lp"),
+                new File("test" + File.separator + "case2.out"));
     }
 }
