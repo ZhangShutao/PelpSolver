@@ -79,7 +79,10 @@ public class PelpSolverImpl implements PelpSolver {
             Set<AnswerSet> answerSets = solveAspProgram(aspProgram);
             Set<WorldView> candidateWorldViews = getCandidateWorldView(answerSets);
             candidateWorldViews.forEach(worldView -> {
-                if (testWorldView(worldView)) {
+                if (testWorldView(worldView) // 该世界观中的主观字得到满足
+                        && !supportedCovered(worldViews, worldView) // 该世界观没有被已有的世界观覆盖
+                        && !replaceCoveredWorldView(worldViews, worldView) // 该世界观没有覆盖已有的世界观
+                        ) {
                     worldViews.add(worldView);
                 }
             });
@@ -87,6 +90,34 @@ public class PelpSolverImpl implements PelpSolver {
             Logger.info("PELP程序{}对应的ASP程序不可满足。", program.toString());
         }
         return worldViews;
+    }
+
+    private boolean replaceCoveredWorldView(Set<WorldView> worldViews, WorldView worldView) {
+        Set<WorldView> tobeChecked = new HashSet<>(worldViews);
+        boolean added = false;
+        for (WorldView checked : tobeChecked) {
+            if (supportedCovered(worldView, checked)) {
+                worldViews.remove(checked);
+                if (!added) {
+                    worldViews.add(worldView);
+                    added = true;
+                }
+            }
+        }
+        return added;
+    }
+
+    private boolean supportedCovered(Set<WorldView> worldViews, WorldView worldView) {
+        for (WorldView checked : worldViews) {
+            if (supportedCovered(checked, worldView)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean supportedCovered(WorldView a, WorldView b) {
+        return a != b && a.getSupportedEpistemic().containsAll(b.getSupportedEpistemic());
     }
 
     @Override
