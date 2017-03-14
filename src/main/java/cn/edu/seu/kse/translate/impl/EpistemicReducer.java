@@ -99,7 +99,7 @@ public class EpistemicReducer implements ProgramTranslator {
             } else if (literal instanceof PelpSubjectiveLiteral) {
                 commonBody.add(translateSubjectiveLiteral((PelpSubjectiveLiteral) literal));
                 if (((PelpSubjectiveLiteral) literal).isEpistemicDeny()) {
-                    AspLiteral translatedLiteral = translateSubjectiveLiteral((PelpSubjectiveLiteral) literal);
+                    AspLiteral translatedLiteral = translateObjectiveLiteral(((PelpSubjectiveLiteral) literal).getObjectiveLiteral());
                     translatedLiteral.setNafCount(1);
                     commonBody.add(translatedLiteral);
                 }
