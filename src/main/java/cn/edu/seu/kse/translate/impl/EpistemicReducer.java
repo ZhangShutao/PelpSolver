@@ -127,9 +127,10 @@ public class EpistemicReducer implements ProgramTranslator {
             List<AspLiteral> body = new ArrayList<>();
             body.addAll(commonBody);
             for (int j = 0, k = i; j != subjectiveLiterals.size(); ++j, k >>= 1) {
-                AspLiteral literal = translateObjectiveLiteral(subjectiveLiterals.get(j).getObjectiveLiteral());
+                PelpObjectiveLiteral objectiveLiteral = subjectiveLiterals.get(j).getObjectiveLiteral();
+                AspLiteral literal = translateObjectiveLiteral(objectiveLiteral);
                 if ((k & 1) == 1) {
-                    literal.setNafCount(1);
+                    literal.setNafCount(objectiveLiteral.getNafCount() + 1);
                 }
                 body.add(literal);
             }
@@ -140,15 +141,30 @@ public class EpistemicReducer implements ProgramTranslator {
     }
 
     private AspLiteral translateSubjectiveLiteral(PelpSubjectiveLiteral literal) {
-
+        PelpSubjectiveLiteral reduceKNot = reduceKNot(literal);
         String predicateStr = String.format("_k%s%s%04d%04d%c%s",
-                (literal.isLeftClose() ? 'c' : 'o'),
-                (literal.isRightClose() ? 'c' : 'o'),
-                (int) (literal.getLeftBound() * 1000),
-                (int) (literal.getRightBound() * 1000),
-                (literal.isNegation() ? 'f' : 't'),
-                literal.getPredicate());
-        return new AspLiteral(0, false, predicateStr, translateLiteralParam(literal.getParams()));
+                (reduceKNot.isLeftClose() ? 'c' : 'o'),
+                (reduceKNot.isRightClose() ? 'c' : 'o'),
+                (int) (reduceKNot.getLeftBound() * 1000),
+                (int) (reduceKNot.getRightBound() * 1000),
+                (reduceKNot.isNegation() ? 'f' : 't'),
+                reduceKNot.getPredicate());
+        return new AspLiteral(0, false, predicateStr, translateLiteralParam(reduceKNot.getParams()));
+    }
+
+    private PelpSubjectiveLiteral reduceKNot(PelpSubjectiveLiteral literal) {
+        if (literal.isNaf()) {
+            PelpObjectiveLiteral objectiveLiteral = new PelpObjectiveLiteral(0, literal.isNegation(), literal.getPredicate(), literal.getParams());
+            return new PelpSubjectiveLiteral(
+                    literal.isRightClose(),
+                    literal.isLeftClose(),
+                    1 - literal.getRightBound(),
+                    1 - literal.getLeftBound(),
+                    objectiveLiteral
+            );
+        } else {
+            return literal;
+        }
     }
 
     private AspLiteral translateObjectiveLiteral(PelpObjectiveLiteral literal) {

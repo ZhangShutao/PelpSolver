@@ -13,7 +13,6 @@ import cn.edu.seu.kse.syntax.parser.PelpSyntaxParser;
 import cn.edu.seu.kse.translate.AnswerSet2PossibleWorldTranslator;
 import cn.edu.seu.kse.translate.ProgramTranslator;
 import cn.edu.seu.kse.translate.impl.EpistemicReducer;
-import cn.edu.seu.kse.translate.impl.KNotReducer;
 import cn.edu.seu.kse.translate.impl.SoftRuleReducer;
 import cn.edu.seu.kse.util.Logger;
 
@@ -27,7 +26,6 @@ import java.util.*;
 public class PelpSolverImpl implements PelpSolver {
     private AspSolver aspSolver = new AspSolverClingo4Impl();
     private ProgramTranslator softReducer = new SoftRuleReducer();
-    private ProgramTranslator kNotReducer = new KNotReducer();
     private ProgramTranslator epistemicReducer = new EpistemicReducer();
     private AnswerSet2PossibleWorldTranslator answerSetTranslator = new AnswerSet2PossibleWorldTranslator();
 
@@ -45,14 +43,6 @@ public class PelpSolverImpl implements PelpSolver {
 
     public void setSoftReducer(ProgramTranslator softReducer) {
         this.softReducer = softReducer;
-    }
-
-    public ProgramTranslator getkNotReducer() {
-        return kNotReducer;
-    }
-
-    public void setkNotReducer(ProgramTranslator kNotReducer) {
-        this.kNotReducer = kNotReducer;
     }
 
     public ProgramTranslator getEpistemicReducer() {
@@ -152,8 +142,7 @@ public class PelpSolverImpl implements PelpSolver {
     public AspProgram pelp2Asp(PelpProgram pelpProgram) throws SyntaxErrorException {
         Logger.info("translating PELP program into ASP program:\n{}", pelpProgram.toString());
         PelpProgram noSoftProgram = (PelpProgram) getSoftReducer().translateProgram(pelpProgram);
-        PelpProgram noKNotProgram = (PelpProgram) getkNotReducer().translateProgram(noSoftProgram);
-        AspProgram aspProgram = (AspProgram) getEpistemicReducer().translateProgram(noKNotProgram);
+        AspProgram aspProgram = (AspProgram) getEpistemicReducer().translateProgram(noSoftProgram);
         Logger.info("translating finished.\n{}", aspProgram.toString());
         return aspProgram;
     }
