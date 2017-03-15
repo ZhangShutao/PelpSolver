@@ -1,10 +1,7 @@
 package cn.edu.seu.kse.translate.impl;
 
 import cn.edu.seu.kse.model.ObjectModel;
-import cn.edu.seu.kse.model.asp.AspLiteral;
-import cn.edu.seu.kse.model.asp.AspParam;
-import cn.edu.seu.kse.model.asp.AspProgram;
-import cn.edu.seu.kse.model.asp.AspRule;
+import cn.edu.seu.kse.model.asp.*;
 import cn.edu.seu.kse.model.pelp.*;
 import cn.edu.seu.kse.translate.ProgramTranslator;
 import cn.edu.seu.kse.util.Logger;
@@ -58,6 +55,8 @@ public class EpistemicReducer implements ProgramTranslator {
         rule.getPositiveBody().forEach(pelpLiteral -> {
             if (pelpLiteral instanceof PelpObjectiveLiteral) {
                 positiveBody.add(translateObjectiveLiteral((PelpObjectiveLiteral) pelpLiteral));
+            } else if (pelpLiteral instanceof PelpRelation) {
+                positiveBody.add(translateRelation((PelpRelation) pelpLiteral));
             }
         });
         return positiveBody;
@@ -96,6 +95,8 @@ public class EpistemicReducer implements ProgramTranslator {
         body.forEach(literal -> {
             if (literal instanceof PelpObjectiveLiteral) {
                 commonBody.add(translateObjectiveLiteral((PelpObjectiveLiteral) literal));
+            } else if (literal instanceof PelpRelation) {
+                commonBody.add(translateRelation((PelpRelation) literal));
             } else if (literal instanceof PelpSubjectiveLiteral) {
                 commonBody.add(translateSubjectiveLiteral((PelpSubjectiveLiteral) literal));
                 if (((PelpSubjectiveLiteral) literal).isEpistemicDeny()) {
@@ -183,11 +184,18 @@ public class EpistemicReducer implements ProgramTranslator {
         return aspParams;
     }
 
+    private AspRelation translateRelation(PelpRelation pelpRelation) {
+        List<AspParam> params = translateLiteralParam(pelpRelation.getParams());
+        return new AspRelation(params.get(0), pelpRelation.getPredicate(), params.get(1));
+    }
+
     private AspRule translateSoftConstrain(PelpRule pelpRule) {
         List<AspLiteral> constrainBody = new ArrayList<>();
         pelpRule.getBody().forEach(literal -> {
             if (literal instanceof PelpObjectiveLiteral) {
                 constrainBody.add(translateObjectiveLiteral((PelpObjectiveLiteral) literal));
+            } else if (literal instanceof PelpRelation) {
+                constrainBody.add(translateRelation((PelpRelation) literal));
             }
         });
         return new AspRule(constrainBody, (int)(pelpRule.getWeight() * 1000), 1, translateLiteralParam(pelpRule.getVariableSet()));
