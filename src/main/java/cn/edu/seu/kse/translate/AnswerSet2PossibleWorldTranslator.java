@@ -68,7 +68,7 @@ public class AnswerSet2PossibleWorldTranslator {
         boolean rightClose = literalStr.codePointAt(3) == 'c';
         int leftBound = Integer.parseInt(literalStr.substring(4, 8));
         int rightBound = Integer.parseInt(literalStr.substring(8, 12));
-        boolean negative = literalStr.codePointAt(13) == 'f';
+        boolean negative = literalStr.codePointAt(12) == 'f';
         String predicate = literalStr.substring(13);
         PelpObjectiveLiteral objectiveLiteral = new PelpObjectiveLiteral(0, negative, predicate, translateLiteralParams(aspLiteral.getParams()));
         return new PelpSubjectiveLiteral(leftClose, rightClose, leftBound * 0.001, rightBound * 0.001, objectiveLiteral);
