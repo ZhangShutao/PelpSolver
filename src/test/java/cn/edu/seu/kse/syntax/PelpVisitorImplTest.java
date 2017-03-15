@@ -2,7 +2,6 @@ package cn.edu.seu.kse.syntax;
 
 import cn.edu.seu.kse.model.ObjectModel;
 import cn.edu.seu.kse.model.pelp.*;
-import cn.edu.seu.kse.syntax.SyntaxErrorListener;
 import cn.edu.seu.kse.syntax.pelp.PelpLexer;
 import cn.edu.seu.kse.syntax.pelp.PelpParser;
 import cn.edu.seu.kse.syntax.pelp.PelpVisitorImpl;
@@ -155,6 +154,15 @@ public class PelpVisitorImplTest {
     }
 
     @Test
+    public void testRelation() {
+        PelpParser parser = getParser("a <= b");
+        ParseTree tree = parser.relation();
+        PelpRelation relation = (PelpRelation) getVisitedObject(tree);
+
+        assertTrue("a<=b".equals(relation.toString()));
+    }
+
+    @Test
     public void testSubjectiveLiteralWithClosedDoubleWeight() {
         PelpParser parser = getParser("K[0.33,0.5] simple(1, 2)");
         ParseTree tree = parser.subjective_literal();
@@ -272,5 +280,15 @@ public class PelpVisitorImplTest {
         assertFalse(program.getRules().get(0).isSoft());
         assertTrue(program.getRules().get(3).isSoft());
         assertTrue(program.getRules().get(4).isSoft());
+    }
+
+    @Test
+    public void testProgramWithRelation() {
+        String text = "p(X) :- a(X, Y1), a(X, Y2), Y1 != Y2.";
+        PelpParser parser = getParser(text);
+        ParseTree tree = parser.program();
+        PelpProgram program = (PelpProgram) getVisitedObject(tree);
+
+        System.out.println(program);
     }
 }
