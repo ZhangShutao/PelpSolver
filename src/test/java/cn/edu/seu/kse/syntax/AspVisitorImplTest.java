@@ -173,4 +173,12 @@ public class AspVisitorImplTest {
         assertTrue(text2.equals(answerSet.toString()));
         assertTrue(answerSet.getWeight() == 0);
     }
+
+    @Test
+    public void testProgramWithRelation() {
+        AspParser parser = getParser("a(X) :- b(X, Y1), b(X, Y2), Y1 != Y2.");
+        ParseTree tree = parser.program();
+        AspProgram program = (AspProgram) getVisitedObject(tree);
+        System.out.println(program);
+    }
 }

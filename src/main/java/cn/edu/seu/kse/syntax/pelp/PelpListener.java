@@ -82,6 +82,26 @@ public interface PelpListener extends ParseTreeListener {
 	 */
 	void exitVar_param(PelpParser.Var_paramContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link PelpParser#compare_operator}.
+	 * @param ctx the parse tree
+	 */
+	void enterCompare_operator(PelpParser.Compare_operatorContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link PelpParser#compare_operator}.
+	 * @param ctx the parse tree
+	 */
+	void exitCompare_operator(PelpParser.Compare_operatorContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link PelpParser#relation}.
+	 * @param ctx the parse tree
+	 */
+	void enterRelation(PelpParser.RelationContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link PelpParser#relation}.
+	 * @param ctx the parse tree
+	 */
+	void exitRelation(PelpParser.RelationContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link PelpParser#objective_literal}.
 	 * @param ctx the parse tree
 	 */
