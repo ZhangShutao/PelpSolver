@@ -80,4 +80,10 @@ public class PelpSolverImplTest {
         testProgram(new File("test" + File.separator + "case5.lp"),
                 new File("test" + File.separator + "case5.out"));
     }
+
+    @Test
+    public void testGrounding() {
+        testProgram(new File("test" + File.separator + "case6.lp"),
+                new File("test" + File.separator + "case6.out"));
+    }
 }

@@ -5,18 +5,24 @@ import cn.edu.seu.kse.aspSolver.impl.AspSolverClingo4Impl;
 import cn.edu.seu.kse.exception.ReasoningErrorException;
 import cn.edu.seu.kse.exception.SyntaxErrorException;
 import cn.edu.seu.kse.exception.UnsatisfiableException;
+import cn.edu.seu.kse.exception.UnsupportedOsTypeException;
+import cn.edu.seu.kse.model.CommandLineOutput;
 import cn.edu.seu.kse.model.asp.AnswerSet;
+import cn.edu.seu.kse.model.asp.AspLiteral;
 import cn.edu.seu.kse.model.asp.AspProgram;
+import cn.edu.seu.kse.model.asp.AspRule;
 import cn.edu.seu.kse.model.pelp.*;
 import cn.edu.seu.kse.pelpSolver.PelpSolver;
+import cn.edu.seu.kse.syntax.parser.AspSyntaxParser;
 import cn.edu.seu.kse.syntax.parser.PelpSyntaxParser;
 import cn.edu.seu.kse.translate.AnswerSet2PossibleWorldTranslator;
 import cn.edu.seu.kse.translate.ProgramTranslator;
 import cn.edu.seu.kse.translate.impl.EpistemicReducer;
 import cn.edu.seu.kse.translate.impl.SoftRuleReducer;
+import cn.edu.seu.kse.util.CommandLineExecute;
 import cn.edu.seu.kse.util.Logger;
 
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 
 /**
@@ -64,9 +70,10 @@ public class PelpSolverImpl implements PelpSolver {
     @Override
     public Set<WorldView> solve(PelpProgram program) throws SyntaxErrorException, ReasoningErrorException {
         Set<WorldView> worldViews = new HashSet<>();
-        AspProgram aspProgram = pelp2Asp(program);
+        AspProgram ungroundedAsp = pelp2Asp(program);
         try {
-            Set<AnswerSet> answerSets = solveAspProgram(aspProgram);
+            AspProgram groundedAsp = removeEpistemicSelectBody(ungroundedAsp);
+            Set<AnswerSet> answerSets = solveAspProgram(groundedAsp);
             Set<WorldView> candidateWorldViews = getCandidateWorldView(answerSets);
             candidateWorldViews.forEach(worldView -> {
                 if (testWorldView(worldView) // 该世界观中的主观字得到满足
@@ -78,6 +85,8 @@ public class PelpSolverImpl implements PelpSolver {
             });
         } catch (UnsatisfiableException e) {
             Logger.info("PELP程序{}对应的ASP程序不可满足。", program.toString());
+        } catch (UnsupportedOsTypeException| IOException e) {
+            Logger.warn("推理过程出错：{}", e.getMessage());
         }
         return worldViews;
     }
@@ -148,6 +157,7 @@ public class PelpSolverImpl implements PelpSolver {
         Logger.info("translating PELP program into ASP program:\n{}", pelpProgram.toString());
         PelpProgram noSoftProgram = (PelpProgram) getSoftReducer().translateProgram(pelpProgram);
         AspProgram aspProgram = (AspProgram) getEpistemicReducer().translateProgram(noSoftProgram);
+
         Logger.info("translating finished.\n{}", aspProgram.toString());
         return aspProgram;
     }
@@ -240,4 +250,33 @@ public class PelpSolverImpl implements PelpSolver {
         return b - a > 1e-6;
     }
 
+    private AspProgram removeEpistemicSelectBody(AspProgram originAsp) throws IOException, UnsupportedOsTypeException, SyntaxErrorException {
+        File programFile = File.createTempFile("pelpTemp", ".lp");
+        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(programFile)));
+        writer.write(originAsp.toString());
+        writer.flush();
+
+        List<String> params = Arrays.asList("--mode=gringo", "--text", "--lparse-rewrite", programFile.getAbsolutePath());
+        CommandLineOutput output = CommandLineExecute.callShell("clingo", params);
+        writer.close();
+
+        AspProgram groundedAsp = AspSyntaxParser.parseProgram(output.getOutput());
+
+        for (AspRule rule : groundedAsp.getRules()) {
+            if (isEpistemicSelectRule(rule) && !rule.getBody().isEmpty()) {
+                rule.setBody(new ArrayList<>());
+            }
+        }
+        Logger.info("grounded asp:\n{}", groundedAsp);
+        return groundedAsp;
+    }
+
+    private boolean isEpistemicSelectRule(AspRule rule) {
+        if (rule.getHead().size() == 2) {
+            AspLiteral literal0 = rule.getHead().get(0);
+            AspLiteral literal1 = rule.getHead().get(1);
+            return (literal0.getPredicate().equals(literal1.getPredicate()) && literal0.getParams().equals(literal1.getParams()));
+        }
+        return false;
+    }
 }

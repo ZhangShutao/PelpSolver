@@ -44,6 +44,8 @@ DOT : '.';
 VBAR : '|';
 //冒号
 COLON : ':';
+//分号
+SEMI : ';';
 //减号、经典否定关键字
 MINUS : '-';
 // 弱否定
@@ -98,9 +100,9 @@ relation : param compare_operator param;
 literal : (NAF)* MINUS? predicate (LPAREN (param (COMMA param)*)? RPAREN)?;
 
 // 规则首部
-rule_head : literal (VBAR literal)*;
+rule_head : literal ((VBAR | SEMI) literal)*;
 // 规则体部
-rule_body : (literal | relation) (COMMA (literal | relation))*;
+rule_body : (literal | relation) ((COMMA| SEMI) (literal | relation))*;
 
 reasoning_rule : rule_head DOT                                                              # fact_rule
                | IF rule_body DOT                                                           # constrain_rule
