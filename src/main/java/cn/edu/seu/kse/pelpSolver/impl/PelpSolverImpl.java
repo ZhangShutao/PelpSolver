@@ -100,7 +100,7 @@ public class PelpSolverImpl implements PelpSolver {
     private boolean supportedCovered(Set<WorldView> worldViews, WorldView worldView) {
         for (WorldView checked : worldViews) {
             if (supportedCovered(checked, worldView)) {
-                System.out.println(checked + " covered " + worldView);
+                Logger.debug(checked + " covered " + worldView);
                 return true;
             }
         }
@@ -109,7 +109,9 @@ public class PelpSolverImpl implements PelpSolver {
 
     private boolean supportedCovered(WorldView a, WorldView b) {
         return a != b
+                && a.getSupportedEpistemic().size() > b.getSupportedEpistemic().size()
                 && a.getSupportedEpistemic().containsAll(b.getSupportedEpistemic())
+                && b.getUnsupportedEpistemic().size() > a.getUnsupportedEpistemic().size()
                 && b.getUnsupportedEpistemic().containsAll(a.getUnsupportedEpistemic());
     }
 

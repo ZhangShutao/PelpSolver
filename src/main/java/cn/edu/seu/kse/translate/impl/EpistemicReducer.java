@@ -75,7 +75,7 @@ public class EpistemicReducer implements ProgramTranslator {
             List<AspLiteral> condition = new ArrayList<>();
             if (literal.isEpistemicConfirm()) {
                 condition.add(translateObjectiveLiteral(literal.getObjectiveLiteral()));
-            } else {
+            } else if (!literal.getVariableSet().isEmpty()) {
                 condition.addAll(positiveBody);
             }
 
