@@ -250,7 +250,7 @@ public class PelpSolverImpl implements PelpSolver {
         return b - a > 1e-6;
     }
 
-    private AspProgram removeEpistemicSelectBody(AspProgram originAsp) throws IOException, UnsupportedOsTypeException, SyntaxErrorException {
+    private AspProgram removeEpistemicSelectBody(AspProgram originAsp) throws IOException, UnsupportedOsTypeException {
         File programFile = File.createTempFile("pelpTemp", ".lp");
         BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(programFile)));
         writer.write(originAsp.toString());
@@ -260,15 +260,21 @@ public class PelpSolverImpl implements PelpSolver {
         CommandLineOutput output = CommandLineExecute.callShell("clingo", params);
         writer.close();
 
-        AspProgram groundedAsp = AspSyntaxParser.parseProgram(output.getOutput());
+        originAsp.getRules().removeIf(rule -> isEpistemicSelectRule(rule) && !rule.getBody().isEmpty());
 
-        for (AspRule rule : groundedAsp.getRules()) {
-            if (isEpistemicSelectRule(rule) && !rule.getBody().isEmpty()) {
-                rule.setBody(new ArrayList<>());
+        String[] lines = output.getOutput().split("\n");
+        for (String line : lines) {
+            try {
+                AspRule rule  = AspSyntaxParser.parseRule(line);
+                if (isEpistemicSelectRule(rule) && !rule.getBody().isEmpty()) {
+                    rule.setBody(new ArrayList<>());
+                    originAsp.getRules().add(rule);
+                }
+            } catch (SyntaxErrorException e) {
+                Logger.debug("实例化语法错误：", e);
             }
         }
-        Logger.info("grounded asp:\n{}", groundedAsp);
-        return groundedAsp;
+        return originAsp;
     }
 
     private boolean isEpistemicSelectRule(AspRule rule) {

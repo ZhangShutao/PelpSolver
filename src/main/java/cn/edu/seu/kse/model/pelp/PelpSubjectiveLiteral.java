@@ -102,7 +102,7 @@ public class PelpSubjectiveLiteral extends PelpLiteral {
 
     @Override
     public boolean isPositive() {
-        return false;
+        return true;
     }
 
     public boolean isEpistemicConfirm() {
