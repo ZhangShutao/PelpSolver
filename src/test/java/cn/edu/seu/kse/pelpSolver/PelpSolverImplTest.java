@@ -86,4 +86,10 @@ public class PelpSolverImplTest {
         testProgram(new File("test" + File.separator + "case6.lp"),
                 new File("test" + File.separator + "case6.out"));
     }
+
+    @Test
+    public void testComplexGrounding() {
+        testProgram(new File("test" + File.separator + "case7.lp"),
+                new File("test" + File.separator + "case7.out"));
+    }
 }

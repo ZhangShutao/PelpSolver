@@ -264,14 +264,16 @@ public class PelpSolverImpl implements PelpSolver {
 
         String[] lines = output.getOutput().split("\n");
         for (String line : lines) {
-            try {
-                AspRule rule  = AspSyntaxParser.parseRule(line);
-                if (isEpistemicSelectRule(rule) && !rule.getBody().isEmpty()) {
-                    rule.setBody(new ArrayList<>());
-                    originAsp.getRules().add(rule);
+            if (!line.contains("#")) {
+                try {
+                    AspRule rule  = AspSyntaxParser.parseRule(line);
+                    if (isEpistemicSelectRule(rule) && !rule.getBody().isEmpty()) {
+                        rule.setBody(new ArrayList<>());
+                        originAsp.getRules().add(rule);
+                    }
+                } catch (SyntaxErrorException e) {
+                    Logger.debug("实例化语法错误：", e);
                 }
-            } catch (SyntaxErrorException e) {
-                Logger.debug("实例化语法错误：", e);
             }
         }
         return originAsp;
