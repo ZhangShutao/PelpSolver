@@ -132,14 +132,14 @@ public class PelpSolverImpl implements PelpSolver {
         StringJoiner outputJoiner = new StringJoiner("\n");
 
         if (worldViews.isEmpty()) {
-            worldViews.add(new WorldView(new HashSet<>(), new HashSet<>()));
-        }
-
-        Integer counter = 1;
-        for (WorldView worldView : worldViews) {
-            outputJoiner.add("WorldView " + counter + ":");
-            outputJoiner.add(worldView.toString());
-            counter++;
+            outputJoiner.add("Inconsistent program");
+        } else {
+            Integer counter = 1;
+            for (WorldView worldView : worldViews) {
+                outputJoiner.add("WorldView " + counter + ":");
+                outputJoiner.add(worldView.toString());
+                counter++;
+            }
         }
 
         String output = outputJoiner.toString();
@@ -237,6 +237,7 @@ public class PelpSolverImpl implements PelpSolver {
     }
 
     private boolean isInEpistemicRange(PelpSubjectiveLiteral literal, double weight) {
+
         return  (literal.isLeftClose() && sim(weight, literal.getLeftBound())) ||
                 (literal.isRightClose() && sim(weight, literal.getRightBound())) ||
                 (simLess(literal.getLeftBound(), weight) && simLess(weight, literal.getRightBound()));
