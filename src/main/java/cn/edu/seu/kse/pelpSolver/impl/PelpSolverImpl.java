@@ -76,6 +76,16 @@ public class PelpSolverImpl implements PelpSolver {
             Set<AnswerSet> answerSets = solveAspProgram(groundedAsp);
             Set<WorldView> candidateWorldViews = getCandidateWorldView(answerSets);
             candidateWorldViews.forEach(worldView -> {
+                StringJoiner joiner = new StringJoiner("\n");
+                joiner.add(worldView + "with supported set:");
+                getSupportSet(worldView).forEach(literal -> joiner.add(literal.toString()));
+                joiner.add("satisfy:");
+                worldView.getSupportedEpistemic().forEach(literal -> joiner.add(literal.toString()));
+                joiner.add("unsatisfy:");
+                worldView.getUnsupportedEpistemic().forEach(literal -> joiner.add(literal.toString()));
+                joiner.add("");
+                Logger.info(joiner.toString());
+
                 if (testWorldView(worldView) // 该世界观中的主观字得到满足
                         && !supportedCovered(worldViews, worldView) // 该世界观没有被已有的世界观覆盖
                         && !replaceCoveredWorldView(worldViews, worldView) // 该世界观没有覆盖已有的世界观
@@ -117,11 +127,23 @@ public class PelpSolverImpl implements PelpSolver {
     }
 
     private boolean supportedCovered(WorldView a, WorldView b) {
-        return a != b
-                && a.getSupportedEpistemic().size() > b.getSupportedEpistemic().size()
-                && a.getSupportedEpistemic().containsAll(b.getSupportedEpistemic())
-                && b.getUnsupportedEpistemic().size() > a.getUnsupportedEpistemic().size()
-                && b.getUnsupportedEpistemic().containsAll(a.getUnsupportedEpistemic());
+        return a != b && getSupportSet(a).containsAll(getSupportSet(b));
+    }
+
+    private Set<PelpSubjectiveLiteral> getSupportSet(WorldView worldView) {
+        Set<PelpSubjectiveLiteral> supportedSet = new HashSet<>();
+        worldView.getSupportedEpistemic().forEach(literal -> {
+            if (!literal.isEpistemicConfirm()) {
+                supportedSet.add(literal);
+            }
+        });
+        worldView.getUnsupportedEpistemic().forEach(literal -> {
+            if (literal.isEpistemicConfirm()) {
+                supportedSet.add(literal);
+            }
+        });
+
+        return supportedSet;
     }
 
     @Override
@@ -220,6 +242,7 @@ public class PelpSolverImpl implements PelpSolver {
     private double getSupportedWeight(PelpSubjectiveLiteral supported, WorldView worldView) {
         double sum = 0;
         PelpObjectiveLiteral literal = supported.getObjectiveLiteral();
+        literal.setNaf(false);
         for (PossibleWorld possibleWorld : worldView.getPossibleWorldSet()) {
             if (possibleWorld.getLiterals().contains(literal)) {
                 sum += possibleWorld.getWeight();
@@ -237,7 +260,9 @@ public class PelpSolverImpl implements PelpSolver {
     }
 
     private boolean isInEpistemicRange(PelpSubjectiveLiteral literal, double weight) {
-
+        if (literal.isNaf()) {
+            weight = 1 - weight;
+        }
         return  (literal.isLeftClose() && sim(weight, literal.getLeftBound())) ||
                 (literal.isRightClose() && sim(weight, literal.getRightBound())) ||
                 (simLess(literal.getLeftBound(), weight) && simLess(weight, literal.getRightBound()));
@@ -261,14 +286,14 @@ public class PelpSolverImpl implements PelpSolver {
         CommandLineOutput output = CommandLineExecute.callShell("clingo", params);
         writer.close();
 
-        originAsp.getRules().removeIf(rule -> isEpistemicSelectRule(rule) && !rule.getBody().isEmpty());
+        originAsp.getRules().removeIf(rule -> isEpistemicSelectRule(rule));
 
         String[] lines = output.getOutput().split("\n");
         for (String line : lines) {
             if (!line.contains("#")) {
                 try {
                     AspRule rule  = AspSyntaxParser.parseRule(line);
-                    if (isEpistemicSelectRule(rule) && !rule.getBody().isEmpty()) {
+                    if (isEpistemicSelectRule(rule)) {
                         rule.setBody(new ArrayList<>());
                         originAsp.getRules().add(rule);
                     }
@@ -284,7 +309,7 @@ public class PelpSolverImpl implements PelpSolver {
         if (rule.getHead().size() == 2) {
             AspLiteral literal0 = rule.getHead().get(0);
             AspLiteral literal1 = rule.getHead().get(1);
-            return (literal0.getPredicate().equals(literal1.getPredicate()) && literal0.getParams().equals(literal1.getParams()));
+            return (literal0.getPredicate().startsWith("_k") &&literal0.getPredicate().equals(literal1.getPredicate()) && literal0.getParams().equals(literal1.getParams()));
         }
         return false;
     }
