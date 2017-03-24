@@ -45,9 +45,59 @@ public class EpistemicReducer implements ProgramTranslator {
             }
             rules.addAll(getEpistemicSelectRules(pelpRule));
         });
+        getAllEpistemicConfirm((PelpProgram)program).forEach(literal -> rules.add(getEpistemicConstrain(literal)));
+        getAllEpistemicDeny((PelpProgram)program).forEach(literal -> rules.add(getEpistemicConstrain(literal)));
         AspProgram result = new AspProgram(new ArrayList<>(rules));
         Logger.debug("subjective literal reducing finished.\n{}", result.toString());
         return result;
+    }
+
+    private AspRule getEpistemicConstrain(PelpSubjectiveLiteral literal) {
+        AspLiteral aspLiteral = translateSubjectiveLiteral(literal);
+        AspLiteral contrast = translateObjectiveLiteral(literal.getObjectiveLiteral());
+        if (literal.isEpistemicConfirm()) {
+            contrast.setNafCount(contrast.getNafCount() ^ 1);
+        }
+        return new AspRule(new ArrayList<>(), Arrays.asList(aspLiteral, contrast));
+    }
+
+    public Set<PelpSubjectiveLiteral> getAllEpistemicConfirm(PelpProgram program) {
+        Set<PelpSubjectiveLiteral> confirm = new HashSet<>();
+        program.getRules().forEach(rule -> {
+            rule.getBody().forEach(literal -> {
+                if (literal instanceof PelpSubjectiveLiteral && ((PelpSubjectiveLiteral) literal).isEpistemicConfirm()) {
+                    confirm.add(translateAllParamAsVariable((PelpSubjectiveLiteral) literal));
+                }
+            });
+        });
+        return confirm;
+    }
+
+    public Set<PelpSubjectiveLiteral> getAllEpistemicDeny(PelpProgram program) {
+        Set<PelpSubjectiveLiteral> deny = new HashSet<>();
+        program.getRules().forEach(rule -> {
+            rule.getBody().forEach(literal -> {
+                if (literal instanceof PelpSubjectiveLiteral && ((PelpSubjectiveLiteral) literal).isEpistemicDeny()) {
+                    deny.add(translateAllParamAsVariable((PelpSubjectiveLiteral) literal));
+                }
+            });
+        });
+        return deny;
+    }
+
+    public PelpSubjectiveLiteral translateAllParamAsVariable(PelpSubjectiveLiteral literal) {
+        List<PelpParam> params = new ArrayList<>();
+        for (Integer i = 0; i != literal.getParams().size(); ++i) {
+            params.add(new PelpParam(PelpParam.VARIABLE, "X" + i.toString()));
+        }
+        return new PelpSubjectiveLiteral(literal.isLeftClose(),
+                literal.isRightClose(),
+                literal.getLeftBound(),
+                literal.getRightBound(),
+                new PelpObjectiveLiteral(literal.getNafCount(),
+                        literal.isNegation(),
+                        literal.getPredicate(),
+                        params));
     }
 
     private List<AspLiteral> translatePositiveBody(PelpRule rule) {
@@ -142,15 +192,15 @@ public class EpistemicReducer implements ProgramTranslator {
     }
 
     private AspLiteral translateSubjectiveLiteral(PelpSubjectiveLiteral literal) {
-        PelpSubjectiveLiteral reduceKNot = reduceKNot(literal);
-        String predicateStr = String.format("_k%s%s%04d%04d%c%s",
-                (reduceKNot.isLeftClose() ? 'c' : 'o'),
-                (reduceKNot.isRightClose() ? 'c' : 'o'),
-                (int) (reduceKNot.getLeftBound() * 1000),
-                (int) (reduceKNot.getRightBound() * 1000),
-                (reduceKNot.isNegation() ? 'f' : 't'),
-                reduceKNot.getPredicate());
-        return new AspLiteral(0, false, predicateStr, translateLiteralParam(reduceKNot.getParams()));
+        String predicateStr = String.format("_k%s%s%04d%04d%c%c%s",
+                (literal.isLeftClose() ? 'c' : 'o'),
+                (literal.isRightClose() ? 'c' : 'o'),
+                (int) (literal.getLeftBound() * 1000),
+                (int) (literal.getRightBound() * 1000),
+                (literal.isNaf() ? 'f' : 't'),
+                (literal.isNegation() ? 'f' : 't'),
+                literal.getPredicate());
+        return new AspLiteral(0, false, predicateStr, translateLiteralParam(literal.getParams()));
     }
 
     private PelpSubjectiveLiteral reduceKNot(PelpSubjectiveLiteral literal) {
@@ -191,13 +241,8 @@ public class EpistemicReducer implements ProgramTranslator {
 
     private AspRule translateSoftConstrain(PelpRule pelpRule) {
         List<AspLiteral> constrainBody = new ArrayList<>();
-        pelpRule.getBody().forEach(literal -> {
-            if (literal instanceof PelpObjectiveLiteral) {
-                constrainBody.add(translateObjectiveLiteral((PelpObjectiveLiteral) literal));
-            } else if (literal instanceof PelpRelation) {
-                constrainBody.add(translateRelation((PelpRelation) literal));
-            }
-        });
-        return new AspRule(constrainBody, (int)(pelpRule.getWeight() * 1000), 1, translateLiteralParam(pelpRule.getVariableSet()));
+        PelpObjectiveLiteral satLiteral = (PelpObjectiveLiteral) pelpRule.getBody().get(0);
+        constrainBody.add(translateObjectiveLiteral(satLiteral));
+        return new AspRule(constrainBody, (int)(pelpRule.getWeight() * 1000), 1, translateLiteralParam(satLiteral.getParams()));
     }
 }
