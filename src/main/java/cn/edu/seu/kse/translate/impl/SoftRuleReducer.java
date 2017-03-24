@@ -176,7 +176,11 @@ public class SoftRuleReducer implements ProgramTranslator {
         List<PelpObjectiveLiteral> headList = Collections.singletonList(headLiteral);
 
         rule.getHead().forEach(head -> {
-            List<PelpLiteral> bodyList = Collections.singletonList(head);
+            List<PelpLiteral> bodyList = new ArrayList<>();
+            bodyList.add(head);
+            rule.getVariableSet().forEach(var -> {
+                bodyList.add(new PelpObjectiveLiteral(0, false, "_herbrand", Collections.singletonList(var)));
+            });
             headRules.add(new PelpRule(headList, bodyList, null));
         });
         return headRules;
