@@ -92,4 +92,10 @@ public class PelpSolverImplTest {
         testProgram(new File("test" + File.separator + "case7.lp"),
                 new File("test" + File.separator + "case7.out"));
     }
+
+    @Test
+    public void testCase8() {
+        testProgram(new File("test" + File.separator + "case8.lp"),
+                new File("test" + File.separator + "case8.out"));
+    }
 }

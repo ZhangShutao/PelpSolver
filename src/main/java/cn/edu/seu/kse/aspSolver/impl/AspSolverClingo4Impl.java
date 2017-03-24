@@ -12,6 +12,7 @@ import cn.edu.seu.kse.model.asp.AnswerSet;
 import cn.edu.seu.kse.model.asp.AspProgram;
 import cn.edu.seu.kse.syntax.parser.AspSyntaxParser;
 import cn.edu.seu.kse.util.CommandLineExecute;
+import cn.edu.seu.kse.util.Logger;
 import org.apache.commons.lang.SystemUtils;
 
 import java.io.*;
@@ -40,7 +41,9 @@ public class AspSolverClingo4Impl implements CommandLineSolver, AspSolver {
         File programFile = null;
         try {
             programFile = saveProgramAsTempFile(program);
+            Logger.info("待推理的ASP程序：\n{}", program);
             String answers = callSolver(programFile, params);
+            Logger.info("ASP推理机输出结果：\n{}", answers);
 
             Set<AnswerSet> answerSets = new HashSet<>();
             resolveReasonResult(answers).forEach(answerSet -> {
