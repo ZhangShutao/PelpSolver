@@ -4,25 +4,20 @@ import cn.edu.seu.kse.aspSolver.AspSolver;
 import cn.edu.seu.kse.aspSolver.impl.AspSolverClingo4Impl;
 import cn.edu.seu.kse.exception.ReasoningErrorException;
 import cn.edu.seu.kse.exception.SyntaxErrorException;
+import cn.edu.seu.kse.exception.TranslateErrorException;
 import cn.edu.seu.kse.exception.UnsatisfiableException;
-import cn.edu.seu.kse.exception.UnsupportedOsTypeException;
-import cn.edu.seu.kse.model.CommandLineOutput;
 import cn.edu.seu.kse.model.asp.AnswerSet;
-import cn.edu.seu.kse.model.asp.AspLiteral;
 import cn.edu.seu.kse.model.asp.AspProgram;
-import cn.edu.seu.kse.model.asp.AspRule;
 import cn.edu.seu.kse.model.pelp.*;
 import cn.edu.seu.kse.pelpSolver.PelpSolver;
-import cn.edu.seu.kse.syntax.parser.AspSyntaxParser;
 import cn.edu.seu.kse.syntax.parser.PelpSyntaxParser;
 import cn.edu.seu.kse.translate.AnswerSet2PossibleWorldTranslator;
 import cn.edu.seu.kse.translate.ProgramTranslator;
 import cn.edu.seu.kse.translate.impl.EpistemicReducer;
 import cn.edu.seu.kse.translate.impl.SoftRuleReducer;
-import cn.edu.seu.kse.util.CommandLineExecute;
 import cn.edu.seu.kse.util.Logger;
 
-import java.io.*;
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -70,10 +65,9 @@ public class PelpSolverImpl implements PelpSolver {
     @Override
     public Set<WorldView> solve(PelpProgram program) throws SyntaxErrorException, ReasoningErrorException {
         Set<WorldView> worldViews = new HashSet<>();
-        AspProgram ungroundedAsp = pelp2Asp(program);
         try {
-            AspProgram groundedAsp = removeEpistemicSelectBody(ungroundedAsp);
-            Set<AnswerSet> answerSets = solveAspProgram(groundedAsp);
+            AspProgram aspProgram = pelp2Asp(program);
+            Set<AnswerSet> answerSets = solveAspProgram(aspProgram);
             Set<WorldView> candidateWorldViews = getCandidateWorldView(answerSets);
             candidateWorldViews.forEach(worldView -> {
                 StringJoiner joiner = new StringJoiner("\n");
@@ -95,8 +89,8 @@ public class PelpSolverImpl implements PelpSolver {
             });
         } catch (UnsatisfiableException e) {
             Logger.info("PELP程序{}对应的ASP程序不可满足。", program.toString());
-        } catch (UnsupportedOsTypeException| IOException e) {
-            Logger.warn("推理过程出错：{}", e.getMessage());
+        } catch (TranslateErrorException e) {
+            Logger.warn("Pelp程序编译出错：{}", e);
         }
         return worldViews;
     }
@@ -175,7 +169,7 @@ public class PelpSolverImpl implements PelpSolver {
      * @return 对应的ASP程序
      * @throws SyntaxErrorException 原程序中存在语法错误
      */
-    public AspProgram pelp2Asp(PelpProgram pelpProgram) throws SyntaxErrorException {
+    public AspProgram pelp2Asp(PelpProgram pelpProgram) throws SyntaxErrorException, TranslateErrorException {
         Logger.info("translating PELP program into ASP program:\n{}", pelpProgram.toString());
         PelpProgram noSoftProgram = (PelpProgram) getSoftReducer().translateProgram(pelpProgram);
         AspProgram aspProgram = (AspProgram) getEpistemicReducer().translateProgram(noSoftProgram);
@@ -274,43 +268,5 @@ public class PelpSolverImpl implements PelpSolver {
 
     private boolean simLess(double a, double b) {
         return b - a > 1e-6;
-    }
-
-    private AspProgram removeEpistemicSelectBody(AspProgram originAsp) throws IOException, UnsupportedOsTypeException {
-        File programFile = File.createTempFile("pelpTemp", ".lp");
-        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(programFile)));
-        writer.write(originAsp.toString());
-        writer.flush();
-
-        List<String> params = Arrays.asList("--mode=gringo", "--text", "--lparse-rewrite", programFile.getAbsolutePath());
-        CommandLineOutput output = CommandLineExecute.callShell("clingo", params);
-        writer.close();
-
-        originAsp.getRules().removeIf(rule -> isEpistemicSelectRule(rule));
-
-        String[] lines = output.getOutput().split("\n");
-        for (String line : lines) {
-            if (!line.contains("#")) {
-                try {
-                    AspRule rule  = AspSyntaxParser.parseRule(line);
-                    if (isEpistemicSelectRule(rule)) {
-                        rule.setBody(new ArrayList<>());
-                        originAsp.getRules().add(rule);
-                    }
-                } catch (SyntaxErrorException e) {
-                    Logger.debug("实例化语法错误：", e);
-                }
-            }
-        }
-        return originAsp;
-    }
-
-    private boolean isEpistemicSelectRule(AspRule rule) {
-        if (rule.getHead().size() == 2) {
-            AspLiteral literal0 = rule.getHead().get(0);
-            AspLiteral literal1 = rule.getHead().get(1);
-            return (literal0.getPredicate().startsWith("_k") &&literal0.getPredicate().equals(literal1.getPredicate()) && literal0.getParams().equals(literal1.getParams()));
-        }
-        return false;
     }
 }

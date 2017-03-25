@@ -1,4 +1,4 @@
-innocent(X) :- K(0,1] not guilty(X), suspect(X).
+innocent(X) :- K[0,1) guilty(X), suspect(X).
 warrant(X) :- K[0.5, 1] guilty(X), suspect(X).
 
 guilty(X) :- witness(X), suspect(X).

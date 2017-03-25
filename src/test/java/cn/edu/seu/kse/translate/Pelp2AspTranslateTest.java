@@ -1,6 +1,7 @@
 package cn.edu.seu.kse.translate;
 
 import cn.edu.seu.kse.exception.SyntaxErrorException;
+import cn.edu.seu.kse.exception.TranslateErrorException;
 import cn.edu.seu.kse.model.asp.AspProgram;
 import cn.edu.seu.kse.model.pelp.PelpProgram;
 import cn.edu.seu.kse.syntax.parser.PelpSyntaxParser;
@@ -26,7 +27,7 @@ public class Pelp2AspTranslateTest {
             AspProgram aspProgram = (AspProgram) epistemicReducer.translateProgram(softReduced);
 
             System.out.println(aspProgram);
-        } catch (SyntaxErrorException e) {
+        } catch (SyntaxErrorException | TranslateErrorException e) {
             e.printStackTrace();
             fail(e.getMessage());
         }
@@ -42,7 +43,7 @@ public class Pelp2AspTranslateTest {
             AspProgram aspProgram = (AspProgram) epistemicReducer.translateProgram(program);
 
             System.out.println(aspProgram);
-        } catch (SyntaxErrorException e) {
+        } catch (SyntaxErrorException | TranslateErrorException e) {
             e.printStackTrace();
         }
     }

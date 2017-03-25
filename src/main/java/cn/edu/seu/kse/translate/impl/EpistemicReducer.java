@@ -1,11 +1,18 @@
 package cn.edu.seu.kse.translate.impl;
 
+import cn.edu.seu.kse.exception.SyntaxErrorException;
+import cn.edu.seu.kse.exception.TranslateErrorException;
+import cn.edu.seu.kse.exception.UnsupportedOsTypeException;
+import cn.edu.seu.kse.model.CommandLineOutput;
 import cn.edu.seu.kse.model.ObjectModel;
 import cn.edu.seu.kse.model.asp.*;
 import cn.edu.seu.kse.model.pelp.*;
+import cn.edu.seu.kse.syntax.parser.AspSyntaxParser;
 import cn.edu.seu.kse.translate.ProgramTranslator;
+import cn.edu.seu.kse.util.CommandLineExecute;
 import cn.edu.seu.kse.util.Logger;
 
+import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
@@ -17,7 +24,7 @@ import java.util.*;
 public class EpistemicReducer implements ProgramTranslator {
 
     @Override
-    public Set<ObjectModel> translate(ObjectModel objectModel) {
+    public Set<ObjectModel> translate(ObjectModel objectModel) throws TranslateErrorException {
         Set<ObjectModel> result = new HashSet<>();
         if (objectModel instanceof PelpProgram) {
             result.add(translateProgram(objectModel));
@@ -36,7 +43,7 @@ public class EpistemicReducer implements ProgramTranslator {
     }
 
     @Override
-    public ObjectModel translateProgram(ObjectModel program) {
+    public ObjectModel translateProgram(ObjectModel program) throws TranslateErrorException {
         Logger.debug("reducing subjective literals...\n{}", program.toString());
         Set<AspRule> rules = new HashSet<>();
         ((PelpProgram) program).getRules().forEach(pelpRule -> {
@@ -50,9 +57,15 @@ public class EpistemicReducer implements ProgramTranslator {
 
         rules.addAll(generateEpistemicConstrain((PelpProgram) program));
 
-        AspProgram result = new AspProgram(new ArrayList<>(rules));
-        Logger.debug("subjective literal reducing finished.\n{}", result.toString());
-        return result;
+        AspProgram ungroundedProgram = new AspProgram(new ArrayList<>(rules));
+        try {
+            AspProgram result = removeEpistemicSelectBody(ungroundedProgram);
+            Logger.debug("subjective literal reducing finished.\n{}", result);
+            return result;
+        } catch (IOException | UnsupportedOsTypeException e) {
+            Logger.warn("程序实例化出错：{}", e);
+            throw new TranslateErrorException(e.getMessage());
+        }
     }
 
     private AspRule getEpistemicConstrain(PelpSubjectiveLiteral literal, boolean negation, Integer addNaf) {
@@ -67,10 +80,10 @@ public class EpistemicReducer implements ProgramTranslator {
         Set<AspRule> constrainRules = new HashSet<>();
 
         try {
-            Object[][] invokeList = {{PelpSubjectiveLiteral.class.getMethod("isKcc00"), false, 0},
-                                     {PelpSubjectiveLiteral.class.getMethod("isKcc11"), true, 1},
-                                     {PelpSubjectiveLiteral.class.getMethod("isKco01"), true, 1},
-                                     {PelpSubjectiveLiteral.class.getMethod("isKoc01"), false, 2}};
+            Object[][] invokeList = {{PelpSubjectiveLiteral.class.getMethod("isKcc11"), false, 1},
+                                     {PelpSubjectiveLiteral.class.getMethod("isKoc01"), true, 1},
+                                     {PelpSubjectiveLiteral.class.getMethod("isKco01"), true, 2},
+                                     {PelpSubjectiveLiteral.class.getMethod("isKc111"), false, 0}};
 
             for (Object[] invokeItem : invokeList) {
                 program.getRules().forEach(rule -> {
@@ -204,5 +217,43 @@ public class EpistemicReducer implements ProgramTranslator {
         PelpObjectiveLiteral satLiteral = (PelpObjectiveLiteral) pelpRule.getBody().get(0);
         constrainBody.add(translateObjectiveLiteral(satLiteral));
         return new AspRule(constrainBody, (int)(pelpRule.getWeight() * 1000), 1, translateLiteralParam(satLiteral.getParams()));
+    }
+
+    private boolean isEpistemicSelectRule(AspRule rule) {
+        if (rule.getHead().size() == 2) {
+            AspLiteral literal0 = rule.getHead().get(0);
+            AspLiteral literal1 = rule.getHead().get(1);
+            return (literal0.getPredicate().startsWith("_k") &&literal0.getPredicate().equals(literal1.getPredicate()) && literal0.getParams().equals(literal1.getParams()));
+        }
+        return false;
+    }
+
+    private AspProgram removeEpistemicSelectBody(AspProgram originAsp) throws IOException, UnsupportedOsTypeException {
+        File programFile = File.createTempFile("pelpTemp", ".lp");
+        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(programFile)));
+        writer.write(originAsp.toString());
+        writer.flush();
+
+        List<String> params = Arrays.asList("--mode=gringo", "--text", "--lparse-rewrite", programFile.getAbsolutePath());
+        CommandLineOutput output = CommandLineExecute.callShell("clingo", params);
+        writer.close();
+
+        originAsp.getRules().removeIf(this::isEpistemicSelectRule);
+
+        String[] lines = output.getOutput().split("\n");
+        for (String line : lines) {
+            if (!line.contains("#")) {
+                try {
+                    AspRule rule  = AspSyntaxParser.parseRule(line);
+                    if (isEpistemicSelectRule(rule)) {
+                        rule.setBody(new ArrayList<>());
+                        originAsp.getRules().add(rule);
+                    }
+                } catch (SyntaxErrorException e) {
+                    Logger.debug("实例化语法错误：", e);
+                }
+            }
+        }
+        return originAsp;
     }
 }
