@@ -55,7 +55,7 @@ public class EpistemicReducer implements ProgramTranslator {
     private AspRule getEpistemicConstrain(PelpSubjectiveLiteral literal) {
         AspLiteral aspLiteral = translateSubjectiveLiteral(literal);
         AspLiteral contrast = translateObjectiveLiteral(literal.getObjectiveLiteral());
-        if (literal.isEpistemicConfirm()) {
+        if (literal.isKcc11()) {
             contrast.setNafCount(contrast.getNafCount() ^ 1);
         }
         return new AspRule(new ArrayList<>(), Arrays.asList(aspLiteral, contrast));
@@ -65,7 +65,7 @@ public class EpistemicReducer implements ProgramTranslator {
         Set<PelpSubjectiveLiteral> confirm = new HashSet<>();
         program.getRules().forEach(rule -> {
             rule.getBody().forEach(literal -> {
-                if (literal instanceof PelpSubjectiveLiteral && ((PelpSubjectiveLiteral) literal).isEpistemicConfirm()) {
+                if (literal instanceof PelpSubjectiveLiteral && ((PelpSubjectiveLiteral) literal).isKcc11()) {
                     confirm.add(translateAllParamAsVariable((PelpSubjectiveLiteral) literal));
                 }
             });
@@ -77,7 +77,7 @@ public class EpistemicReducer implements ProgramTranslator {
         Set<PelpSubjectiveLiteral> deny = new HashSet<>();
         program.getRules().forEach(rule -> {
             rule.getBody().forEach(literal -> {
-                if (literal instanceof PelpSubjectiveLiteral && ((PelpSubjectiveLiteral) literal).isEpistemicDeny()) {
+                if (literal instanceof PelpSubjectiveLiteral && ((PelpSubjectiveLiteral) literal).isKcc00()) {
                     deny.add(translateAllParamAsVariable((PelpSubjectiveLiteral) literal));
                 }
             });
@@ -123,7 +123,7 @@ public class EpistemicReducer implements ProgramTranslator {
             fact.add(getNegativeEpistemicLiteral(literal));
 
             List<AspLiteral> condition = new ArrayList<>();
-            if (literal.isEpistemicConfirm()) {
+            if (literal.isKcc11()) {
                 condition.add(translateObjectiveLiteral(literal.getObjectiveLiteral()));
             } else if (!literal.getVariableSet().isEmpty()) {
                 condition.addAll(positiveBody);
@@ -149,7 +149,7 @@ public class EpistemicReducer implements ProgramTranslator {
                 commonBody.add(translateRelation((PelpRelation) literal));
             } else if (literal instanceof PelpSubjectiveLiteral) {
                 commonBody.add(translateSubjectiveLiteral((PelpSubjectiveLiteral) literal));
-                if (((PelpSubjectiveLiteral) literal).isEpistemicDeny()) {
+                if (((PelpSubjectiveLiteral) literal).isKcc00()) {
                     AspLiteral translatedLiteral = translateObjectiveLiteral(((PelpSubjectiveLiteral) literal).getObjectiveLiteral());
                     translatedLiteral.setNafCount(1);
                     commonBody.add(translatedLiteral);
@@ -169,7 +169,7 @@ public class EpistemicReducer implements ProgramTranslator {
 
         List<PelpSubjectiveLiteral> subjectiveLiterals = new ArrayList<>();
         rule.getSubjectiveLiterals().forEach(subjectiveLiteral -> {
-            if (!subjectiveLiteral.isEpistemicConfirm() && !subjectiveLiteral.isEpistemicDeny()) {
+            if (!subjectiveLiteral.isKcc11() && !subjectiveLiteral.isKcc00()) {
                 subjectiveLiterals.add(subjectiveLiteral);
             }
         });

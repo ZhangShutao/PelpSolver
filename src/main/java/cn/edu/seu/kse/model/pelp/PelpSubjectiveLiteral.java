@@ -105,14 +105,50 @@ public class PelpSubjectiveLiteral extends PelpLiteral {
         return false;
     }
 
-    public boolean isEpistemicConfirm() {
+    /**
+     * 判断当前主观字是否是形如K[1,1]o的主观字
+     * @return true 或 false
+     */
+    public boolean isKcc11() {
         return isLeftClose() && isRightClose() &&
                 Math.abs(getLeftBound() - 1) < 1e-6 && Math.abs(getRightBound() - 1) < 1e-6;
     }
 
-    public boolean isEpistemicDeny() {
+    /**
+     * 判断当前主观字是否是形如K[0,0]o的主观字
+     * @return true 或 false
+     */
+    public boolean isKcc00() {
         return isLeftClose() && isRightClose() &&
-                Math.abs(getLeftBound() - 0) < 1e-6 && Math.abs(getRightBound() - 0) < 1e-6;
+                Math.abs(getLeftBound()) < 1e-6 && Math.abs(getRightBound()) < 1e-6;
+    }
+
+    /**
+     * 判断当前主观字是否是形如K[1,1)o的主观字
+     * @return true 或 false
+     */
+    public boolean isKco01() {
+        return isLeftClose() && !isRightClose() &&
+                Math.abs(getLeftBound()) < 1e-6 && Math.abs(getRightBound() - 1) < 1e-6;
+    }
+
+    /**
+     * 判断当前主观字是否是形如K(1,1]o的主观字
+     * @return true 或 false
+     */
+    public boolean isKoc01() {
+        return !isLeftClose() && isRightClose() &&
+                Math.abs(getLeftBound()) < 1e-6 && Math.abs(getRightBound() - 1) < 1e-6;
+    }
+
+    /**
+     * 判断当前主观字是否是除了K[1,1]o,K[0,0]o,K(0,1]o,K[0,1)o之外的主观字
+     * @return true 或 false
+     */
+    public boolean isNormal() {
+        return !(!isLeftClose() && !isRightClose() &&
+                    Math.abs(getLeftBound()) < 1e-6 && Math.abs(getRightBound() - 1) < 1e-6)
+                || (getLeftBound()> 1e-6 && getRightBound() < (1 - 1e-6));
     }
 
     public PelpObjectiveLiteral getObjectiveLiteral() {
