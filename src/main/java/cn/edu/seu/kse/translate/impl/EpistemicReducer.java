@@ -26,7 +26,7 @@ public class EpistemicReducer implements ProgramTranslator {
             if (pelpRule.isSoft()) {
                 result.add(translateSoftConstrain(pelpRule));
             } else {
-                result.addAll(replaceEpistemicLiteral(pelpRule));
+                result.add(replaceEpistemicLiteral(pelpRule));
             }
             result.addAll(getEpistemicSelectRules(pelpRule));
         } else {
@@ -43,7 +43,7 @@ public class EpistemicReducer implements ProgramTranslator {
             if (pelpRule.isSoft()) {
                 rules.add(translateSoftConstrain(pelpRule));
             } else {
-                rules.addAll(replaceEpistemicLiteral(pelpRule));
+                rules.add(replaceEpistemicLiteral(pelpRule));
             }
             rules.addAll(getEpistemicSelectRules(pelpRule));
         });
@@ -141,60 +141,29 @@ public class EpistemicReducer implements ProgramTranslator {
         return selectRules;
     }
 
-    /**
-     * 获得主观字替换过程中一条规则的替换结果中规则体部的共同部分
-     * @param body 原pelp规则的体部
-     * @return 共同体部的ASP字列表
-     */
-    private List<AspLiteral> getCommonBodyInEpistemicLiteralReplacing(List<PelpLiteral> body) {
-        List<AspLiteral> commonBody = new ArrayList<>();
-        body.forEach(literal -> {
-            if (literal instanceof PelpObjectiveLiteral) {
-                commonBody.add(translateObjectiveLiteral((PelpObjectiveLiteral) literal));
-            } else if (literal instanceof PelpRelation) {
-                commonBody.add(translateRelation((PelpRelation) literal));
-            } else if (literal instanceof PelpSubjectiveLiteral) {
-                commonBody.add(translateSubjectiveLiteral((PelpSubjectiveLiteral) literal));
-                if (((PelpSubjectiveLiteral) literal).isKcc00()) {
-                    AspLiteral translatedLiteral = translateObjectiveLiteral(((PelpSubjectiveLiteral) literal).getObjectiveLiteral());
-                    translatedLiteral.setNafCount(1);
-                    commonBody.add(translatedLiteral);
-                }
-            }
-        });
-        return commonBody;
-    }
-
-    private Set<AspRule> replaceEpistemicLiteral(PelpRule rule) {
-        Set<AspRule> rules = new HashSet<>();
-
+    private AspRule replaceEpistemicLiteral(PelpRule rule) {
         List<AspLiteral> head = new ArrayList<>();
-        rule.getHead().forEach(literal -> head.add(translateObjectiveLiteral(literal)));
+        rule.getHead().forEach(pelpLiteral -> head.add(translateObjectiveLiteral(pelpLiteral)));
 
-        List<AspLiteral> commonBody = getCommonBodyInEpistemicLiteralReplacing(rule.getBody());
-
-        List<PelpSubjectiveLiteral> subjectiveLiterals = new ArrayList<>();
-        rule.getSubjectiveLiterals().forEach(subjectiveLiteral -> {
-            if (!subjectiveLiteral.isKcc11() && !subjectiveLiteral.isKcc00()) {
-                subjectiveLiterals.add(subjectiveLiteral);
+        List<AspLiteral> body = new ArrayList<>();
+        rule.getBody().forEach(pelpLiteral -> {
+            if (pelpLiteral instanceof PelpSubjectiveLiteral) {
+                body.add(translateSubjectiveLiteral((PelpSubjectiveLiteral)pelpLiteral)); // 添加 kwo
+                if (((PelpSubjectiveLiteral) pelpLiteral).isKcc11()) { // 添加 o
+                    body.add(translateObjectiveLiteral(((PelpSubjectiveLiteral) pelpLiteral).getObjectiveLiteral()));
+                } else if (((PelpSubjectiveLiteral) pelpLiteral).isKcc00()) { // 添加 not o
+                    AspLiteral addLiteral = translateObjectiveLiteral(((PelpSubjectiveLiteral) pelpLiteral).getObjectiveLiteral());
+                    addLiteral.setNafCount(addLiteral.getNafCount() + 1);
+                    body.add(addLiteral);
+                }
+            } else if (pelpLiteral instanceof PelpObjectiveLiteral) {
+                body.add(translateObjectiveLiteral((PelpObjectiveLiteral) pelpLiteral));
+            } else if (pelpLiteral instanceof PelpRelation) {
+                body.add(translateRelation((PelpRelation) pelpLiteral));
             }
         });
 
-        for (int i = 0; i != 1 << subjectiveLiterals.size(); ++i) {
-            List<AspLiteral> body = new ArrayList<>();
-            body.addAll(commonBody);
-            for (int j = 0, k = i; j != subjectiveLiterals.size(); ++j, k >>= 1) {
-                PelpObjectiveLiteral objectiveLiteral = subjectiveLiterals.get(j).getObjectiveLiteral();
-                AspLiteral literal = translateObjectiveLiteral(objectiveLiteral);
-                if ((k & 1) == 1) {
-                    literal.setNafCount(objectiveLiteral.getNafCount() + 1);
-                }
-                body.add(literal);
-            }
-            rules.add(new AspRule(head, body));
-        }
-
-        return rules;
+        return new AspRule(head, body);
     }
 
     private AspLiteral translateSubjectiveLiteral(PelpSubjectiveLiteral literal) {
@@ -207,21 +176,6 @@ public class EpistemicReducer implements ProgramTranslator {
                 (literal.isNegation() ? 'f' : 't'),
                 literal.getPredicate());
         return new AspLiteral(0, false, predicateStr, translateLiteralParam(literal.getParams()));
-    }
-
-    private PelpSubjectiveLiteral reduceKNot(PelpSubjectiveLiteral literal) {
-        if (literal.isNaf()) {
-            PelpObjectiveLiteral objectiveLiteral = new PelpObjectiveLiteral(0, literal.isNegation(), literal.getPredicate(), literal.getParams());
-            return new PelpSubjectiveLiteral(
-                    literal.isRightClose(),
-                    literal.isLeftClose(),
-                    1 - literal.getRightBound(),
-                    1 - literal.getLeftBound(),
-                    objectiveLiteral
-            );
-        } else {
-            return literal;
-        }
     }
 
     private AspLiteral translateObjectiveLiteral(PelpObjectiveLiteral literal) {
