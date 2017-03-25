@@ -43,6 +43,19 @@ public class AspVisitorImpl extends AspBaseVisitor {
     }
 
     @Override
+    public Object visitCompare_operator(AspParser.Compare_operatorContext ctx) {
+        return ctx.getText();
+    }
+
+    @Override
+    public Object visitRelation(AspParser.RelationContext ctx) {
+        AspParam left = (AspParam) visit(ctx.param(0));
+        AspParam right = (AspParam) visit(ctx.param(1));
+        String operator = (String) visit(ctx.compare_operator());
+        return new AspRelation(left, operator, right);
+    }
+
+    @Override
     public Object visitLiteral(AspParser.LiteralContext ctx) {
         int nafCount = ctx.NAF().size();
         boolean isNegation = ctx.MINUS() != null;
@@ -63,7 +76,12 @@ public class AspVisitorImpl extends AspBaseVisitor {
     @Override
     public Object visitRule_body(AspParser.Rule_bodyContext ctx) {
         List<AspLiteral> literals = new ArrayList<>();
-        ctx.literal().forEach(literalContext -> literals.add((AspLiteral) visit(literalContext)));
+        for (int i = 0; i != ctx.getChildCount(); ++i) {
+            if (ctx.getChild(i) instanceof AspParser.LiteralContext
+                    || ctx.getChild(i) instanceof AspParser.RelationContext) {
+                literals.add((AspLiteral) visit(ctx.getChild(i)));
+            }
+        }
         return literals;
     }
 

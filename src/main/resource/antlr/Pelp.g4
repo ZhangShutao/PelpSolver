@@ -23,6 +23,19 @@ LCBRACK : '{';
 //右花括号
 RCBRACK : '}';
 
+// 小于
+LESS : '<';
+// 大于
+GREATER : '>';
+// 等于
+EQUAL : '=';
+// 不等于
+NOTEQUAL : '!=';
+// 小于等于
+LESSEQ : '<=';
+// 大于等于
+GREATEREQ : '>=';
+
 //逗号
 COMMA : ',';
 //点号
@@ -77,16 +90,20 @@ var : VAR | KNOW;
 // 谓词/函数参数
 param : (integer | string | predicate) # const_param
       | var                            # var_param;
+// 比较操作符
+compare_operator : (LESS | LESSEQ | GREATER | GREATEREQ | EQUAL | NOTEQUAL);
 
+// 关系表达式
+relation : param compare_operator param;
 // 客观字
-objective_literal : NAF? MINUS? predicate (LPAREN (param (COMMA param)*)? RPAREN)?;
+objective_literal : (NAF)* MINUS? predicate (LPAREN (param (COMMA param)*)? RPAREN)?;
 // 主观字
 subjective_literal : KNOW (LPAREN | LSBRACK) decimal COMMA decimal (RPAREN | RSBRACK) objective_literal;
 
 // 规则首部
 rule_head : objective_literal (VBAR objective_literal)*;
 // 规则体部
-rule_body : (objective_literal | subjective_literal) (COMMA (objective_literal | subjective_literal))*;
+rule_body : (objective_literal | subjective_literal | relation) (COMMA (objective_literal | subjective_literal | relation))*;
 
 hard_rule : rule_head DOT                # fact_rule
           | IF rule_body DOT             # constrain_rule

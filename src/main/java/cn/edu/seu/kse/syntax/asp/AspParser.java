@@ -17,25 +17,30 @@ public class AspParser extends Parser {
 	protected static final PredictionContextCache _sharedContextCache =
 		new PredictionContextCache();
 	public static final int
-		LPAREN=1, RPAREN=2, LSBRACK=3, RSBRACK=4, LCBRACK=5, RCBRACK=6, COMMA=7, 
-		DOT=8, VBAR=9, COLON=10, MINUS=11, NAF=12, IF=13, SOFT_IF=14, AT=15, DECIMAL=16, 
-		POSITIVE_INT=17, ZERO=18, STRING=19, PREDICATE=20, VAR=21, WS=22, LINE_COMMENT=23;
+		LPAREN=1, RPAREN=2, LSBRACK=3, RSBRACK=4, LCBRACK=5, RCBRACK=6, LESS=7, 
+		GREATER=8, EQUAL=9, NOTEQUAL=10, LESSEQ=11, GREATEREQ=12, COMMA=13, DOT=14, 
+		VBAR=15, COLON=16, SEMI=17, MINUS=18, NAF=19, IF=20, SOFT_IF=21, AT=22, 
+		DECIMAL=23, POSITIVE_INT=24, ZERO=25, STRING=26, PREDICATE=27, VAR=28, 
+		WS=29, LINE_COMMENT=30;
 	public static final int
 		RULE_integer = 0, RULE_string = 1, RULE_predicate = 2, RULE_var = 3, RULE_param = 4, 
-		RULE_literal = 5, RULE_rule_head = 6, RULE_rule_body = 7, RULE_reasoning_rule = 8, 
-		RULE_program = 9, RULE_answer_set = 10;
+		RULE_compare_operator = 5, RULE_relation = 6, RULE_literal = 7, RULE_rule_head = 8, 
+		RULE_rule_body = 9, RULE_reasoning_rule = 10, RULE_program = 11, RULE_answer_set = 12;
 	public static final String[] ruleNames = {
-		"integer", "string", "predicate", "var", "param", "literal", "rule_head", 
-		"rule_body", "reasoning_rule", "program", "answer_set"
+		"integer", "string", "predicate", "var", "param", "compare_operator", 
+		"relation", "literal", "rule_head", "rule_body", "reasoning_rule", "program", 
+		"answer_set"
 	};
 
 	private static final String[] _LITERAL_NAMES = {
-		null, "'('", "')'", "'['", "']'", "'{'", "'}'", "','", "'.'", "'|'", "':'", 
-		"'-'", "'not'", "':-'", "':~'", "'@'", null, null, "'0'"
+		null, "'('", "')'", "'['", "']'", "'{'", "'}'", "'<'", "'>'", "'='", "'!='", 
+		"'<='", "'>='", "','", "'.'", "'|'", "':'", "';'", "'-'", "'not'", "':-'", 
+		"':~'", "'@'", null, null, "'0'"
 	};
 	private static final String[] _SYMBOLIC_NAMES = {
 		null, "LPAREN", "RPAREN", "LSBRACK", "RSBRACK", "LCBRACK", "RCBRACK", 
-		"COMMA", "DOT", "VBAR", "COLON", "MINUS", "NAF", "IF", "SOFT_IF", "AT", 
+		"LESS", "GREATER", "EQUAL", "NOTEQUAL", "LESSEQ", "GREATEREQ", "COMMA", 
+		"DOT", "VBAR", "COLON", "SEMI", "MINUS", "NAF", "IF", "SOFT_IF", "AT", 
 		"DECIMAL", "POSITIVE_INT", "ZERO", "STRING", "PREDICATE", "VAR", "WS", 
 		"LINE_COMMENT"
 	};
@@ -118,16 +123,16 @@ public class AspParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(23);
+			setState(27);
 			_la = _input.LA(1);
 			if (_la==MINUS) {
 				{
-				setState(22);
+				setState(26);
 				match(MINUS);
 				}
 			}
 
-			setState(25);
+			setState(29);
 			_la = _input.LA(1);
 			if ( !(_la==POSITIVE_INT || _la==ZERO) ) {
 			_errHandler.recoverInline(this);
@@ -174,7 +179,7 @@ public class AspParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(27);
+			setState(31);
 			match(STRING);
 			}
 		}
@@ -216,7 +221,7 @@ public class AspParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(29);
+			setState(33);
 			match(PREDICATE);
 			}
 		}
@@ -258,7 +263,7 @@ public class AspParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(31);
+			setState(35);
 			match(VAR);
 			}
 		}
@@ -333,7 +338,7 @@ public class AspParser extends Parser {
 		ParamContext _localctx = new ParamContext(_ctx, getState());
 		enterRule(_localctx, 8, RULE_param);
 		try {
-			setState(39);
+			setState(43);
 			switch (_input.LA(1)) {
 			case MINUS:
 			case POSITIVE_INT:
@@ -343,25 +348,25 @@ public class AspParser extends Parser {
 				_localctx = new Const_paramContext(_localctx);
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(36);
+				setState(40);
 				switch (_input.LA(1)) {
 				case MINUS:
 				case POSITIVE_INT:
 				case ZERO:
 					{
-					setState(33);
+					setState(37);
 					integer();
 					}
 					break;
 				case STRING:
 					{
-					setState(34);
+					setState(38);
 					string();
 					}
 					break;
 				case PREDICATE:
 					{
-					setState(35);
+					setState(39);
 					predicate();
 					}
 					break;
@@ -374,12 +379,119 @@ public class AspParser extends Parser {
 				_localctx = new Var_paramContext(_localctx);
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(38);
+				setState(42);
 				var();
 				}
 				break;
 			default:
 				throw new NoViableAltException(this);
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			exitRule();
+		}
+		return _localctx;
+	}
+
+	public static class Compare_operatorContext extends ParserRuleContext {
+		public TerminalNode LESS() { return getToken(AspParser.LESS, 0); }
+		public TerminalNode LESSEQ() { return getToken(AspParser.LESSEQ, 0); }
+		public TerminalNode GREATER() { return getToken(AspParser.GREATER, 0); }
+		public TerminalNode GREATEREQ() { return getToken(AspParser.GREATEREQ, 0); }
+		public TerminalNode EQUAL() { return getToken(AspParser.EQUAL, 0); }
+		public TerminalNode NOTEQUAL() { return getToken(AspParser.NOTEQUAL, 0); }
+		public Compare_operatorContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_compare_operator; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof AspListener ) ((AspListener)listener).enterCompare_operator(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof AspListener ) ((AspListener)listener).exitCompare_operator(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof AspVisitor ) return ((AspVisitor<? extends T>)visitor).visitCompare_operator(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+
+	public final Compare_operatorContext compare_operator() throws RecognitionException {
+		Compare_operatorContext _localctx = new Compare_operatorContext(_ctx, getState());
+		enterRule(_localctx, 10, RULE_compare_operator);
+		int _la;
+		try {
+			enterOuterAlt(_localctx, 1);
+			{
+			setState(45);
+			_la = _input.LA(1);
+			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << LESS) | (1L << GREATER) | (1L << EQUAL) | (1L << NOTEQUAL) | (1L << LESSEQ) | (1L << GREATEREQ))) != 0)) ) {
+			_errHandler.recoverInline(this);
+			} else {
+				consume();
+			}
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			exitRule();
+		}
+		return _localctx;
+	}
+
+	public static class RelationContext extends ParserRuleContext {
+		public List<ParamContext> param() {
+			return getRuleContexts(ParamContext.class);
+		}
+		public ParamContext param(int i) {
+			return getRuleContext(ParamContext.class,i);
+		}
+		public Compare_operatorContext compare_operator() {
+			return getRuleContext(Compare_operatorContext.class,0);
+		}
+		public RelationContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_relation; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof AspListener ) ((AspListener)listener).enterRelation(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof AspListener ) ((AspListener)listener).exitRelation(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof AspVisitor ) return ((AspVisitor<? extends T>)visitor).visitRelation(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+
+	public final RelationContext relation() throws RecognitionException {
+		RelationContext _localctx = new RelationContext(_ctx, getState());
+		enterRule(_localctx, 12, RULE_relation);
+		try {
+			enterOuterAlt(_localctx, 1);
+			{
+			setState(47);
+			param();
+			setState(48);
+			compare_operator();
+			setState(49);
+			param();
 			}
 		}
 		catch (RecognitionException re) {
@@ -435,68 +547,68 @@ public class AspParser extends Parser {
 
 	public final LiteralContext literal() throws RecognitionException {
 		LiteralContext _localctx = new LiteralContext(_ctx, getState());
-		enterRule(_localctx, 10, RULE_literal);
+		enterRule(_localctx, 14, RULE_literal);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(44);
+			setState(54);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while (_la==NAF) {
 				{
 				{
-				setState(41);
+				setState(51);
 				match(NAF);
 				}
 				}
-				setState(46);
+				setState(56);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
-			setState(48);
+			setState(58);
 			_la = _input.LA(1);
 			if (_la==MINUS) {
 				{
-				setState(47);
+				setState(57);
 				match(MINUS);
 				}
 			}
 
-			setState(50);
+			setState(60);
 			predicate();
-			setState(63);
+			setState(73);
 			_la = _input.LA(1);
 			if (_la==LPAREN) {
 				{
-				setState(51);
+				setState(61);
 				match(LPAREN);
-				setState(60);
+				setState(70);
 				_la = _input.LA(1);
 				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << MINUS) | (1L << POSITIVE_INT) | (1L << ZERO) | (1L << STRING) | (1L << PREDICATE) | (1L << VAR))) != 0)) {
 					{
-					setState(52);
+					setState(62);
 					param();
-					setState(57);
+					setState(67);
 					_errHandler.sync(this);
 					_la = _input.LA(1);
 					while (_la==COMMA) {
 						{
 						{
-						setState(53);
+						setState(63);
 						match(COMMA);
-						setState(54);
+						setState(64);
 						param();
 						}
 						}
-						setState(59);
+						setState(69);
 						_errHandler.sync(this);
 						_la = _input.LA(1);
 					}
 					}
 				}
 
-				setState(62);
+				setState(72);
 				match(RPAREN);
 				}
 			}
@@ -525,6 +637,10 @@ public class AspParser extends Parser {
 		public TerminalNode VBAR(int i) {
 			return getToken(AspParser.VBAR, i);
 		}
+		public List<TerminalNode> SEMI() { return getTokens(AspParser.SEMI); }
+		public TerminalNode SEMI(int i) {
+			return getToken(AspParser.SEMI, i);
+		}
 		public Rule_headContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -546,26 +662,31 @@ public class AspParser extends Parser {
 
 	public final Rule_headContext rule_head() throws RecognitionException {
 		Rule_headContext _localctx = new Rule_headContext(_ctx, getState());
-		enterRule(_localctx, 12, RULE_rule_head);
+		enterRule(_localctx, 16, RULE_rule_head);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(65);
+			setState(75);
 			literal();
-			setState(70);
+			setState(80);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			while (_la==VBAR) {
+			while (_la==VBAR || _la==SEMI) {
 				{
 				{
-				setState(66);
-				match(VBAR);
-				setState(67);
+				setState(76);
+				_la = _input.LA(1);
+				if ( !(_la==VBAR || _la==SEMI) ) {
+				_errHandler.recoverInline(this);
+				} else {
+					consume();
+				}
+				setState(77);
 				literal();
 				}
 				}
-				setState(72);
+				setState(82);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
@@ -589,9 +710,19 @@ public class AspParser extends Parser {
 		public LiteralContext literal(int i) {
 			return getRuleContext(LiteralContext.class,i);
 		}
+		public List<RelationContext> relation() {
+			return getRuleContexts(RelationContext.class);
+		}
+		public RelationContext relation(int i) {
+			return getRuleContext(RelationContext.class,i);
+		}
 		public List<TerminalNode> COMMA() { return getTokens(AspParser.COMMA); }
 		public TerminalNode COMMA(int i) {
 			return getToken(AspParser.COMMA, i);
+		}
+		public List<TerminalNode> SEMI() { return getTokens(AspParser.SEMI); }
+		public TerminalNode SEMI(int i) {
+			return getToken(AspParser.SEMI, i);
 		}
 		public Rule_bodyContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -614,26 +745,59 @@ public class AspParser extends Parser {
 
 	public final Rule_bodyContext rule_body() throws RecognitionException {
 		Rule_bodyContext _localctx = new Rule_bodyContext(_ctx, getState());
-		enterRule(_localctx, 14, RULE_rule_body);
+		enterRule(_localctx, 18, RULE_rule_body);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(73);
-			literal();
-			setState(78);
+			setState(85);
 			_errHandler.sync(this);
-			_la = _input.LA(1);
-			while (_la==COMMA) {
+			switch ( getInterpreter().adaptivePredict(_input,9,_ctx) ) {
+			case 1:
 				{
-				{
-				setState(74);
-				match(COMMA);
-				setState(75);
+				setState(83);
 				literal();
 				}
+				break;
+			case 2:
+				{
+				setState(84);
+				relation();
 				}
-				setState(80);
+				break;
+			}
+			setState(94);
+			_errHandler.sync(this);
+			_la = _input.LA(1);
+			while (_la==COMMA || _la==SEMI) {
+				{
+				{
+				setState(87);
+				_la = _input.LA(1);
+				if ( !(_la==COMMA || _la==SEMI) ) {
+				_errHandler.recoverInline(this);
+				} else {
+					consume();
+				}
+				setState(90);
+				_errHandler.sync(this);
+				switch ( getInterpreter().adaptivePredict(_input,10,_ctx) ) {
+				case 1:
+					{
+					setState(88);
+					literal();
+					}
+					break;
+				case 2:
+					{
+					setState(89);
+					relation();
+					}
+					break;
+				}
+				}
+				}
+				setState(96);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
@@ -769,19 +933,19 @@ public class AspParser extends Parser {
 
 	public final Reasoning_ruleContext reasoning_rule() throws RecognitionException {
 		Reasoning_ruleContext _localctx = new Reasoning_ruleContext(_ctx, getState());
-		enterRule(_localctx, 16, RULE_reasoning_rule);
+		enterRule(_localctx, 20, RULE_reasoning_rule);
 		int _la;
 		try {
-			setState(111);
+			setState(127);
 			_errHandler.sync(this);
-			switch ( getInterpreter().adaptivePredict(_input,12,_ctx) ) {
+			switch ( getInterpreter().adaptivePredict(_input,14,_ctx) ) {
 			case 1:
 				_localctx = new Fact_ruleContext(_localctx);
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(81);
+				setState(97);
 				rule_head();
-				setState(82);
+				setState(98);
 				match(DOT);
 				}
 				break;
@@ -789,11 +953,11 @@ public class AspParser extends Parser {
 				_localctx = new Constrain_ruleContext(_localctx);
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(84);
+				setState(100);
 				match(IF);
-				setState(85);
+				setState(101);
 				rule_body();
-				setState(86);
+				setState(102);
 				match(DOT);
 				}
 				break;
@@ -801,13 +965,13 @@ public class AspParser extends Parser {
 				_localctx = new Normal_ruleContext(_localctx);
 				enterOuterAlt(_localctx, 3);
 				{
-				setState(88);
+				setState(104);
 				rule_head();
-				setState(89);
+				setState(105);
 				match(IF);
-				setState(90);
+				setState(106);
 				rule_body();
-				setState(91);
+				setState(107);
 				match(DOT);
 				}
 				break;
@@ -815,44 +979,44 @@ public class AspParser extends Parser {
 				_localctx = new Soft_constrainContext(_localctx);
 				enterOuterAlt(_localctx, 4);
 				{
-				setState(93);
+				setState(109);
 				match(SOFT_IF);
-				setState(94);
+				setState(110);
 				rule_body();
-				setState(95);
+				setState(111);
 				match(DOT);
-				setState(96);
+				setState(112);
 				match(LSBRACK);
-				setState(97);
+				setState(113);
 				integer();
-				setState(100);
+				setState(116);
 				_la = _input.LA(1);
 				if (_la==AT) {
 					{
-					setState(98);
+					setState(114);
 					match(AT);
-					setState(99);
+					setState(115);
 					integer();
 					}
 				}
 
-				setState(106);
+				setState(122);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 				while (_la==COMMA) {
 					{
 					{
-					setState(102);
+					setState(118);
 					match(COMMA);
-					setState(103);
+					setState(119);
 					param();
 					}
 					}
-					setState(108);
+					setState(124);
 					_errHandler.sync(this);
 					_la = _input.LA(1);
 				}
-				setState(109);
+				setState(125);
 				match(RSBRACK);
 				}
 				break;
@@ -897,22 +1061,22 @@ public class AspParser extends Parser {
 
 	public final ProgramContext program() throws RecognitionException {
 		ProgramContext _localctx = new ProgramContext(_ctx, getState());
-		enterRule(_localctx, 18, RULE_program);
+		enterRule(_localctx, 22, RULE_program);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(116);
+			setState(132);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << MINUS) | (1L << NAF) | (1L << IF) | (1L << SOFT_IF) | (1L << PREDICATE))) != 0)) {
 				{
 				{
-				setState(113);
+				setState(129);
 				reasoning_rule();
 				}
 				}
-				setState(118);
+				setState(134);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
@@ -957,22 +1121,22 @@ public class AspParser extends Parser {
 
 	public final Answer_setContext answer_set() throws RecognitionException {
 		Answer_setContext _localctx = new Answer_setContext(_ctx, getState());
-		enterRule(_localctx, 20, RULE_answer_set);
+		enterRule(_localctx, 24, RULE_answer_set);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(122);
+			setState(138);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << MINUS) | (1L << NAF) | (1L << PREDICATE))) != 0)) {
 				{
 				{
-				setState(119);
+				setState(135);
 				literal();
 				}
 				}
-				setState(124);
+				setState(140);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
@@ -990,37 +1154,45 @@ public class AspParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\u0430\ud6d1\u8206\uad2d\u4417\uaef1\u8d80\uaadd\3\31\u0080\4\2\t\2"+
-		"\4\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\4\13"+
-		"\t\13\4\f\t\f\3\2\5\2\32\n\2\3\2\3\2\3\3\3\3\3\4\3\4\3\5\3\5\3\6\3\6\3"+
-		"\6\5\6\'\n\6\3\6\5\6*\n\6\3\7\7\7-\n\7\f\7\16\7\60\13\7\3\7\5\7\63\n\7"+
-		"\3\7\3\7\3\7\3\7\3\7\7\7:\n\7\f\7\16\7=\13\7\5\7?\n\7\3\7\5\7B\n\7\3\b"+
-		"\3\b\3\b\7\bG\n\b\f\b\16\bJ\13\b\3\t\3\t\3\t\7\tO\n\t\f\t\16\tR\13\t\3"+
-		"\n\3\n\3\n\3\n\3\n\3\n\3\n\3\n\3\n\3\n\3\n\3\n\3\n\3\n\3\n\3\n\3\n\3\n"+
-		"\3\n\5\ng\n\n\3\n\3\n\7\nk\n\n\f\n\16\nn\13\n\3\n\3\n\5\nr\n\n\3\13\7"+
-		"\13u\n\13\f\13\16\13x\13\13\3\f\7\f{\n\f\f\f\16\f~\13\f\3\f\2\2\r\2\4"+
-		"\6\b\n\f\16\20\22\24\26\2\3\3\2\23\24\u0086\2\31\3\2\2\2\4\35\3\2\2\2"+
-		"\6\37\3\2\2\2\b!\3\2\2\2\n)\3\2\2\2\f.\3\2\2\2\16C\3\2\2\2\20K\3\2\2\2"+
-		"\22q\3\2\2\2\24v\3\2\2\2\26|\3\2\2\2\30\32\7\r\2\2\31\30\3\2\2\2\31\32"+
-		"\3\2\2\2\32\33\3\2\2\2\33\34\t\2\2\2\34\3\3\2\2\2\35\36\7\25\2\2\36\5"+
-		"\3\2\2\2\37 \7\26\2\2 \7\3\2\2\2!\"\7\27\2\2\"\t\3\2\2\2#\'\5\2\2\2$\'"+
-		"\5\4\3\2%\'\5\6\4\2&#\3\2\2\2&$\3\2\2\2&%\3\2\2\2\'*\3\2\2\2(*\5\b\5\2"+
-		")&\3\2\2\2)(\3\2\2\2*\13\3\2\2\2+-\7\16\2\2,+\3\2\2\2-\60\3\2\2\2.,\3"+
-		"\2\2\2./\3\2\2\2/\62\3\2\2\2\60.\3\2\2\2\61\63\7\r\2\2\62\61\3\2\2\2\62"+
-		"\63\3\2\2\2\63\64\3\2\2\2\64A\5\6\4\2\65>\7\3\2\2\66;\5\n\6\2\678\7\t"+
-		"\2\28:\5\n\6\29\67\3\2\2\2:=\3\2\2\2;9\3\2\2\2;<\3\2\2\2<?\3\2\2\2=;\3"+
-		"\2\2\2>\66\3\2\2\2>?\3\2\2\2?@\3\2\2\2@B\7\4\2\2A\65\3\2\2\2AB\3\2\2\2"+
-		"B\r\3\2\2\2CH\5\f\7\2DE\7\13\2\2EG\5\f\7\2FD\3\2\2\2GJ\3\2\2\2HF\3\2\2"+
-		"\2HI\3\2\2\2I\17\3\2\2\2JH\3\2\2\2KP\5\f\7\2LM\7\t\2\2MO\5\f\7\2NL\3\2"+
-		"\2\2OR\3\2\2\2PN\3\2\2\2PQ\3\2\2\2Q\21\3\2\2\2RP\3\2\2\2ST\5\16\b\2TU"+
-		"\7\n\2\2Ur\3\2\2\2VW\7\17\2\2WX\5\20\t\2XY\7\n\2\2Yr\3\2\2\2Z[\5\16\b"+
-		"\2[\\\7\17\2\2\\]\5\20\t\2]^\7\n\2\2^r\3\2\2\2_`\7\20\2\2`a\5\20\t\2a"+
-		"b\7\n\2\2bc\7\5\2\2cf\5\2\2\2de\7\21\2\2eg\5\2\2\2fd\3\2\2\2fg\3\2\2\2"+
-		"gl\3\2\2\2hi\7\t\2\2ik\5\n\6\2jh\3\2\2\2kn\3\2\2\2lj\3\2\2\2lm\3\2\2\2"+
-		"mo\3\2\2\2nl\3\2\2\2op\7\6\2\2pr\3\2\2\2qS\3\2\2\2qV\3\2\2\2qZ\3\2\2\2"+
-		"q_\3\2\2\2r\23\3\2\2\2su\5\22\n\2ts\3\2\2\2ux\3\2\2\2vt\3\2\2\2vw\3\2"+
-		"\2\2w\25\3\2\2\2xv\3\2\2\2y{\5\f\7\2zy\3\2\2\2{~\3\2\2\2|z\3\2\2\2|}\3"+
-		"\2\2\2}\27\3\2\2\2~|\3\2\2\2\21\31&).\62;>AHPflqv|";
+		"\3\u0430\ud6d1\u8206\uad2d\u4417\uaef1\u8d80\uaadd\3 \u0090\4\2\t\2\4"+
+		"\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\4\13\t"+
+		"\13\4\f\t\f\4\r\t\r\4\16\t\16\3\2\5\2\36\n\2\3\2\3\2\3\3\3\3\3\4\3\4\3"+
+		"\5\3\5\3\6\3\6\3\6\5\6+\n\6\3\6\5\6.\n\6\3\7\3\7\3\b\3\b\3\b\3\b\3\t\7"+
+		"\t\67\n\t\f\t\16\t:\13\t\3\t\5\t=\n\t\3\t\3\t\3\t\3\t\3\t\7\tD\n\t\f\t"+
+		"\16\tG\13\t\5\tI\n\t\3\t\5\tL\n\t\3\n\3\n\3\n\7\nQ\n\n\f\n\16\nT\13\n"+
+		"\3\13\3\13\5\13X\n\13\3\13\3\13\3\13\5\13]\n\13\7\13_\n\13\f\13\16\13"+
+		"b\13\13\3\f\3\f\3\f\3\f\3\f\3\f\3\f\3\f\3\f\3\f\3\f\3\f\3\f\3\f\3\f\3"+
+		"\f\3\f\3\f\3\f\5\fw\n\f\3\f\3\f\7\f{\n\f\f\f\16\f~\13\f\3\f\3\f\5\f\u0082"+
+		"\n\f\3\r\7\r\u0085\n\r\f\r\16\r\u0088\13\r\3\16\7\16\u008b\n\16\f\16\16"+
+		"\16\u008e\13\16\3\16\2\2\17\2\4\6\b\n\f\16\20\22\24\26\30\32\2\6\3\2\32"+
+		"\33\3\2\t\16\4\2\21\21\23\23\4\2\17\17\23\23\u0096\2\35\3\2\2\2\4!\3\2"+
+		"\2\2\6#\3\2\2\2\b%\3\2\2\2\n-\3\2\2\2\f/\3\2\2\2\16\61\3\2\2\2\208\3\2"+
+		"\2\2\22M\3\2\2\2\24W\3\2\2\2\26\u0081\3\2\2\2\30\u0086\3\2\2\2\32\u008c"+
+		"\3\2\2\2\34\36\7\24\2\2\35\34\3\2\2\2\35\36\3\2\2\2\36\37\3\2\2\2\37 "+
+		"\t\2\2\2 \3\3\2\2\2!\"\7\34\2\2\"\5\3\2\2\2#$\7\35\2\2$\7\3\2\2\2%&\7"+
+		"\36\2\2&\t\3\2\2\2\'+\5\2\2\2(+\5\4\3\2)+\5\6\4\2*\'\3\2\2\2*(\3\2\2\2"+
+		"*)\3\2\2\2+.\3\2\2\2,.\5\b\5\2-*\3\2\2\2-,\3\2\2\2.\13\3\2\2\2/\60\t\3"+
+		"\2\2\60\r\3\2\2\2\61\62\5\n\6\2\62\63\5\f\7\2\63\64\5\n\6\2\64\17\3\2"+
+		"\2\2\65\67\7\25\2\2\66\65\3\2\2\2\67:\3\2\2\28\66\3\2\2\289\3\2\2\29<"+
+		"\3\2\2\2:8\3\2\2\2;=\7\24\2\2<;\3\2\2\2<=\3\2\2\2=>\3\2\2\2>K\5\6\4\2"+
+		"?H\7\3\2\2@E\5\n\6\2AB\7\17\2\2BD\5\n\6\2CA\3\2\2\2DG\3\2\2\2EC\3\2\2"+
+		"\2EF\3\2\2\2FI\3\2\2\2GE\3\2\2\2H@\3\2\2\2HI\3\2\2\2IJ\3\2\2\2JL\7\4\2"+
+		"\2K?\3\2\2\2KL\3\2\2\2L\21\3\2\2\2MR\5\20\t\2NO\t\4\2\2OQ\5\20\t\2PN\3"+
+		"\2\2\2QT\3\2\2\2RP\3\2\2\2RS\3\2\2\2S\23\3\2\2\2TR\3\2\2\2UX\5\20\t\2"+
+		"VX\5\16\b\2WU\3\2\2\2WV\3\2\2\2X`\3\2\2\2Y\\\t\5\2\2Z]\5\20\t\2[]\5\16"+
+		"\b\2\\Z\3\2\2\2\\[\3\2\2\2]_\3\2\2\2^Y\3\2\2\2_b\3\2\2\2`^\3\2\2\2`a\3"+
+		"\2\2\2a\25\3\2\2\2b`\3\2\2\2cd\5\22\n\2de\7\20\2\2e\u0082\3\2\2\2fg\7"+
+		"\26\2\2gh\5\24\13\2hi\7\20\2\2i\u0082\3\2\2\2jk\5\22\n\2kl\7\26\2\2lm"+
+		"\5\24\13\2mn\7\20\2\2n\u0082\3\2\2\2op\7\27\2\2pq\5\24\13\2qr\7\20\2\2"+
+		"rs\7\5\2\2sv\5\2\2\2tu\7\30\2\2uw\5\2\2\2vt\3\2\2\2vw\3\2\2\2w|\3\2\2"+
+		"\2xy\7\17\2\2y{\5\n\6\2zx\3\2\2\2{~\3\2\2\2|z\3\2\2\2|}\3\2\2\2}\177\3"+
+		"\2\2\2~|\3\2\2\2\177\u0080\7\6\2\2\u0080\u0082\3\2\2\2\u0081c\3\2\2\2"+
+		"\u0081f\3\2\2\2\u0081j\3\2\2\2\u0081o\3\2\2\2\u0082\27\3\2\2\2\u0083\u0085"+
+		"\5\26\f\2\u0084\u0083\3\2\2\2\u0085\u0088\3\2\2\2\u0086\u0084\3\2\2\2"+
+		"\u0086\u0087\3\2\2\2\u0087\31\3\2\2\2\u0088\u0086\3\2\2\2\u0089\u008b"+
+		"\5\20\t\2\u008a\u0089\3\2\2\2\u008b\u008e\3\2\2\2\u008c\u008a\3\2\2\2"+
+		"\u008c\u008d\3\2\2\2\u008d\33\3\2\2\2\u008e\u008c\3\2\2\2\23\35*-8<EH"+
+		"KRW\\`v|\u0081\u0086\u008c";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

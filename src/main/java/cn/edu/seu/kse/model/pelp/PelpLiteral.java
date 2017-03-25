@@ -9,17 +9,25 @@ import java.util.*;
  * Created by 张舒韬 on 2017/1/6.
  */
 public abstract class PelpLiteral extends ObjectModel {
-    private boolean naf;    // 弱否定
+    private Integer nafCount;
     private boolean negation;   // 强否定
     private String predicate;    // 谓词
     private List<PelpParam> params = new ArrayList<>(); // 参数列表
 
     public boolean isNaf() {
-        return naf;
+        return nafCount == 1;
     }
 
     public void setNaf(boolean naf) {
-        this.naf = naf;
+        this.nafCount = naf ? 1 : 0;
+    }
+
+    public Integer getNafCount() {
+        return nafCount;
+    }
+
+    public void setNafCount(Integer nafCount) {
+        this.nafCount = nafCount;
     }
 
     public boolean isNegation() {
@@ -48,7 +56,7 @@ public abstract class PelpLiteral extends ObjectModel {
 
     protected String getSimpleLiteral() {
         StringBuilder builder = new StringBuilder();
-        if (isNaf()) {
+        for (int i = 0; i != getNafCount(); ++i) {
             builder.append("not ");
         }
         if (isNegation()) {

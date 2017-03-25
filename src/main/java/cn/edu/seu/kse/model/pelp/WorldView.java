@@ -57,13 +57,19 @@ public class WorldView {
             return false;
         } else {
             WorldView worldView = (WorldView) o;
-            return new EqualsBuilder().append(getPossibleWorldSet(), worldView.getPossibleWorldSet()).isEquals();
+            return new EqualsBuilder().append(getPossibleWorldSet(), worldView.getPossibleWorldSet())
+                    .append(getSupportedEpistemic(), worldView.getSupportedEpistemic())
+                    .append(getUnsupportedEpistemic(), worldView.getUnsupportedEpistemic())
+                    .isEquals();
         }
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(getPossibleWorldSet()).toHashCode();
+        return new HashCodeBuilder().append(getPossibleWorldSet())
+                .append(getSupportedEpistemic())
+                .append(getUnsupportedEpistemic())
+                .toHashCode();
     }
 
     @Override

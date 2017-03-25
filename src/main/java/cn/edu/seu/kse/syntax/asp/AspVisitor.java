@@ -49,6 +49,18 @@ public interface AspVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitVar_param(AspParser.Var_paramContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link AspParser#compare_operator}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitCompare_operator(AspParser.Compare_operatorContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link AspParser#relation}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitRelation(AspParser.RelationContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link AspParser#literal}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

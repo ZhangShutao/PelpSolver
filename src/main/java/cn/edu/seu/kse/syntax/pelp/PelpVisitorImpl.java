@@ -54,15 +54,28 @@ public class PelpVisitorImpl extends PelpBaseVisitor {
     }
 
     @Override
+    public Object visitCompare_operator(PelpParser.Compare_operatorContext ctx) {
+        return ctx.getText();
+    }
+
+    @Override
+    public Object visitRelation(PelpParser.RelationContext ctx) {
+        PelpParam left = (PelpParam) visit(ctx.param(0));
+        PelpParam right = (PelpParam) visit(ctx.param(1));
+        String operator = (String) visit(ctx.compare_operator());
+        return new PelpRelation(left, operator, right);
+    }
+
+    @Override
     public Object visitObjective_literal(PelpParser.Objective_literalContext ctx) {
-        boolean isNaf = ctx.NAF() != null;
+        Integer nafCount = ctx.NAF().size();
         boolean isNegation = ctx.MINUS() != null;
         String predicate = ctx.predicate().getText();
 
         List<PelpParam> params = new ArrayList<>();
         ctx.param().forEach(paramContext -> params.add((PelpParam) visit(paramContext)));
 
-        return new PelpObjectiveLiteral(isNaf, isNegation, predicate, params);
+        return new PelpObjectiveLiteral(nafCount, isNegation, predicate, params);
     }
 
     @Override
@@ -87,7 +100,9 @@ public class PelpVisitorImpl extends PelpBaseVisitor {
     public Object visitRule_body(PelpParser.Rule_bodyContext ctx) {
         List<PelpLiteral> body = new ArrayList<>();
         for (int i = 0; i != ctx.getChildCount(); ++i) {
-            if (ctx.getChild(i) instanceof PelpParser.Subjective_literalContext || ctx.getChild(i) instanceof PelpParser.Objective_literalContext) {
+            if (ctx.getChild(i) instanceof PelpParser.Subjective_literalContext
+                    || ctx.getChild(i) instanceof PelpParser.Objective_literalContext
+                    || ctx.getChild(i) instanceof PelpParser.RelationContext) {
                 body.add((PelpLiteral) visit(ctx.getChild(i)));
             }
         }

@@ -72,7 +72,7 @@ public class PelpSubjectiveLiteral extends PelpLiteral {
                 .append(getLeftBound())
                 .append(isRightClose())
                 .append(getRightBound())
-                .append(isNaf())
+                .append(getNafCount())
                 .append(isNegation())
                 .append(getPredicate())
                 .append(getParams())
@@ -92,7 +92,7 @@ public class PelpSubjectiveLiteral extends PelpLiteral {
                     .append(getLeftBound(), other.getLeftBound())
                     .append(isRightClose(), other.isRightClose())
                     .append(getRightBound(), other.getRightBound())
-                    .append(isNaf(), other.isNaf())
+                    .append(getNafCount(), other.getNafCount())
                     .append(isNegation(), other.isNegation())
                     .append(getPredicate(), other.getPredicate())
                     .append(getParams(), other.getParams())
@@ -116,6 +116,6 @@ public class PelpSubjectiveLiteral extends PelpLiteral {
     }
 
     public PelpObjectiveLiteral getObjectiveLiteral() {
-        return new PelpObjectiveLiteral(isNaf(), isNegation(), getPredicate(), getParams());
+        return new PelpObjectiveLiteral(getNafCount(), isNegation(), getPredicate(), getParams());
     }
 }

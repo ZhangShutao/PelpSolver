@@ -5,19 +5,24 @@ import cn.edu.seu.kse.aspSolver.impl.AspSolverClingo4Impl;
 import cn.edu.seu.kse.exception.ReasoningErrorException;
 import cn.edu.seu.kse.exception.SyntaxErrorException;
 import cn.edu.seu.kse.exception.UnsatisfiableException;
+import cn.edu.seu.kse.exception.UnsupportedOsTypeException;
+import cn.edu.seu.kse.model.CommandLineOutput;
 import cn.edu.seu.kse.model.asp.AnswerSet;
+import cn.edu.seu.kse.model.asp.AspLiteral;
 import cn.edu.seu.kse.model.asp.AspProgram;
+import cn.edu.seu.kse.model.asp.AspRule;
 import cn.edu.seu.kse.model.pelp.*;
 import cn.edu.seu.kse.pelpSolver.PelpSolver;
+import cn.edu.seu.kse.syntax.parser.AspSyntaxParser;
 import cn.edu.seu.kse.syntax.parser.PelpSyntaxParser;
 import cn.edu.seu.kse.translate.AnswerSet2PossibleWorldTranslator;
 import cn.edu.seu.kse.translate.ProgramTranslator;
 import cn.edu.seu.kse.translate.impl.EpistemicReducer;
-import cn.edu.seu.kse.translate.impl.KNotReducer;
 import cn.edu.seu.kse.translate.impl.SoftRuleReducer;
+import cn.edu.seu.kse.util.CommandLineExecute;
 import cn.edu.seu.kse.util.Logger;
 
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 
 /**
@@ -27,7 +32,6 @@ import java.util.*;
 public class PelpSolverImpl implements PelpSolver {
     private AspSolver aspSolver = new AspSolverClingo4Impl();
     private ProgramTranslator softReducer = new SoftRuleReducer();
-    private ProgramTranslator kNotReducer = new KNotReducer();
     private ProgramTranslator epistemicReducer = new EpistemicReducer();
     private AnswerSet2PossibleWorldTranslator answerSetTranslator = new AnswerSet2PossibleWorldTranslator();
 
@@ -45,14 +49,6 @@ public class PelpSolverImpl implements PelpSolver {
 
     public void setSoftReducer(ProgramTranslator softReducer) {
         this.softReducer = softReducer;
-    }
-
-    public ProgramTranslator getkNotReducer() {
-        return kNotReducer;
-    }
-
-    public void setkNotReducer(ProgramTranslator kNotReducer) {
-        this.kNotReducer = kNotReducer;
     }
 
     public ProgramTranslator getEpistemicReducer() {
@@ -74,19 +70,80 @@ public class PelpSolverImpl implements PelpSolver {
     @Override
     public Set<WorldView> solve(PelpProgram program) throws SyntaxErrorException, ReasoningErrorException {
         Set<WorldView> worldViews = new HashSet<>();
-        AspProgram aspProgram = pelp2Asp(program);
+        AspProgram ungroundedAsp = pelp2Asp(program);
         try {
-            Set<AnswerSet> answerSets = solveAspProgram(aspProgram);
+            AspProgram groundedAsp = removeEpistemicSelectBody(ungroundedAsp);
+            Set<AnswerSet> answerSets = solveAspProgram(groundedAsp);
             Set<WorldView> candidateWorldViews = getCandidateWorldView(answerSets);
             candidateWorldViews.forEach(worldView -> {
-                if (testWorldView(worldView)) {
+                StringJoiner joiner = new StringJoiner("\n");
+                joiner.add(worldView + "with supported set:");
+                getSupportSet(worldView).forEach(literal -> joiner.add(literal.toString()));
+                joiner.add("satisfy:");
+                worldView.getSupportedEpistemic().forEach(literal -> joiner.add(literal.toString()));
+                joiner.add("unsatisfy:");
+                worldView.getUnsupportedEpistemic().forEach(literal -> joiner.add(literal.toString()));
+                joiner.add("");
+                Logger.info(joiner.toString());
+
+                if (testWorldView(worldView) // 该世界观中的主观字得到满足
+                        && !supportedCovered(worldViews, worldView) // 该世界观没有被已有的世界观覆盖
+                        && !replaceCoveredWorldView(worldViews, worldView) // 该世界观没有覆盖已有的世界观
+                        ) {
                     worldViews.add(worldView);
                 }
             });
         } catch (UnsatisfiableException e) {
             Logger.info("PELP程序{}对应的ASP程序不可满足。", program.toString());
+        } catch (UnsupportedOsTypeException| IOException e) {
+            Logger.warn("推理过程出错：{}", e.getMessage());
         }
         return worldViews;
+    }
+
+    private boolean replaceCoveredWorldView(Set<WorldView> worldViews, WorldView worldView) {
+        Set<WorldView> tobeChecked = new HashSet<>(worldViews);
+        boolean added = false;
+        for (WorldView checked : tobeChecked) {
+            if (supportedCovered(worldView, checked)) {
+                worldViews.remove(checked);
+                if (!added) {
+                    worldViews.add(worldView);
+                    added = true;
+                }
+            }
+        }
+        return added;
+    }
+
+    private boolean supportedCovered(Set<WorldView> worldViews, WorldView worldView) {
+        for (WorldView checked : worldViews) {
+            if (supportedCovered(checked, worldView)) {
+                Logger.debug(checked + " covered " + worldView);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean supportedCovered(WorldView a, WorldView b) {
+        return a != b && getSupportSet(a).containsAll(getSupportSet(b));
+    }
+
+    private Set<PelpSubjectiveLiteral> getSupportSet(WorldView worldView) {
+        Set<PelpSubjectiveLiteral> supportedSet = new HashSet<>();
+        worldView.getSupportedEpistemic().forEach(literal -> {
+            if (!literal.isEpistemicConfirm()) {
+                supportedSet.add(literal);
+            }
+        });
+        worldView.getUnsupportedEpistemic().forEach(literal -> {
+            if (literal.isEpistemicConfirm()) {
+                supportedSet.add(literal);
+            }
+        });
+
+        return supportedSet;
     }
 
     @Override
@@ -96,12 +153,17 @@ public class PelpSolverImpl implements PelpSolver {
         Set<WorldView> worldViews = solve(pelpProgram);
         StringJoiner outputJoiner = new StringJoiner("\n");
 
-        Integer counter = 1;
-        for (WorldView worldView : worldViews) {
-            outputJoiner.add("WorldView " + counter + ":");
-            outputJoiner.add(worldView.toString());
-            counter++;
+        if (worldViews.isEmpty()) {
+            outputJoiner.add("Inconsistent program");
+        } else {
+            Integer counter = 1;
+            for (WorldView worldView : worldViews) {
+                outputJoiner.add("WorldView " + counter + ":");
+                outputJoiner.add(worldView.toString());
+                counter++;
+            }
         }
+
         String output = outputJoiner.toString();
         Logger.info("program solved:\n{}", output);
         return output;
@@ -116,8 +178,8 @@ public class PelpSolverImpl implements PelpSolver {
     public AspProgram pelp2Asp(PelpProgram pelpProgram) throws SyntaxErrorException {
         Logger.info("translating PELP program into ASP program:\n{}", pelpProgram.toString());
         PelpProgram noSoftProgram = (PelpProgram) getSoftReducer().translateProgram(pelpProgram);
-        PelpProgram noKNotProgram = (PelpProgram) getkNotReducer().translateProgram(noSoftProgram);
-        AspProgram aspProgram = (AspProgram) getEpistemicReducer().translateProgram(noKNotProgram);
+        AspProgram aspProgram = (AspProgram) getEpistemicReducer().translateProgram(noSoftProgram);
+
         Logger.info("translating finished.\n{}", aspProgram.toString());
         return aspProgram;
     }
@@ -180,6 +242,7 @@ public class PelpSolverImpl implements PelpSolver {
     private double getSupportedWeight(PelpSubjectiveLiteral supported, WorldView worldView) {
         double sum = 0;
         PelpObjectiveLiteral literal = supported.getObjectiveLiteral();
+        literal.setNaf(false);
         for (PossibleWorld possibleWorld : worldView.getPossibleWorldSet()) {
             if (possibleWorld.getLiterals().contains(literal)) {
                 sum += possibleWorld.getWeight();
@@ -197,6 +260,9 @@ public class PelpSolverImpl implements PelpSolver {
     }
 
     private boolean isInEpistemicRange(PelpSubjectiveLiteral literal, double weight) {
+        if (literal.isNaf()) {
+            weight = 1 - weight;
+        }
         return  (literal.isLeftClose() && sim(weight, literal.getLeftBound())) ||
                 (literal.isRightClose() && sim(weight, literal.getRightBound())) ||
                 (simLess(literal.getLeftBound(), weight) && simLess(weight, literal.getRightBound()));
@@ -210,4 +276,41 @@ public class PelpSolverImpl implements PelpSolver {
         return b - a > 1e-6;
     }
 
+    private AspProgram removeEpistemicSelectBody(AspProgram originAsp) throws IOException, UnsupportedOsTypeException {
+        File programFile = File.createTempFile("pelpTemp", ".lp");
+        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(programFile)));
+        writer.write(originAsp.toString());
+        writer.flush();
+
+        List<String> params = Arrays.asList("--mode=gringo", "--text", "--lparse-rewrite", programFile.getAbsolutePath());
+        CommandLineOutput output = CommandLineExecute.callShell("clingo", params);
+        writer.close();
+
+        originAsp.getRules().removeIf(rule -> isEpistemicSelectRule(rule));
+
+        String[] lines = output.getOutput().split("\n");
+        for (String line : lines) {
+            if (!line.contains("#")) {
+                try {
+                    AspRule rule  = AspSyntaxParser.parseRule(line);
+                    if (isEpistemicSelectRule(rule)) {
+                        rule.setBody(new ArrayList<>());
+                        originAsp.getRules().add(rule);
+                    }
+                } catch (SyntaxErrorException e) {
+                    Logger.debug("实例化语法错误：", e);
+                }
+            }
+        }
+        return originAsp;
+    }
+
+    private boolean isEpistemicSelectRule(AspRule rule) {
+        if (rule.getHead().size() == 2) {
+            AspLiteral literal0 = rule.getHead().get(0);
+            AspLiteral literal1 = rule.getHead().get(1);
+            return (literal0.getPredicate().startsWith("_k") &&literal0.getPredicate().equals(literal1.getPredicate()) && literal0.getParams().equals(literal1.getParams()));
+        }
+        return false;
+    }
 }

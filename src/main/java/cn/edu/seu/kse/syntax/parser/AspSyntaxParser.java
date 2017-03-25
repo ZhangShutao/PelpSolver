@@ -4,6 +4,7 @@ import cn.edu.seu.kse.exception.SyntaxErrorException;
 import cn.edu.seu.kse.model.ObjectModel;
 import cn.edu.seu.kse.model.asp.AnswerSet;
 import cn.edu.seu.kse.model.asp.AspProgram;
+import cn.edu.seu.kse.model.asp.AspRule;
 import cn.edu.seu.kse.syntax.SyntaxErrorListener;
 import cn.edu.seu.kse.syntax.asp.AspLexer;
 import cn.edu.seu.kse.syntax.asp.AspParser;
@@ -67,4 +68,13 @@ public class AspSyntaxParser {
         }
     }
 
+    public static AspRule parseRule(String text) throws SyntaxErrorException {
+        AspParser parser = getParser(text);
+        try {
+            ParseTree tree = parser.reasoning_rule();
+            return (AspRule) getVisitedObject(tree);
+        } catch (RuntimeException e) {
+            throw new SyntaxErrorException(e.getMessage(), e);
+        }
+    }
 }

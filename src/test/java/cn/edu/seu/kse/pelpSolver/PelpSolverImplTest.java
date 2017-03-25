@@ -34,6 +34,7 @@ public class PelpSolverImplTest {
     private void testProgram(File inputFile, File outputFile) {
         try {
             String output = solver.solve(readFile(inputFile));
+            System.out.println(output);
             assertTrue(output.equals(readFile(outputFile)));
         } catch (SyntaxErrorException e) {
             fail("语法错误：" + e.getMessage());
@@ -54,5 +55,47 @@ public class PelpSolverImplTest {
     public void testCase1() {
         testProgram(new File("test" + File.separator + "case1.lp"),
                 new File("test" + File.separator + "case1.out"));
+    }
+
+    @Test
+    public void testCase2() {
+        testProgram(new File("test" + File.separator + "case2.lp"),
+                new File("test" + File.separator + "case2.out"));
+    }
+
+    @Test
+    public void testCase3() {
+        testProgram(new File("test" + File.separator + "case3.lp"),
+                new File("test" + File.separator + "case3.out"));
+    }
+
+    @Test
+    public void testCase4() {
+        testProgram(new File("test" + File.separator + "case4.lp"),
+                new File("test" + File.separator + "case4.out"));
+    }
+
+    @Test
+    public void testCase5() {
+        testProgram(new File("test" + File.separator + "case5.lp"),
+                new File("test" + File.separator + "case5.out"));
+    }
+
+    @Test
+    public void testGrounding() {
+        testProgram(new File("test" + File.separator + "case6.lp"),
+                new File("test" + File.separator + "case6.out"));
+    }
+
+    @Test
+    public void testComplexGrounding() {
+        testProgram(new File("test" + File.separator + "case7.lp"),
+                new File("test" + File.separator + "case7.out"));
+    }
+
+    @Test
+    public void testCase8() {
+        testProgram(new File("test" + File.separator + "case8.lp"),
+                new File("test" + File.separator + "case8.out"));
     }
 }

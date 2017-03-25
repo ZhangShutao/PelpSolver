@@ -13,8 +13,8 @@ public class PelpObjectiveLiteral extends PelpLiteral{
     public PelpObjectiveLiteral() {
     }
 
-    public PelpObjectiveLiteral(boolean naf, boolean negation, String predicate, List<PelpParam> paramList) {
-        setNaf(naf);
+    public PelpObjectiveLiteral(Integer nafCount, boolean negation, String predicate, List<PelpParam> paramList) {
+        setNafCount(nafCount);
         setNegation(negation);
         setPredicate(predicate);
         setParams(paramList);
@@ -28,7 +28,7 @@ public class PelpObjectiveLiteral extends PelpLiteral{
     @Override
     public int hashCode() {
         return new HashCodeBuilder()
-                .append(isNaf())
+                .append(getNafCount())
                 .append(isNegation())
                 .append(getPredicate())
                 .append(getParams())
@@ -44,7 +44,7 @@ public class PelpObjectiveLiteral extends PelpLiteral{
         } else {
             PelpObjectiveLiteral other = (PelpObjectiveLiteral) obj;
             return new EqualsBuilder()
-                    .append(isNaf(), other.isNaf())
+                    .append(getNafCount(), other.getNafCount())
                     .append(isNegation(), other.isNegation())
                     .append(getPredicate(), other.getPredicate())
                     .append(getParams(), other.getParams())
@@ -54,6 +54,6 @@ public class PelpObjectiveLiteral extends PelpLiteral{
 
     @Override
     public boolean isPositive() {
-        return !isNaf();
+        return getNafCount() == 0;
     }
 }
