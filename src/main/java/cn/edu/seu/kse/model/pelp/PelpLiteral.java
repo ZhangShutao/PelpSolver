@@ -19,7 +19,7 @@ public abstract class PelpLiteral extends ObjectModel {
     }
 
     public void setNaf(boolean naf) {
-        this.nafCount = naf ? 1 : 0;
+        setNafCount(naf ? 1 : 0);
     }
 
     public Integer getNafCount() {
@@ -27,7 +27,11 @@ public abstract class PelpLiteral extends ObjectModel {
     }
 
     public void setNafCount(Integer nafCount) {
-        this.nafCount = nafCount;
+        if (nafCount > 2) {
+            this.nafCount = (nafCount % 2) + 1;
+        } else {
+            this.nafCount = nafCount;
+        }
     }
 
     public boolean isNegation() {

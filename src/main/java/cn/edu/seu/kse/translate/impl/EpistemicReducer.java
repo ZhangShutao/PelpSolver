@@ -6,6 +6,8 @@ import cn.edu.seu.kse.model.pelp.*;
 import cn.edu.seu.kse.translate.ProgramTranslator;
 import cn.edu.seu.kse.util.Logger;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.*;
 
 /**
@@ -45,44 +47,48 @@ public class EpistemicReducer implements ProgramTranslator {
             }
             rules.addAll(getEpistemicSelectRules(pelpRule));
         });
-        getAllEpistemicConfirm((PelpProgram)program).forEach(literal -> rules.add(getEpistemicConstrain(literal)));
-        getAllEpistemicDeny((PelpProgram)program).forEach(literal -> rules.add(getEpistemicConstrain(literal)));
+
+        rules.addAll(generateEpistemicConstrain((PelpProgram) program));
+
         AspProgram result = new AspProgram(new ArrayList<>(rules));
         Logger.debug("subjective literal reducing finished.\n{}", result.toString());
         return result;
     }
 
-    private AspRule getEpistemicConstrain(PelpSubjectiveLiteral literal) {
+    private AspRule getEpistemicConstrain(PelpSubjectiveLiteral literal, boolean negation, Integer addNaf) {
         AspLiteral aspLiteral = translateSubjectiveLiteral(literal);
-        AspLiteral contrast = translateObjectiveLiteral(literal.getObjectiveLiteral());
-        if (literal.isKcc11()) {
-            contrast.setNafCount(contrast.getNafCount() ^ 1);
+        aspLiteral.setNegation(negation);
+        AspLiteral constrain = translateObjectiveLiteral(literal.getObjectiveLiteral());
+        constrain.setNafCount(constrain.getNafCount() + addNaf);
+        return new AspRule(new ArrayList<>(), Arrays.asList(aspLiteral, constrain));
+    }
+
+    public Set<AspRule> generateEpistemicConstrain(PelpProgram program) {
+        Set<AspRule> constrainRules = new HashSet<>();
+
+        try {
+            Object[][] invokeList = {{PelpSubjectiveLiteral.class.getMethod("isKcc00"), false, 0},
+                                     {PelpSubjectiveLiteral.class.getMethod("isKcc11"), true, 1},
+                                     {PelpSubjectiveLiteral.class.getMethod("isKco01"), true, 1},
+                                     {PelpSubjectiveLiteral.class.getMethod("isKoc01"), false, 2}};
+
+            for (Object[] invokeItem : invokeList) {
+                program.getRules().forEach(rule -> {
+                    for (PelpLiteral literal : rule.getBody() ){
+                        try {
+                            if (literal instanceof PelpSubjectiveLiteral && (boolean) ((Method)invokeItem[0]).invoke(literal)) {
+                                constrainRules.add(getEpistemicConstrain((PelpSubjectiveLiteral) literal, (boolean)invokeItem[1], (int)invokeItem[2]));
+                            }
+                        } catch (IllegalAccessException | InvocationTargetException e) {
+                            Logger.warn("反射调用出错：{}", e);
+                        }
+                    }
+                });
+            }
+        } catch (NoSuchMethodException e) {
+            Logger.warn("反射方法查询出错：{}", e);
         }
-        return new AspRule(new ArrayList<>(), Arrays.asList(aspLiteral, contrast));
-    }
-
-    public Set<PelpSubjectiveLiteral> getAllEpistemicConfirm(PelpProgram program) {
-        Set<PelpSubjectiveLiteral> confirm = new HashSet<>();
-        program.getRules().forEach(rule -> {
-            rule.getBody().forEach(literal -> {
-                if (literal instanceof PelpSubjectiveLiteral && ((PelpSubjectiveLiteral) literal).isKcc11()) {
-                    confirm.add(translateAllParamAsVariable((PelpSubjectiveLiteral) literal));
-                }
-            });
-        });
-        return confirm;
-    }
-
-    public Set<PelpSubjectiveLiteral> getAllEpistemicDeny(PelpProgram program) {
-        Set<PelpSubjectiveLiteral> deny = new HashSet<>();
-        program.getRules().forEach(rule -> {
-            rule.getBody().forEach(literal -> {
-                if (literal instanceof PelpSubjectiveLiteral && ((PelpSubjectiveLiteral) literal).isKcc00()) {
-                    deny.add(translateAllParamAsVariable((PelpSubjectiveLiteral) literal));
-                }
-            });
-        });
-        return deny;
+        return constrainRules;
     }
 
     public PelpSubjectiveLiteral translateAllParamAsVariable(PelpSubjectiveLiteral literal) {
