@@ -66,14 +66,6 @@ public class EpistemicReducer implements ProgramTranslator {
         }
     }
 
-    private AspRule getEpistemicConstrain(PelpSubjectiveLiteral literal, boolean negation, Integer addNaf) {
-        AspLiteral aspLiteral = translateSubjectiveLiteral(literal);
-        aspLiteral.setNegation(negation);
-        AspLiteral constrain = translateObjectiveLiteral(literal.getObjectiveLiteral());
-        constrain.setNafCount(constrain.getNafCount() + addNaf);
-        return new AspRule(new ArrayList<>(), Arrays.asList(aspLiteral, constrain));
-    }
-
     private Set<PelpSubjectiveLiteral> getAllSubjectiveLiteralInProgram(PelpProgram program) {
         Set<PelpSubjectiveLiteral> subjectiveLiterals = new HashSet<>();
         program.getRules().forEach(rule ->
