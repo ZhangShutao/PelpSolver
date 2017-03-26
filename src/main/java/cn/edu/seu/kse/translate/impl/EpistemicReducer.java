@@ -13,8 +13,6 @@ import cn.edu.seu.kse.util.CommandLineExecute;
 import cn.edu.seu.kse.util.Logger;
 
 import java.io.*;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.*;
 
 /**
@@ -55,7 +53,7 @@ public class EpistemicReducer implements ProgramTranslator {
             rules.addAll(getEpistemicSelectRules(pelpRule));
         });
 
-        rules.addAll(generateEpistemicConstrain((PelpProgram) program));
+        rules.addAll(generateMixEpistemicRule((PelpProgram) program));
 
         AspProgram ungroundedProgram = new AspProgram(new ArrayList<>(rules));
         try {
@@ -76,32 +74,49 @@ public class EpistemicReducer implements ProgramTranslator {
         return new AspRule(new ArrayList<>(), Arrays.asList(aspLiteral, constrain));
     }
 
-    public Set<AspRule> generateEpistemicConstrain(PelpProgram program) {
-        Set<AspRule> constrainRules = new HashSet<>();
-
-        try {
-            Object[][] invokeList = {{PelpSubjectiveLiteral.class.getMethod("isKcc11"), false, 1},
-                                     {PelpSubjectiveLiteral.class.getMethod("isKoc01"), true, 1},
-                                     {PelpSubjectiveLiteral.class.getMethod("isKco01"), true, 2},
-                                     {PelpSubjectiveLiteral.class.getMethod("isKc111"), false, 0}};
-
-            for (Object[] invokeItem : invokeList) {
-                program.getRules().forEach(rule -> {
-                    for (PelpLiteral literal : rule.getBody() ){
-                        try {
-                            if (literal instanceof PelpSubjectiveLiteral && (boolean) ((Method)invokeItem[0]).invoke(literal)) {
-                                constrainRules.add(getEpistemicConstrain((PelpSubjectiveLiteral) literal, (boolean)invokeItem[1], (int)invokeItem[2]));
-                            }
-                        } catch (IllegalAccessException | InvocationTargetException e) {
-                            Logger.warn("反射调用出错：{}", e);
-                        }
+    private Set<PelpSubjectiveLiteral> getAllSubjectiveLiteralInProgram(PelpProgram program) {
+        Set<PelpSubjectiveLiteral> subjectiveLiterals = new HashSet<>();
+        program.getRules().forEach(rule ->
+                rule.getBody().forEach(literal -> {
+                    if (literal instanceof PelpSubjectiveLiteral) {
+                        subjectiveLiterals.add((PelpSubjectiveLiteral) literal);
                     }
-                });
+                })
+        );
+        return subjectiveLiterals;
+    }
+
+    private Set<AspRule> generateMixEpistemicRule(PelpProgram program) {
+        Set<AspRule> rules = new HashSet<>();
+        getAllSubjectiveLiteralInProgram(program).forEach(subjectiveLiteral -> {
+            if (subjectiveLiteral.isKco01() || subjectiveLiteral.isKoc01()) {
+                rules.addAll(generateMixEpistemicRule(subjectiveLiteral));
             }
-        } catch (NoSuchMethodException e) {
-            Logger.warn("反射方法查询出错：{}", e);
-        }
-        return constrainRules;
+        });
+        return rules;
+    }
+
+    private Set<AspRule> generateMixEpistemicRule(PelpSubjectiveLiteral subjectiveLiteral) {
+        Set<AspRule> rules = new HashSet<>();
+
+        List<AspLiteral> mixHead = Collections.singletonList(generateMixSubjectiveLiteral(subjectiveLiteral));
+
+        List<AspLiteral> positiveBody = Collections.singletonList(translateSubjectiveLiteral(subjectiveLiteral));
+        rules.add(new AspRule(mixHead, positiveBody));
+
+        List<AspLiteral> negativeBody = new ArrayList<>();
+
+        AspLiteral negation = translateSubjectiveLiteral(subjectiveLiteral);
+        negation.setNegation(true);
+        negativeBody.add(negation);
+
+        AspLiteral addition = translateObjectiveLiteral(subjectiveLiteral.getObjectiveLiteral());
+        addition.setNafCount(addition.getNafCount() + (subjectiveLiteral.isKco01() ? 1 : 2));
+        negativeBody.add(addition);
+
+        rules.add(new AspRule(mixHead, negativeBody));
+
+        return rules;
     }
 
     public PelpSubjectiveLiteral translateAllParamAsVariable(PelpSubjectiveLiteral literal) {
@@ -161,11 +176,18 @@ public class EpistemicReducer implements ProgramTranslator {
         List<AspLiteral> body = new ArrayList<>();
         rule.getBody().forEach(pelpLiteral -> {
             if (pelpLiteral instanceof PelpSubjectiveLiteral) {
-                body.add(translateSubjectiveLiteral((PelpSubjectiveLiteral)pelpLiteral)); // 添加 kwo
-                if (((PelpSubjectiveLiteral) pelpLiteral).isKcc11()) { // 添加 o
-                    body.add(translateObjectiveLiteral(((PelpSubjectiveLiteral) pelpLiteral).getObjectiveLiteral()));
-                } else if (((PelpSubjectiveLiteral) pelpLiteral).isKcc00()) { // 添加 not o
-                    AspLiteral addLiteral = translateObjectiveLiteral(((PelpSubjectiveLiteral) pelpLiteral).getObjectiveLiteral());
+                PelpSubjectiveLiteral subjectiveLiteral = (PelpSubjectiveLiteral) pelpLiteral;
+
+                if (subjectiveLiteral.isKco01() || subjectiveLiteral.isKoc01()) {
+                    body.add(generateMixSubjectiveLiteral(subjectiveLiteral));
+                } else {
+                    body.add(translateSubjectiveLiteral(subjectiveLiteral)); // 添加 kwo
+                }
+
+                if (subjectiveLiteral.isKcc11()) { // 添加 o
+                    body.add(translateObjectiveLiteral(subjectiveLiteral.getObjectiveLiteral()));
+                } else if (subjectiveLiteral.isKcc00()) { // 添加 not o
+                    AspLiteral addLiteral = translateObjectiveLiteral(subjectiveLiteral.getObjectiveLiteral());
                     addLiteral.setNafCount(addLiteral.getNafCount() + 1);
                     body.add(addLiteral);
                 }
@@ -189,6 +211,12 @@ public class EpistemicReducer implements ProgramTranslator {
                 (literal.isNegation() ? 'f' : 't'),
                 literal.getPredicate());
         return new AspLiteral(0, false, predicateStr, translateLiteralParam(literal.getParams()));
+    }
+
+    private AspLiteral generateMixSubjectiveLiteral(PelpSubjectiveLiteral literal) {
+        AspLiteral aspLiteral = translateSubjectiveLiteral(literal);
+        aspLiteral.setPredicate("_m" + aspLiteral.getPredicate().substring(1));
+        return aspLiteral;
     }
 
     private AspLiteral translateObjectiveLiteral(PelpObjectiveLiteral literal) {
@@ -237,6 +265,9 @@ public class EpistemicReducer implements ProgramTranslator {
         List<String> params = Arrays.asList("--mode=gringo", "--text", "--lparse-rewrite", programFile.getAbsolutePath());
         CommandLineOutput output = CommandLineExecute.callShell("clingo", params);
         writer.close();
+        if (!programFile.delete()) {
+            Logger.warn("删除文件{} 失败。", programFile.getAbsolutePath());
+        }
 
         originAsp.getRules().removeIf(this::isEpistemicSelectRule);
 

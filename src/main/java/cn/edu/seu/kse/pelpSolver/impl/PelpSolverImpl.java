@@ -127,12 +127,12 @@ public class PelpSolverImpl implements PelpSolver {
     private Set<PelpSubjectiveLiteral> getSupportSet(WorldView worldView) {
         Set<PelpSubjectiveLiteral> supportedSet = new HashSet<>();
         worldView.getSupportedEpistemic().forEach(literal -> {
-            if (!literal.isKcc11()) {
+            if (!literal.isKcc11() && ! literal.isKcc00()) {
                 supportedSet.add(literal);
             }
         });
         worldView.getUnsupportedEpistemic().forEach(literal -> {
-            if (literal.isKcc11()) {
+            if (literal.isKcc11() || literal.isKcc00()) {
                 supportedSet.add(literal);
             }
         });

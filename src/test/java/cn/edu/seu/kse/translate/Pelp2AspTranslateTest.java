@@ -37,7 +37,7 @@ public class Pelp2AspTranslateTest {
     public void testTranslateEpistemicConstrain() {
         try {
             PelpProgram program = PelpSyntaxParser.parseProgram("p | q :- K[1, 1] r.\n" +
-                    "a :- K[1, 1] not b.\n" +
+                    "a :- K(0, 1] not b.\n" +
                     "a :- K[0, 0] not p.\n" +
                     "r :- not q.");
             AspProgram aspProgram = (AspProgram) epistemicReducer.translateProgram(program);

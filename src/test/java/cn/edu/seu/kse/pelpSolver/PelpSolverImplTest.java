@@ -88,7 +88,7 @@ public class PelpSolverImplTest {
     }
 
     @Test
-    public void testComplexGrounding() {
+    public void testEpistemicConstrain() {
         testProgram(new File("test" + File.separator + "case7.lp"),
                 new File("test" + File.separator + "case7.out"));
     }
