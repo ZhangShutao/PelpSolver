@@ -1,6 +1,7 @@
 package cn.edu.seu.kse.translate;
 
 import cn.edu.seu.kse.exception.SyntaxErrorException;
+import cn.edu.seu.kse.exception.TranslateErrorException;
 import cn.edu.seu.kse.model.pelp.PelpProgram;
 import cn.edu.seu.kse.syntax.parser.PelpSyntaxParser;
 import cn.edu.seu.kse.translate.impl.SoftRuleReducer;
@@ -40,7 +41,7 @@ public class SoftRuleReducerTest {
 
             PelpProgram translatedProgram = (PelpProgram) translator.translateProgram(originProgram);
             assertTrue(translatedProgram.toString().contains("_herbrand(jo)."));
-        } catch (SyntaxErrorException e) {
+        } catch (SyntaxErrorException | TranslateErrorException e) {
             fail(e.getMessage());
         }
     }
@@ -52,7 +53,7 @@ public class SoftRuleReducerTest {
 
             PelpProgram translateProgram = (PelpProgram) translator.translateProgram(originProgram);
             assertTrue(translateProgram.toString().contains("_select(_r0,X)|not _select(_r0,X):-_herbrand(X)."));
-        } catch (SyntaxErrorException e) {
+        } catch (SyntaxErrorException | TranslateErrorException e) {
             e.printStackTrace();
         }
     }

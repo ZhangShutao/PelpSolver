@@ -33,7 +33,11 @@ public class AspLiteral extends ObjectModel {
     }
 
     public void setNafCount(int nafCount) {
-        this.nafCount = nafCount;
+        if (nafCount <= 2) {
+            this.nafCount = nafCount;
+        } else {
+            this.nafCount = nafCount % 2 + 1;
+        }
     }
 
     public boolean isNegation() {
