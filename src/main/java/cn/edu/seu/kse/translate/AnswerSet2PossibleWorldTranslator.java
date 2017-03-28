@@ -77,7 +77,7 @@ public class AnswerSet2PossibleWorldTranslator {
 
     private List<PelpParam> translateLiteralParams(List<AspParam> aspParams) {
         List<PelpParam> pelpParams = new ArrayList<>();
-        aspParams.forEach(aspParam -> pelpParams.add(new PelpParam(aspParam.getType(), aspParam.getText())));
+        aspParams.forEach(aspParam -> pelpParams.add(new PelpParam(aspParam.getType(), aspParam.getValue().toString())));
         return pelpParams;
     }
 }

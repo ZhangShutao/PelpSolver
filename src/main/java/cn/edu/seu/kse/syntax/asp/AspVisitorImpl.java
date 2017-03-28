@@ -43,6 +43,11 @@ public class AspVisitorImpl extends AspBaseVisitor {
     }
 
     @Override
+    public Object visitLiteral_param(AspParser.Literal_paramContext ctx) {
+        return new AspParam(AspParam.LITERAL, visit(ctx.literal()));
+    }
+
+    @Override
     public Object visitCompare_operator(AspParser.Compare_operatorContext ctx) {
         return ctx.getText();
     }

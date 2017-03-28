@@ -11,16 +11,17 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 public class AspParam extends ObjectModel {
     public static final int CONSTANT = 0;
     public static final int VARIABLE = 1;
+    public static final int LITERAL = 2;
 
     private int type;
-    private String text;
+    private Object value;
 
     public AspParam() {
     }
 
-    public AspParam(int type, String text) {
+    public AspParam(int type, Object value) {
         this.type = type;
-        this.text = text;
+        this.value = value;
     }
 
     public int getType() {
@@ -31,22 +32,22 @@ public class AspParam extends ObjectModel {
         this.type = type;
     }
 
-    public String getText() {
-        return text;
+    public Object getValue() {
+        return value;
     }
 
-    public void setText(String text) {
-        this.text = text;
+    public void setValue(Object value) {
+        this.value = value;
     }
 
     @Override
     public String toString() {
-        return getText();
+        return getValue().toString();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(getType()).append(getText()).toHashCode();
+        return new HashCodeBuilder().append(getType()).append(getValue()).toHashCode();
     }
 
     @Override
@@ -57,7 +58,7 @@ public class AspParam extends ObjectModel {
             return false;
         } else {
             AspParam other = (AspParam) obj;
-            return new EqualsBuilder().append(getType(), other.getType()).append(getText(), other.getText()).isEquals();
+            return new EqualsBuilder().append(getType(), other.getType()).append(getValue(), other.getValue()).isEquals();
         }
     }
 }

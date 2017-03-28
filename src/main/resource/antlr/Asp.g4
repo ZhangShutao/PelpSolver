@@ -91,7 +91,8 @@ predicate : PREDICATE;
 var : VAR;
 // 谓词/函数参数
 param : (integer | string | predicate) # const_param
-      | var                            # var_param;
+      | var                            # var_param
+      | literal                        # literal_param;
 // 比较操作符
 compare_operator : (LESS | LESSEQ | GREATER | GREATEREQ | EQUAL | NOTEQUAL);
 // 关系表达式

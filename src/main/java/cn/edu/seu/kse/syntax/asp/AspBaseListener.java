@@ -88,6 +88,18 @@ public class AspBaseListener implements AspListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterLiteral_param(AspParser.Literal_paramContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitLiteral_param(AspParser.Literal_paramContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterCompare_operator(AspParser.Compare_operatorContext ctx) { }
 	/**
 	 * {@inheritDoc}

@@ -72,6 +72,18 @@ public interface AspListener extends ParseTreeListener {
 	 */
 	void exitVar_param(AspParser.Var_paramContext ctx);
 	/**
+	 * Enter a parse tree produced by the {@code literal_param}
+	 * labeled alternative in {@link AspParser#param}.
+	 * @param ctx the parse tree
+	 */
+	void enterLiteral_param(AspParser.Literal_paramContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code literal_param}
+	 * labeled alternative in {@link AspParser#param}.
+	 * @param ctx the parse tree
+	 */
+	void exitLiteral_param(AspParser.Literal_paramContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link AspParser#compare_operator}.
 	 * @param ctx the parse tree
 	 */
