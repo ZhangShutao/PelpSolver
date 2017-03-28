@@ -19,7 +19,7 @@ public class PelpLexer extends Lexer {
 	public static final int
 		LPAREN=1, RPAREN=2, LSBRACK=3, RSBRACK=4, LCBRACK=5, RCBRACK=6, LESS=7, 
 		GREATER=8, EQUAL=9, NOTEQUAL=10, LESSEQ=11, GREATEREQ=12, COMMA=13, DOT=14, 
-		VBAR=15, COLON=16, MINUS=17, NAF=18, IF=19, KNOW=20, PR_GREATER=21, DECIMAL=22, 
+		VBAR=15, COLON=16, MINUS=17, NAF=18, IF=19, KNOW=20, PROB_LESS=21, DECIMAL=22, 
 		POSITIVE_INT=23, ZERO=24, STRING=25, PREDICATE=26, VAR=27, WS=28, LINE_COMMENT=29;
 	public static String[] modeNames = {
 		"DEFAULT_MODE"
@@ -28,7 +28,7 @@ public class PelpLexer extends Lexer {
 	public static final String[] ruleNames = {
 		"LPAREN", "RPAREN", "LSBRACK", "RSBRACK", "LCBRACK", "RCBRACK", "LESS", 
 		"GREATER", "EQUAL", "NOTEQUAL", "LESSEQ", "GREATEREQ", "COMMA", "DOT", 
-		"VBAR", "COLON", "MINUS", "NAF", "IF", "KNOW", "PR_GREATER", "DECIMAL", 
+		"VBAR", "COLON", "MINUS", "NAF", "IF", "KNOW", "PROB_LESS", "DECIMAL", 
 		"POSITIVE_INT", "ZERO", "STRING", "PREDICATE", "VAR", "WS", "LINE_COMMENT"
 	};
 
@@ -40,7 +40,7 @@ public class PelpLexer extends Lexer {
 	private static final String[] _SYMBOLIC_NAMES = {
 		null, "LPAREN", "RPAREN", "LSBRACK", "RSBRACK", "LCBRACK", "RCBRACK", 
 		"LESS", "GREATER", "EQUAL", "NOTEQUAL", "LESSEQ", "GREATEREQ", "COMMA", 
-		"DOT", "VBAR", "COLON", "MINUS", "NAF", "IF", "KNOW", "PR_GREATER", "DECIMAL", 
+		"DOT", "VBAR", "COLON", "MINUS", "NAF", "IF", "KNOW", "PROB_LESS", "DECIMAL", 
 		"POSITIVE_INT", "ZERO", "STRING", "PREDICATE", "VAR", "WS", "LINE_COMMENT"
 	};
 	public static final Vocabulary VOCABULARY = new VocabularyImpl(_LITERAL_NAMES, _SYMBOLIC_NAMES);

@@ -9,7 +9,7 @@ import java.util.*;
  * Pelp中的客观字
  * Created by 张舒韬 on 2017/1/8.
  */
-public class PelpObjectiveLiteral extends PelpLiteral{
+public class PelpObjectiveLiteral extends PelpObjective {
     private Integer nafCount = 0;
     private boolean negation;   // 强否定
     private String predicate;    // 谓词

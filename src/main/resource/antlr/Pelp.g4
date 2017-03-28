@@ -53,7 +53,7 @@ IF : ':-';
 // 主观模态词
 KNOW : 'K';
 // 概率比较模态词
-PR_GREATER : '#PL';
+PROB_LESS : '#PL';
 
 //小数(点表示法)
 DECIMAL : MINUS? ([1-9][0-9]* | ZERO ) DOT [0-9]+;
@@ -102,7 +102,7 @@ objective_literal : (NAF)* MINUS? predicate (LPAREN (param (COMMA param)*)? RPAR
 // 主观字
 subjective_literal : KNOW (LPAREN | LSBRACK) decimal COMMA decimal (RPAREN | RSBRACK) objective_literal;
 // 概率关系表达式
-prob_relation : PR_GREATER LPAREN objective_literal COMMA objective_literal RPAREN;
+prob_relation : PROB_LESS LPAREN objective_literal COMMA objective_literal RPAREN;
 
 // 规则首部
 rule_head : objective_literal (VBAR objective_literal)*;

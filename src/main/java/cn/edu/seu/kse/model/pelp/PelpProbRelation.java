@@ -10,7 +10,7 @@ import java.util.Set;
  * TODO:
  * Created by 张舒韬 on 2017/3/28.
  */
-public class PelpProbRelation extends PelpLiteral {
+public class PelpProbRelation extends PelpSubjective {
     private PelpObjectiveLiteral left;
     private PelpObjectiveLiteral right;
 
@@ -71,11 +71,6 @@ public class PelpProbRelation extends PelpLiteral {
         var.addAll(left.getVariableSet());
         var.addAll(right.getVariableSet());
         return var;
-    }
-
-    @Override
-    public boolean isPositive() {
-        return false;
     }
 
     @Override

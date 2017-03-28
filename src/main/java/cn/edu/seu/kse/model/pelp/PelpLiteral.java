@@ -15,4 +15,6 @@ public abstract class PelpLiteral extends ObjectModel {
     public abstract Set<PelpParam> getVariableSet();
 
     public abstract boolean isPositive();
+
+    public abstract boolean isSubjective();
 }

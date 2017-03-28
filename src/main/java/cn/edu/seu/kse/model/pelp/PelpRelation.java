@@ -7,7 +7,7 @@ import java.util.Set;
  * TODO:
  * Created by 张舒韬 on 2017/3/15.
  */
-public class PelpRelation extends PelpLiteral {
+public class PelpRelation extends PelpObjective {
 
     private PelpParam left;
     private PelpParam right;

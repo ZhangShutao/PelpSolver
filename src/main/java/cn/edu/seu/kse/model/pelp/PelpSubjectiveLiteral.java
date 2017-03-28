@@ -3,14 +3,13 @@ package cn.edu.seu.kse.model.pelp;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
-import java.util.List;
 import java.util.Set;
 
 /**
  * Pelp的主观字
  * Created by 张舒韬 on 2017/1/7.
  */
-public class PelpSubjectiveLiteral extends PelpLiteral {
+public class PelpSubjectiveLiteral extends PelpSubjective {
 
     private boolean isLeftClose;
     private boolean isRightClose;
@@ -64,46 +63,6 @@ public class PelpSubjectiveLiteral extends PelpLiteral {
         this.rightBound = rightBound;
     }
 
-    public boolean isNaf() {
-        return objectiveLiteral.isNaf();
-    }
-
-    public void setNaf(boolean naf) {
-        objectiveLiteral.setNaf(naf);
-    }
-
-    public Integer getNafCount() {
-        return objectiveLiteral.getNafCount();
-    }
-
-    public void setNafCount(Integer nafCount) {
-        objectiveLiteral.setNafCount(nafCount);
-    }
-
-    public boolean isNegation() {
-        return objectiveLiteral.isNegation();
-    }
-
-    public void setNegation(boolean negation) {
-        objectiveLiteral.setNegation(negation);
-    }
-
-    public String getPredicate() {
-        return objectiveLiteral.getPredicate();
-    }
-
-    public void setPredicate(String predicate) {
-        objectiveLiteral.setPredicate(predicate);
-    }
-
-    public List<PelpParam> getParams() {
-        return objectiveLiteral.getParams();
-    }
-
-    public void setParams(List<PelpParam> params) {
-        objectiveLiteral.setParams(params);
-    }
-
     public PelpObjectiveLiteral getObjectiveLiteral() {
         return objectiveLiteral;
     }
@@ -144,11 +103,6 @@ public class PelpSubjectiveLiteral extends PelpLiteral {
                     .append(getObjectiveLiteral(), other.getObjectiveLiteral())
                     .isEquals();
         }
-    }
-
-    @Override
-    public boolean isPositive() {
-        return false;
     }
 
     /**
