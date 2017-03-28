@@ -235,13 +235,19 @@ public class PelpSolverImpl implements PelpSolver {
 
     private double getSupportedWeight(PelpSubjectiveLiteral supported, WorldView worldView) {
         double sum = 0;
-        PelpObjectiveLiteral literal = new PelpObjectiveLiteral(0, supported.isNegation(), supported.getPredicate(), supported.getParams());
+        PelpObjectiveLiteral literal = new PelpObjectiveLiteral(supported.getObjectiveLiteral());
+        literal.setNafCount(0);
+
         for (PossibleWorld possibleWorld : worldView.getPossibleWorldSet()) {
             if (possibleWorld.getLiterals().contains(literal)) {
                 sum += possibleWorld.getWeight();
             }
         }
-        return sum;
+        if (supported.getObjectiveLiteral().getNafCount() % 2 == 0) {
+            return sum;
+        } else {
+            return 1 - sum;
+        }
     }
 
     private String getGroupId(AnswerSet answerSet) {
@@ -253,9 +259,6 @@ public class PelpSolverImpl implements PelpSolver {
     }
 
     private boolean isInEpistemicRange(PelpSubjectiveLiteral literal, double weight) {
-        if (literal.isNaf()) {
-            weight = 1 - weight;
-        }
         return  (literal.isLeftClose() && sim(weight, literal.getLeftBound())) ||
                 (literal.isRightClose() && sim(weight, literal.getRightBound())) ||
                 (simLess(literal.getLeftBound(), weight) && simLess(weight, literal.getRightBound()));

@@ -20,8 +20,8 @@ public class AspParser extends Parser {
 		LPAREN=1, RPAREN=2, LSBRACK=3, RSBRACK=4, LCBRACK=5, RCBRACK=6, LESS=7, 
 		GREATER=8, EQUAL=9, NOTEQUAL=10, LESSEQ=11, GREATEREQ=12, COMMA=13, DOT=14, 
 		VBAR=15, COLON=16, SEMI=17, MINUS=18, NAF=19, IF=20, SOFT_IF=21, AT=22, 
-		PROB_LESS=23, DECIMAL=24, POSITIVE_INT=25, ZERO=26, STRING=27, PREDICATE=28, 
-		VAR=29, WS=30, LINE_COMMENT=31;
+		DECIMAL=23, POSITIVE_INT=24, ZERO=25, STRING=26, PREDICATE=27, VAR=28, 
+		WS=29, LINE_COMMENT=30;
 	public static final int
 		RULE_integer = 0, RULE_string = 1, RULE_predicate = 2, RULE_var = 3, RULE_param = 4, 
 		RULE_compare_operator = 5, RULE_relation = 6, RULE_literal = 7, RULE_rule_head = 8, 
@@ -35,14 +35,14 @@ public class AspParser extends Parser {
 	private static final String[] _LITERAL_NAMES = {
 		null, "'('", "')'", "'['", "']'", "'{'", "'}'", "'<'", "'>'", "'='", "'!='", 
 		"'<='", "'>='", "','", "'.'", "'|'", "':'", "';'", "'-'", "'not'", "':-'", 
-		"':~'", "'@'", "'_pl'", null, null, "'0'"
+		"':~'", "'@'", null, null, "'0'"
 	};
 	private static final String[] _SYMBOLIC_NAMES = {
 		null, "LPAREN", "RPAREN", "LSBRACK", "RSBRACK", "LCBRACK", "RCBRACK", 
 		"LESS", "GREATER", "EQUAL", "NOTEQUAL", "LESSEQ", "GREATEREQ", "COMMA", 
 		"DOT", "VBAR", "COLON", "SEMI", "MINUS", "NAF", "IF", "SOFT_IF", "AT", 
-		"PROB_LESS", "DECIMAL", "POSITIVE_INT", "ZERO", "STRING", "PREDICATE", 
-		"VAR", "WS", "LINE_COMMENT"
+		"DECIMAL", "POSITIVE_INT", "ZERO", "STRING", "PREDICATE", "VAR", "WS", 
+		"LINE_COMMENT"
 	};
 	public static final Vocabulary VOCABULARY = new VocabularyImpl(_LITERAL_NAMES, _SYMBOLIC_NAMES);
 
@@ -1176,7 +1176,7 @@ public class AspParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\u0430\ud6d1\u8206\uad2d\u4417\uaef1\u8d80\uaadd\3!\u0091\4\2\t\2\4"+
+		"\3\u0430\ud6d1\u8206\uad2d\u4417\uaef1\u8d80\uaadd\3 \u0091\4\2\t\2\4"+
 		"\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\4\13\t"+
 		"\13\4\f\t\f\4\r\t\r\4\16\t\16\3\2\5\2\36\n\2\3\2\3\2\3\3\3\3\3\4\3\4\3"+
 		"\5\3\5\3\6\3\6\3\6\5\6+\n\6\3\6\3\6\5\6/\n\6\3\7\3\7\3\b\3\b\3\b\3\b\3"+
@@ -1187,12 +1187,12 @@ public class AspParser extends Parser {
 		"\f\3\f\3\f\3\f\5\fx\n\f\3\f\3\f\7\f|\n\f\f\f\16\f\177\13\f\3\f\3\f\5\f"+
 		"\u0083\n\f\3\r\7\r\u0086\n\r\f\r\16\r\u0089\13\r\3\16\7\16\u008c\n\16"+
 		"\f\16\16\16\u008f\13\16\3\16\2\2\17\2\4\6\b\n\f\16\20\22\24\26\30\32\2"+
-		"\6\3\2\33\34\3\2\t\16\4\2\21\21\23\23\4\2\17\17\23\23\u0098\2\35\3\2\2"+
+		"\6\3\2\32\33\3\2\t\16\4\2\21\21\23\23\4\2\17\17\23\23\u0098\2\35\3\2\2"+
 		"\2\4!\3\2\2\2\6#\3\2\2\2\b%\3\2\2\2\n.\3\2\2\2\f\60\3\2\2\2\16\62\3\2"+
 		"\2\2\209\3\2\2\2\22N\3\2\2\2\24X\3\2\2\2\26\u0082\3\2\2\2\30\u0087\3\2"+
 		"\2\2\32\u008d\3\2\2\2\34\36\7\24\2\2\35\34\3\2\2\2\35\36\3\2\2\2\36\37"+
-		"\3\2\2\2\37 \t\2\2\2 \3\3\2\2\2!\"\7\35\2\2\"\5\3\2\2\2#$\7\36\2\2$\7"+
-		"\3\2\2\2%&\7\37\2\2&\t\3\2\2\2\'+\5\2\2\2(+\5\4\3\2)+\5\6\4\2*\'\3\2\2"+
+		"\3\2\2\2\37 \t\2\2\2 \3\3\2\2\2!\"\7\34\2\2\"\5\3\2\2\2#$\7\35\2\2$\7"+
+		"\3\2\2\2%&\7\36\2\2&\t\3\2\2\2\'+\5\2\2\2(+\5\4\3\2)+\5\6\4\2*\'\3\2\2"+
 		"\2*(\3\2\2\2*)\3\2\2\2+/\3\2\2\2,/\5\b\5\2-/\5\20\t\2.*\3\2\2\2.,\3\2"+
 		"\2\2.-\3\2\2\2/\13\3\2\2\2\60\61\t\3\2\2\61\r\3\2\2\2\62\63\5\n\6\2\63"+
 		"\64\5\f\7\2\64\65\5\n\6\2\65\17\3\2\2\2\668\7\25\2\2\67\66\3\2\2\28;\3"+

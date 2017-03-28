@@ -18,6 +18,13 @@ public class PelpObjectiveLiteral extends PelpObjective {
     public PelpObjectiveLiteral() {
     }
 
+    public PelpObjectiveLiteral(PelpObjectiveLiteral other) {
+        setNafCount(other.getNafCount());
+        setNegation(other.isNegation());
+        setPredicate(other.getPredicate());
+        setParams(other.getParams());
+    }
+
     public PelpObjectiveLiteral(Integer nafCount, boolean negation, String predicate, List<PelpParam> paramList) {
         setNafCount(nafCount);
         setNegation(negation);
