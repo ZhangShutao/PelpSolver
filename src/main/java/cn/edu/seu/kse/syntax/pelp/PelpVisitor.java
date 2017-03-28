@@ -79,6 +79,12 @@ public interface PelpVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitSubjective_literal(PelpParser.Subjective_literalContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link PelpParser#prob_relation}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitProb_relation(PelpParser.Prob_relationContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link PelpParser#rule_head}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

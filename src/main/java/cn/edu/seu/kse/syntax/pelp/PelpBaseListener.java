@@ -148,6 +148,18 @@ public class PelpBaseListener implements PelpListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterProb_relation(PelpParser.Prob_relationContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitProb_relation(PelpParser.Prob_relationContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterRule_head(PelpParser.Rule_headContext ctx) { }
 	/**
 	 * {@inheritDoc}

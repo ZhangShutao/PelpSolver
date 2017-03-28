@@ -10,11 +10,11 @@ import java.util.Set;
  * TODO:
  * Created by 张舒韬 on 2017/3/28.
  */
-public class PelpSubjectiveRelation extends PelpLiteral {
+public class PelpProbRelation extends PelpLiteral {
     private PelpObjectiveLiteral left;
     private PelpObjectiveLiteral right;
 
-    public PelpSubjectiveRelation(PelpObjectiveLiteral left, PelpObjectiveLiteral right) {
+    public PelpProbRelation(PelpObjectiveLiteral left, PelpObjectiveLiteral right) {
         this.left = left;
         this.right = right;
     }
@@ -41,7 +41,7 @@ public class PelpSubjectiveRelation extends PelpLiteral {
 
         if (o == null || getClass() != o.getClass()) return false;
 
-        PelpSubjectiveRelation that = (PelpSubjectiveRelation) o;
+        PelpProbRelation that = (PelpProbRelation) o;
 
         return new EqualsBuilder()
                 .append(getLeft(), that.getLeft())

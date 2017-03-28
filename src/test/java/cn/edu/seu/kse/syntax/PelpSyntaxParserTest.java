@@ -105,4 +105,15 @@ public class PelpSyntaxParserTest {
             fail("语法解析错误：" + e.getMessage());
         }
     }
+
+    @Test
+    public void testProbRelation() {
+        try {
+            PelpProgram program = PelpSyntaxParser.parseProgram("a(X) :- #PL(b(X), c(X)), b(X).");
+
+            System.out.println(program);
+        } catch (SyntaxErrorException e) {
+            fail("语法解析错误：" + e.getMessage());
+        }
+    }
 }
