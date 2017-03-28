@@ -94,6 +94,13 @@ public class PelpBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements P
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
+	@Override public T visitProb_relation(PelpParser.Prob_relationContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
 	@Override public T visitRule_head(PelpParser.Rule_headContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}

@@ -3,16 +3,19 @@ package cn.edu.seu.kse.model.pelp;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
+import java.util.Set;
+
 /**
  * Pelp的主观字
  * Created by 张舒韬 on 2017/1/7.
  */
-public class PelpSubjectiveLiteral extends PelpLiteral {
+public class PelpSubjectiveLiteral extends PelpSubjective {
 
     private boolean isLeftClose;
     private boolean isRightClose;
     private double leftBound;
     private double rightBound;
+    private PelpObjectiveLiteral objectiveLiteral = new PelpObjectiveLiteral();
 
     public PelpSubjectiveLiteral() {
     }
@@ -22,10 +25,10 @@ public class PelpSubjectiveLiteral extends PelpLiteral {
         this.isRightClose = isRightClose;
         this.leftBound = leftBound;
         this.rightBound = rightBound;
-        setNaf(objectiveLiteral.isNaf());
-        setNegation(objectiveLiteral.isNegation());
-        setPredicate(objectiveLiteral.getPredicate());
-        setParams(objectiveLiteral.getParams());
+        this.objectiveLiteral.setNaf(objectiveLiteral.isNaf());
+        this.objectiveLiteral.setNegation(objectiveLiteral.isNegation());
+        this.objectiveLiteral.setPredicate(objectiveLiteral.getPredicate());
+        this.objectiveLiteral.setParams(objectiveLiteral.getParams());
     }
 
     public boolean isLeftClose() {
@@ -60,9 +63,17 @@ public class PelpSubjectiveLiteral extends PelpLiteral {
         this.rightBound = rightBound;
     }
 
+    public PelpObjectiveLiteral getObjectiveLiteral() {
+        return objectiveLiteral;
+    }
+
+    public void setObjectiveLiteral(PelpObjectiveLiteral objectiveLiteral) {
+        this.objectiveLiteral = objectiveLiteral;
+    }
+
     @Override
     public String toString() {
-        return "K" + (isLeftClose() ? "[" : "(") + getLeftBound() + "," + getRightBound() + (isRightClose() ? "]" : ")") + getSimpleLiteral();
+        return "K" + (isLeftClose() ? "[" : "(") + getLeftBound() + "," + getRightBound() + (isRightClose() ? "]" : ")") + objectiveLiteral.toString();
     }
 
     @Override
@@ -72,10 +83,7 @@ public class PelpSubjectiveLiteral extends PelpLiteral {
                 .append(getLeftBound())
                 .append(isRightClose())
                 .append(getRightBound())
-                .append(getNafCount())
-                .append(isNegation())
-                .append(getPredicate())
-                .append(getParams())
+                .append(getObjectiveLiteral())
                 .toHashCode();
     }
 
@@ -92,17 +100,9 @@ public class PelpSubjectiveLiteral extends PelpLiteral {
                     .append(getLeftBound(), other.getLeftBound())
                     .append(isRightClose(), other.isRightClose())
                     .append(getRightBound(), other.getRightBound())
-                    .append(getNafCount(), other.getNafCount())
-                    .append(isNegation(), other.isNegation())
-                    .append(getPredicate(), other.getPredicate())
-                    .append(getParams(), other.getParams())
+                    .append(getObjectiveLiteral(), other.getObjectiveLiteral())
                     .isEquals();
         }
-    }
-
-    @Override
-    public boolean isPositive() {
-        return false;
     }
 
     /**
@@ -151,7 +151,13 @@ public class PelpSubjectiveLiteral extends PelpLiteral {
                 || (getLeftBound()> 1e-6 && getRightBound() < (1 - 1e-6));
     }
 
-    public PelpObjectiveLiteral getObjectiveLiteral() {
-        return new PelpObjectiveLiteral(getNafCount(), isNegation(), getPredicate(), getParams());
+    @Override
+    public Set<PelpParam> getHerbrandUniverse() {
+        return objectiveLiteral.getHerbrandUniverse();
+    }
+
+    @Override
+    public Set<PelpParam> getVariableSet() {
+        return objectiveLiteral.getVariableSet();
     }
 }

@@ -52,6 +52,8 @@ NAF : 'not';
 IF : ':-';
 // 主观模态词
 KNOW : 'K';
+// 概率比较模态词
+PROB_LESS : '#PL';
 
 //小数(点表示法)
 DECIMAL : MINUS? ([1-9][0-9]* | ZERO ) DOT [0-9]+;
@@ -99,11 +101,13 @@ relation : param compare_operator param;
 objective_literal : (NAF)* MINUS? predicate (LPAREN (param (COMMA param)*)? RPAREN)?;
 // 主观字
 subjective_literal : KNOW (LPAREN | LSBRACK) decimal COMMA decimal (RPAREN | RSBRACK) objective_literal;
+// 概率关系表达式
+prob_relation : PROB_LESS LPAREN objective_literal COMMA objective_literal RPAREN;
 
 // 规则首部
 rule_head : objective_literal (VBAR objective_literal)*;
 // 规则体部
-rule_body : (objective_literal | subjective_literal | relation) (COMMA (objective_literal | subjective_literal | relation))*;
+rule_body : (objective_literal | subjective_literal | relation | prob_relation) (COMMA (objective_literal | subjective_literal | relation | prob_relation))*;
 
 hard_rule : rule_head DOT                # fact_rule
           | IF rule_body DOT             # constrain_rule

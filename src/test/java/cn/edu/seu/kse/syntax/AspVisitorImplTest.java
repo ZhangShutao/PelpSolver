@@ -181,4 +181,12 @@ public class AspVisitorImplTest {
         AspProgram program = (AspProgram) getVisitedObject(tree);
         System.out.println(program);
     }
+
+    @Test
+    public void testAspRule() {
+        AspParser parser = getParser("b:-_pl(_f0ta(1),_f0tb(1)).");
+        ParseTree tree = parser.reasoning_rule();
+        AspRule rule = (AspRule) getVisitedObject(tree);
+        System.out.println(rule);
+    }
 }

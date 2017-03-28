@@ -122,6 +122,16 @@ public interface PelpListener extends ParseTreeListener {
 	 */
 	void exitSubjective_literal(PelpParser.Subjective_literalContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link PelpParser#prob_relation}.
+	 * @param ctx the parse tree
+	 */
+	void enterProb_relation(PelpParser.Prob_relationContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link PelpParser#prob_relation}.
+	 * @param ctx the parse tree
+	 */
+	void exitProb_relation(PelpParser.Prob_relationContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link PelpParser#rule_head}.
 	 * @param ctx the parse tree
 	 */

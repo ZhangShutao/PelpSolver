@@ -90,6 +90,13 @@ public class PelpVisitorImpl extends PelpBaseVisitor {
     }
 
     @Override
+    public Object visitProb_relation(PelpParser.Prob_relationContext ctx) {
+        PelpObjectiveLiteral left = (PelpObjectiveLiteral) visit(ctx.objective_literal(0));
+        PelpObjectiveLiteral right = (PelpObjectiveLiteral) visit(ctx.objective_literal(1));
+        return new PelpProbRelation(left, right);
+    }
+
+    @Override
     public Object visitRule_head(PelpParser.Rule_headContext ctx) {
         List<PelpObjectiveLiteral> head = new ArrayList<>();
         ctx.objective_literal().forEach(objective_literalContext -> head.add((PelpObjectiveLiteral) visit(objective_literalContext)));
@@ -102,7 +109,8 @@ public class PelpVisitorImpl extends PelpBaseVisitor {
         for (int i = 0; i != ctx.getChildCount(); ++i) {
             if (ctx.getChild(i) instanceof PelpParser.Subjective_literalContext
                     || ctx.getChild(i) instanceof PelpParser.Objective_literalContext
-                    || ctx.getChild(i) instanceof PelpParser.RelationContext) {
+                    || ctx.getChild(i) instanceof PelpParser.RelationContext
+                    || ctx.getChild(i) instanceof PelpParser.Prob_relationContext) {
                 body.add((PelpLiteral) visit(ctx.getChild(i)));
             }
         }

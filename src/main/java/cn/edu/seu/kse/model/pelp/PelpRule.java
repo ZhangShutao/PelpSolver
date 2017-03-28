@@ -161,4 +161,14 @@ public class PelpRule extends ObjectModel {
         });
         return subjectiveLiterals;
     }
+
+    public Set<PelpSubjective> getSubjectives() {
+        Set<PelpSubjective> subjectives = new HashSet<>();
+        getBody().forEach(literal -> {
+            if (literal.isSubjective()) {
+                subjectives.add((PelpSubjective) literal);
+            }
+        });
+        return subjectives;
+    }
 }

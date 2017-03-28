@@ -47,4 +47,17 @@ public class Pelp2AspTranslateTest {
             e.printStackTrace();
         }
     }
+
+    @Test
+    public void testTranslatePELPWithProbRelation() {
+        try {
+            PelpProgram program = PelpSyntaxParser.parseProgram("b :- #PL(a(X), b(X)), a(X).\n" +
+                    "p(X) | q(X) :- a(X).\n a(1).");
+            AspProgram aspProgram = (AspProgram) epistemicReducer.translateProgram(program);
+
+            System.out.println(aspProgram);
+        } catch (SyntaxErrorException | TranslateErrorException e) {
+            e.printStackTrace();
+        }
+    }
 }

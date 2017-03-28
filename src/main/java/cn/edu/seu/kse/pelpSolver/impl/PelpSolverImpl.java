@@ -113,7 +113,7 @@ public class PelpSolverImpl implements PelpSolver {
     private boolean supportedCovered(Set<WorldView> worldViews, WorldView worldView) {
         for (WorldView checked : worldViews) {
             if (supportedCovered(checked, worldView)) {
-                Logger.debug(checked + " covered " + worldView);
+                Logger.info(checked + " covered " + worldView);
                 return true;
             }
         }
@@ -124,16 +124,24 @@ public class PelpSolverImpl implements PelpSolver {
         return a != b && getSupportSet(a).containsAll(getSupportSet(b));
     }
 
-    private Set<PelpSubjectiveLiteral> getSupportSet(WorldView worldView) {
-        Set<PelpSubjectiveLiteral> supportedSet = new HashSet<>();
+    private Set<PelpSubjective> getSupportSet(WorldView worldView) {
+        Set<PelpSubjective> supportedSet = new HashSet<>();
         worldView.getSupportedEpistemic().forEach(literal -> {
-            if (!literal.isKcc11() && ! literal.isKcc00()) {
+            if (literal instanceof PelpSubjectiveLiteral) {
+                PelpSubjectiveLiteral subjectiveLiteral = (PelpSubjectiveLiteral) literal;
+                if (!subjectiveLiteral.isKcc11() && !subjectiveLiteral.isKcc00()) {
+                    supportedSet.add(literal);
+                }
+            } else if (literal instanceof PelpProbRelation) {
                 supportedSet.add(literal);
             }
         });
         worldView.getUnsupportedEpistemic().forEach(literal -> {
-            if (literal.isKcc11() || literal.isKcc00()) {
-                supportedSet.add(literal);
+            if (literal instanceof PelpSubjectiveLiteral) {
+                PelpSubjectiveLiteral subjectiveLiteral = (PelpSubjectiveLiteral) literal;
+                if (subjectiveLiteral.isKcc11() || subjectiveLiteral.isKcc00()) {
+                    supportedSet.add(literal);
+                }
             }
         });
 
@@ -192,8 +200,8 @@ public class PelpSolverImpl implements PelpSolver {
             PossibleWorld possibleWorld = getAnswerSetTranslator().translate(answerSet);
             String groupId = getGroupId(answerSet);
             if (!worldViewMap.containsKey(groupId)) {
-                Set<PelpSubjectiveLiteral> supported = getAnswerSetTranslator().getSupportedEpistemic(answerSet);
-                Set<PelpSubjectiveLiteral> notSupported = getAnswerSetTranslator().getNotSupportedEpistemic(answerSet);
+                Set<PelpSubjective> supported = getAnswerSetTranslator().getSupportedEpistemic(answerSet);
+                Set<PelpSubjective> notSupported = getAnswerSetTranslator().getNotSupportedEpistemic(answerSet);
                 worldViewMap.put(groupId, new WorldView(supported, notSupported));
             }
             worldViewMap.get(groupId).addPossibleWorld(possibleWorld);
@@ -217,46 +225,61 @@ public class PelpSolverImpl implements PelpSolver {
     }
 
     public boolean testWorldView(WorldView worldView) {
-        for (PelpSubjectiveLiteral supported : worldView.getSupportedEpistemic()) {
-            double weight = getSupportedWeight(supported, worldView);
-            if (!isInEpistemicRange(supported, weight)) {
+        for (PelpSubjective supported : worldView.getSupportedEpistemic()) {
+            if (!supportedByWorldView(supported, worldView)) {
                 return false;
             }
         }
 
-        for (PelpSubjectiveLiteral unsupported  : worldView.getUnsupportedEpistemic()) {
-            double weight = getSupportedWeight(unsupported, worldView);
-            if (isInEpistemicRange(unsupported, weight)) {
+        for (PelpSubjective unsupported  : worldView.getUnsupportedEpistemic()) {
+            if (supportedByWorldView(unsupported, worldView)) {
                 return false;
             }
         }
         return true;
     }
 
-    private double getSupportedWeight(PelpSubjectiveLiteral supported, WorldView worldView) {
+    private boolean supportedByWorldView(PelpSubjective subjective, WorldView worldView) {
+        if (subjective instanceof PelpSubjectiveLiteral) {
+            PelpSubjectiveLiteral subjectiveLiteral = (PelpSubjectiveLiteral) subjective;
+            double weight = getSupportedWeight(subjectiveLiteral.getObjectiveLiteral(), worldView);
+            return isInEpistemicRange(subjectiveLiteral, weight);
+        } else {
+            PelpProbRelation probRelation = (PelpProbRelation) subjective;
+            double weightLeft = getSupportedWeight(probRelation.getLeft(), worldView);
+            double weightRight = getSupportedWeight(probRelation.getRight(), worldView);
+            return simLess(weightLeft, weightRight);
+        }
+    }
+
+    private double getSupportedWeight(PelpObjectiveLiteral supported, WorldView worldView) {
         double sum = 0;
-        PelpObjectiveLiteral literal = supported.getObjectiveLiteral();
+        PelpObjectiveLiteral literal = new PelpObjectiveLiteral(supported);
         literal.setNaf(false);
+
         for (PossibleWorld possibleWorld : worldView.getPossibleWorldSet()) {
             if (possibleWorld.getLiterals().contains(literal)) {
                 sum += possibleWorld.getWeight();
             }
         }
-        return sum;
+        if (supported.getNafCount() % 2 == 0) {
+            return sum;
+        } else {
+            return 1 - sum;
+        }
     }
 
     private String getGroupId(AnswerSet answerSet) {
         StringJoiner supportJoiner = new StringJoiner(",", "{", "}");
         StringJoiner notSupportJoiner = new StringJoiner(", ", "{", "}");
         getAnswerSetTranslator().getSupportedEpistemic(answerSet).forEach(literal -> supportJoiner.add(literal.toString()));
-        getAnswerSetTranslator().getNotSupportedEpistemic(answerSet).forEach(literal -> notSupportJoiner.add(literal.toString()));
+        getAnswerSetTranslator().getNotSupportedEpistemic(answerSet).forEach(literal -> {
+            notSupportJoiner.add(literal.toString());
+        });
         return supportJoiner.toString() + notSupportJoiner.toString();
     }
 
     private boolean isInEpistemicRange(PelpSubjectiveLiteral literal, double weight) {
-        if (literal.isNaf()) {
-            weight = 1 - weight;
-        }
         return  (literal.isLeftClose() && sim(weight, literal.getLeftBound())) ||
                 (literal.isRightClose() && sim(weight, literal.getRightBound())) ||
                 (simLess(literal.getLeftBound(), weight) && simLess(weight, literal.getRightBound()));

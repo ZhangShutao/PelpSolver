@@ -233,7 +233,6 @@ public class PelpVisitorImplTest {
         assertFalse(rule.isFact());
         assertFalse(rule.isSoft());
         assertTrue(rule.getBody().get(2) instanceof PelpSubjectiveLiteral);
-        assertTrue(rule.getBody().get(2).isNaf());
     }
 
     @Test
@@ -260,7 +259,6 @@ public class PelpVisitorImplTest {
         assertFalse(rule.isConstrain());
         assertFalse(rule.isFact());
         assertTrue(rule.getBody().get(2) instanceof PelpSubjectiveLiteral);
-        assertTrue(rule.getBody().get(2).isNaf());
         assertTrue(rule.isSoft());
         assertTrue(Math.abs(rule.getWeight() - 100.2) < 1e-6);
     }
