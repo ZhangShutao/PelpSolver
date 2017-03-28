@@ -113,7 +113,7 @@ public class PelpSolverImpl implements PelpSolver {
     private boolean supportedCovered(Set<WorldView> worldViews, WorldView worldView) {
         for (WorldView checked : worldViews) {
             if (supportedCovered(checked, worldView)) {
-                Logger.debug(checked + " covered " + worldView);
+                Logger.info(checked + " covered " + worldView);
                 return true;
             }
         }
@@ -235,8 +235,7 @@ public class PelpSolverImpl implements PelpSolver {
 
     private double getSupportedWeight(PelpSubjectiveLiteral supported, WorldView worldView) {
         double sum = 0;
-        PelpObjectiveLiteral literal = supported.getObjectiveLiteral();
-        literal.setNaf(false);
+        PelpObjectiveLiteral literal = new PelpObjectiveLiteral(0, supported.isNegation(), supported.getPredicate(), supported.getParams());
         for (PossibleWorld possibleWorld : worldView.getPossibleWorldSet()) {
             if (possibleWorld.getLiterals().contains(literal)) {
                 sum += possibleWorld.getWeight();

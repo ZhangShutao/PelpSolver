@@ -9,90 +9,10 @@ import java.util.*;
  * Created by 张舒韬 on 2017/1/6.
  */
 public abstract class PelpLiteral extends ObjectModel {
-    private Integer nafCount;
-    private boolean negation;   // 强否定
-    private String predicate;    // 谓词
-    private List<PelpParam> params = new ArrayList<>(); // 参数列表
 
-    public boolean isNaf() {
-        return nafCount == 1;
-    }
+    public abstract Set<PelpParam> getHerbrandUniverse();
 
-    public void setNaf(boolean naf) {
-        setNafCount(naf ? 1 : 0);
-    }
-
-    public Integer getNafCount() {
-        return nafCount;
-    }
-
-    public void setNafCount(Integer nafCount) {
-        if (nafCount > 2) {
-            this.nafCount = (nafCount % 2) + 1;
-        } else {
-            this.nafCount = nafCount;
-        }
-    }
-
-    public boolean isNegation() {
-        return negation;
-    }
-
-    public void setNegation(boolean negation) {
-        this.negation = negation;
-    }
-
-    public String getPredicate() {
-        return predicate;
-    }
-
-    public void setPredicate(String predicate) {
-        this.predicate = predicate;
-    }
-
-    public List<PelpParam> getParams() {
-        return params;
-    }
-
-    public void setParams(List<PelpParam> params) {
-        this.params = params;
-    }
-
-    protected String getSimpleLiteral() {
-        StringBuilder builder = new StringBuilder();
-        for (int i = 0; i != getNafCount(); ++i) {
-            builder.append("not ");
-        }
-        if (isNegation()) {
-            builder.append("-");
-        }
-        builder.append(getPredicate());
-        if (!getParams().isEmpty()) {
-            StringJoiner paramJoiner = new StringJoiner(",", "(", ")");
-            getParams().forEach(param -> paramJoiner.add(param.toString()));
-            builder.append(paramJoiner.toString());
-        }
-
-        return builder.toString();
-    }
-
-    public Set<PelpParam> getHerbrandUniverse() {
-        return filterParamType(PelpParam.CONSTANT);
-    }
-
-    public Set<PelpParam> getVariableSet() {
-        return filterParamType(PelpParam.VARIABLE);
-    }
-
-    private Set<PelpParam> filterParamType (int type) {
-        Set<PelpParam> paramSet = new HashSet<>();
-        getParams().forEach(pelpParam -> {
-            if (pelpParam.getType() == type) {
-                paramSet.add(pelpParam);
-            }
-        });
-        return paramSet;
-    }
+    public abstract Set<PelpParam> getVariableSet();
 
     public abstract boolean isPositive();
 }

@@ -227,9 +227,12 @@ public class EpistemicReducer implements ProgramTranslator {
         return aspParams;
     }
 
+    private AspParam translateLiteralParam(PelpParam param) {
+        return new AspParam(param.getType(), param.getText());
+    }
+
     private AspRelation translateRelation(PelpRelation pelpRelation) {
-        List<AspParam> params = translateLiteralParam(pelpRelation.getParams());
-        return new AspRelation(params.get(0), pelpRelation.getPredicate(), params.get(1));
+        return new AspRelation(translateLiteralParam(pelpRelation.getLeft()), pelpRelation.getOperator(), translateLiteralParam(pelpRelation.getLeft()));
     }
 
     private AspRule translateSoftConstrain(PelpRule pelpRule) {
