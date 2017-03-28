@@ -13,10 +13,10 @@ import java.util.StringJoiner;
  */
 public class WorldView {
     private Set<PossibleWorld> possibleWorldSet = new HashSet<>();
-    private Set<PelpSubjectiveLiteral> supportedEpistemic = new HashSet<>(); // 世界观支持的主观字
-    private Set<PelpSubjectiveLiteral> unsupportedEpistemic = new HashSet<>(); // 世界观否定的主观字
+    private Set<PelpSubjective> supportedEpistemic = new HashSet<>(); // 世界观支持的主观字
+    private Set<PelpSubjective> unsupportedEpistemic = new HashSet<>(); // 世界观否定的主观字
 
-    public WorldView(Set<PelpSubjectiveLiteral> supportedEpistemic, Set<PelpSubjectiveLiteral> unsupportedEpistemic) {
+    public WorldView(Set<PelpSubjective> supportedEpistemic, Set<PelpSubjective> unsupportedEpistemic) {
         this.supportedEpistemic = supportedEpistemic;
         this.unsupportedEpistemic = unsupportedEpistemic;
     }
@@ -29,19 +29,19 @@ public class WorldView {
         this.possibleWorldSet = possibleWorldSet;
     }
 
-    public Set<PelpSubjectiveLiteral> getSupportedEpistemic() {
+    public Set<PelpSubjective> getSupportedEpistemic() {
         return supportedEpistemic;
     }
 
-    public void setSupportedEpistemic(Set<PelpSubjectiveLiteral> supportedEpistemic) {
+    public void setSupportedEpistemic(Set<PelpSubjective> supportedEpistemic) {
         this.supportedEpistemic = supportedEpistemic;
     }
 
-    public Set<PelpSubjectiveLiteral> getUnsupportedEpistemic() {
+    public Set<PelpSubjective> getUnsupportedEpistemic() {
         return unsupportedEpistemic;
     }
 
-    public void setUnsupportedEpistemic(Set<PelpSubjectiveLiteral> unsupportedEpistemic) {
+    public void setUnsupportedEpistemic(Set<PelpSubjective> unsupportedEpistemic) {
         this.unsupportedEpistemic = unsupportedEpistemic;
     }
 
