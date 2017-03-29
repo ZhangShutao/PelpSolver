@@ -129,7 +129,7 @@ public class AspVisitorImpl extends AspBaseVisitor {
 
     @Override
     public Object visitProgram(AspParser.ProgramContext ctx) {
-        List<AspRule> rules = new ArrayList<>();
+        Set<AspRule> rules = new HashSet<>();
         ctx.reasoning_rule().forEach(ruleContext -> rules.add((AspRule) visit(ruleContext)));
 
         return new AspProgram(rules);

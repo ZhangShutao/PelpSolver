@@ -47,7 +47,7 @@ public class EpistemicReducer implements ProgramTranslator {
 
         rules.addAll(generateMixEpistemicRule((PelpProgram) program));
 
-        AspProgram ungroundedProgram = new AspProgram(new ArrayList<>(rules));
+        AspProgram ungroundedProgram = new AspProgram(new HashSet<>(rules));
         try {
             AspProgram result = removeEpistemicSelectBody(ungroundedProgram);
             Logger.debug("subjective literal reducing finished.\n{}", result);
@@ -238,7 +238,7 @@ public class EpistemicReducer implements ProgramTranslator {
     }
 
     private AspRelation translateRelation(PelpRelation pelpRelation) {
-        return new AspRelation(translateLiteralParam(pelpRelation.getLeft()), pelpRelation.getOperator(), translateLiteralParam(pelpRelation.getLeft()));
+        return new AspRelation(translateLiteralParam(pelpRelation.getLeft()), pelpRelation.getOperator(), translateLiteralParam(pelpRelation.getRight()));
     }
 
     private AspRule translateSoftConstrain(PelpRule pelpRule) {

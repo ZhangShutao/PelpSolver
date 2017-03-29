@@ -4,8 +4,8 @@ import cn.edu.seu.kse.model.ObjectModel;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.StringJoiner;
 
 /**
@@ -13,20 +13,20 @@ import java.util.StringJoiner;
  * Created by 张舒韬 on 2017/1/9.
  */
 public class AspProgram extends ObjectModel {
-    private List<AspRule> rules = new ArrayList<>();
+    private Set<AspRule> rules = new HashSet<>();
 
     public AspProgram() {
     }
 
-    public AspProgram(List<AspRule> rules) {
+    public AspProgram(Set<AspRule> rules) {
         this.rules = rules;
     }
 
-    public List<AspRule> getRules() {
+    public Set<AspRule> getRules() {
         return rules;
     }
 
-    public void setRules(List<AspRule> rules) {
+    public void setRules(Set<AspRule> rules) {
         this.rules = rules;
     }
 

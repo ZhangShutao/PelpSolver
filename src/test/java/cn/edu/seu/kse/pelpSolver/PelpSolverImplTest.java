@@ -98,4 +98,14 @@ public class PelpSolverImplTest {
         testProgram(new File("test" + File.separator + "case8.lp"),
                 new File("test" + File.separator + "case8.out"));
     }
+
+    @Test
+    public void test3doors() {
+        try {
+            String program = readFile(new File("test" + File.separator + "3doors.lp"));
+            System.out.println(solver.solve(program));
+        } catch (IOException | ReasoningErrorException | SyntaxErrorException e) {
+            e.printStackTrace();
+        }
+    }
 }
