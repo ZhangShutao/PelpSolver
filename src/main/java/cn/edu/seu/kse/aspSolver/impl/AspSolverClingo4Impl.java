@@ -29,6 +29,7 @@ public class AspSolverClingo4Impl implements CommandLineSolver, AspSolver {
         BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(programFile)));
         writer.write(program.toString());
         writer.flush();
+        writer.close();
         return programFile;
     }
 
@@ -44,9 +45,7 @@ public class AspSolverClingo4Impl implements CommandLineSolver, AspSolver {
             Logger.info("待推理的ASP程序：\n{}", program);
             String answers = callSolver(programFile, params);
             Logger.info("ASP推理机输出结果：\n{}", answers);
-            if (!programFile.delete()) {
-                Logger.warn("删除文件{}失败", programFile.getAbsolutePath());
-            }
+            programFile.deleteOnExit();
 
             Set<AnswerSet> answerSets = new HashSet<>();
             resolveReasonResult(answers).forEach(answerSet -> {

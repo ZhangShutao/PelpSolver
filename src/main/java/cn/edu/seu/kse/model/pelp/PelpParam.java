@@ -11,13 +11,14 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 public class PelpParam extends ObjectModel {
     public static final int CONSTANT = 0;
     public static final int VARIABLE = 1;
+    public static final int LITERAL = 2;
 
     private int type;
-    private String text;
+    private Object value;
 
-    public PelpParam(int type, String text) {
+    public PelpParam(int type, Object value) {
         this.type = type;
-        this.text = text;
+        this.value = value;
     }
 
     public int getType() {
@@ -29,11 +30,15 @@ public class PelpParam extends ObjectModel {
     }
 
     public String getText() {
-        return text;
+        return value.toString();
     }
 
-    public void setText(String text) {
-        this.text = text;
+    public Object getValue() {
+        return value;
+    }
+
+    public void setValue(Object value) {
+        this.value = value;
     }
 
     @Override
@@ -43,7 +48,7 @@ public class PelpParam extends ObjectModel {
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(getType()).append(getText()).toHashCode();
+        return new HashCodeBuilder().append(getType()).append(getValue()).toHashCode();
     }
 
     @Override
@@ -52,7 +57,7 @@ public class PelpParam extends ObjectModel {
             return false;
         } else {
             PelpParam other = (PelpParam) obj;
-            return new EqualsBuilder().append(getType(), other.getType()).append(getText(), other.getText()).isEquals();
+            return new EqualsBuilder().append(getType(), other.getType()).append(getValue(), other.getValue()).isEquals();
         }
     }
 }
