@@ -54,7 +54,8 @@ public class EpistemicReducer implements ProgramTranslator {
     private Set<PelpRule> generateMixEpistemicRule(PelpProgram program) {
         Set<PelpRule> rules = new HashSet<>();
         getAllSubjectiveLiteralInProgram(program).forEach(subjectiveLiteral -> {
-            if (subjectiveLiteral.isKco01() || subjectiveLiteral.isKoc01()) {
+            if (subjectiveLiteral.isKco01() || subjectiveLiteral.isKoc01() ||
+                    (!subjectiveLiteral.isKcc00() && !subjectiveLiteral.isKcc11())) {
                 rules.addAll(generateMixEpistemicRule(subjectiveLiteral));
             }
         });
@@ -69,17 +70,32 @@ public class EpistemicReducer implements ProgramTranslator {
         List<PelpLiteral> positiveBody = Collections.singletonList(translateSubjectiveLiteral(subjectiveLiteral));
         rules.add(new PelpRule(mixHead, positiveBody));
 
-        List<PelpLiteral> negativeBody = new ArrayList<>();
-
         PelpObjectiveLiteral negation = translateSubjectiveLiteral(subjectiveLiteral);
         negation.setNegation(true);
-        negativeBody.add(negation);
 
-        PelpObjectiveLiteral addition = new PelpObjectiveLiteral(subjectiveLiteral.getObjectiveLiteral());
-        addition.setNafCount(addition.getNafCount() + (subjectiveLiteral.isKco01() ? 1 : 2));
-        negativeBody.add(addition);
+        if (subjectiveLiteral.isKco01() || subjectiveLiteral.isKoc01()) {
+            List<PelpLiteral> negativeBody = new ArrayList<>();
+            negativeBody.add(negation);
+            PelpObjectiveLiteral addition = new PelpObjectiveLiteral(subjectiveLiteral.getObjectiveLiteral());
+            addition.setNafCount(addition.getNafCount() + (subjectiveLiteral.isKco01() ? 1 : 2));
+            negativeBody.add(addition);
+            rules.add(new PelpRule(mixHead, negativeBody));
+        } else {
+            List<PelpLiteral> confirmNegativeBody = new ArrayList<>();
+            PelpObjectiveLiteral confirmAddition = new PelpObjectiveLiteral(subjectiveLiteral.getObjectiveLiteral());
+            confirmAddition.setNafCount(confirmAddition.getNafCount() + 1);
+            confirmNegativeBody.add(confirmAddition);
+            PelpSubjectiveLiteral confirm = new PelpSubjectiveLiteral(true, true, 1, 1, subjectiveLiteral.getObjectiveLiteral());
+            confirmNegativeBody.add(translateSubjectiveLiteral(confirm));
+            rules.add(new PelpRule(mixHead, confirmNegativeBody));
 
-        rules.add(new PelpRule(mixHead, negativeBody));
+            List<PelpLiteral> denyNegativeBody = new ArrayList<>();
+            PelpObjectiveLiteral denyAddition = new PelpObjectiveLiteral(subjectiveLiteral.getObjectiveLiteral());
+            denyNegativeBody.add(denyAddition);
+            PelpSubjectiveLiteral deny = new PelpSubjectiveLiteral(true, true, 0, 0, subjectiveLiteral.getObjectiveLiteral());
+            denyNegativeBody.add(translateSubjectiveLiteral(deny));
+            rules.add(new PelpRule(mixHead, denyNegativeBody));
+        }
 
         return rules;
     }
@@ -90,20 +106,33 @@ public class EpistemicReducer implements ProgramTranslator {
         List<PelpLiteral> positiveBody = new ArrayList<>(rule.getPositiveBody());
 
         rule.getSubjectives().forEach(literal -> {
-            List<PelpObjectiveLiteral> fact = new ArrayList<>();
-            PelpObjectiveLiteral replacedLiteral;
+            selectRules.add(new PelpRule(getEpistemicSelectHead(literal), positiveBody));
             if (literal instanceof PelpSubjectiveLiteral) {
-                replacedLiteral = translateSubjectiveLiteral((PelpSubjectiveLiteral) literal);
-            } else {
-                replacedLiteral = translateProbRelation((PelpProbRelation) literal);
+                PelpSubjectiveLiteral subjectiveLiteral = (PelpSubjectiveLiteral) literal;
+                if (!subjectiveLiteral.isKcc11() && !subjectiveLiteral.isKcc00() &&
+                        !subjectiveLiteral.isKoc01() && !subjectiveLiteral.isKco01()) {
+                    PelpSubjectiveLiteral confirm = new PelpSubjectiveLiteral(true, true, 1, 1, subjectiveLiteral.getObjectiveLiteral());
+                    PelpSubjectiveLiteral deny = new PelpSubjectiveLiteral(true, true, 0, 0, subjectiveLiteral.getObjectiveLiteral());
+                    selectRules.add(new PelpRule(getEpistemicSelectHead(confirm), positiveBody));
+                    selectRules.add(new PelpRule(getEpistemicSelectHead(deny), positiveBody));
+                }
             }
-            fact.add(replacedLiteral);
-            fact.add(getInverseLiteral(replacedLiteral));
-
-            selectRules.add(new PelpRule(fact, positiveBody));
         });
 
         return selectRules;
+    }
+
+    private List<PelpObjectiveLiteral> getEpistemicSelectHead(PelpSubjective literal) {
+        List<PelpObjectiveLiteral> fact = new ArrayList<>();
+        PelpObjectiveLiteral replacedLiteral;
+        if (literal instanceof PelpSubjectiveLiteral) {
+            replacedLiteral = translateSubjectiveLiteral((PelpSubjectiveLiteral) literal);
+        } else {
+            replacedLiteral = translateProbRelation((PelpProbRelation) literal);
+        }
+        fact.add(replacedLiteral);
+        fact.add(getInverseLiteral(replacedLiteral));
+        return fact;
     }
 
     private PelpRule replaceEpistemicLiteral(PelpRule rule) {
@@ -112,10 +141,10 @@ public class EpistemicReducer implements ProgramTranslator {
             if (pelpLiteral instanceof PelpSubjectiveLiteral) {
                 PelpSubjectiveLiteral subjectiveLiteral = (PelpSubjectiveLiteral) pelpLiteral;
 
-                if (subjectiveLiteral.isKco01() || subjectiveLiteral.isKoc01()) {
-                    body.add(generateMixSubjectiveLiteral(subjectiveLiteral)); // 添加ekwo
-                } else {
+                if (subjectiveLiteral.isKcc00() || subjectiveLiteral.isKcc11()) {
                     body.add(translateSubjectiveLiteral(subjectiveLiteral)); // 添加 kwo
+                } else {
+                    body.add(generateMixSubjectiveLiteral(subjectiveLiteral)); // 添加ekwo
                 }
 
                 if (subjectiveLiteral.isKcc11()) { // 添加 o

@@ -60,4 +60,17 @@ public class Pelp2AspTranslateTest {
             e.printStackTrace();
         }
     }
+
+    @Test
+    public void testTranslateNormalEpistemic() {
+        try {
+            PelpProgram program = PelpSyntaxParser.parseProgram("p | q.\n" +
+                    ":- K[0.4, 0.6] p.");
+            PelpProgram aspProgram = (PelpProgram) epistemicReducer.translateProgram(program);
+
+            System.out.println(aspProgram);
+        } catch (SyntaxErrorException | TranslateErrorException e) {
+            e.printStackTrace();
+        }
+    }
 }

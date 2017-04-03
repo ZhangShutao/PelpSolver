@@ -108,4 +108,16 @@ public class PelpSolverImplTest {
             e.printStackTrace();
         }
     }
+
+    @Test
+    public void testConstrain1() {
+        testProgram(new File("test" + File.separator + "case9.lp"),
+                new File("test" + File.separator + "case9.out"));
+    }
+
+    @Test
+    public void testConstrain2() {
+        testProgram(new File("test" + File.separator + "case10.lp"),
+                new File("test" + File.separator + "case10.out"));
+    }
 }
