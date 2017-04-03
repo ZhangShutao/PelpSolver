@@ -91,6 +91,7 @@ public class EpistemicReducer implements ProgramTranslator {
 
             List<PelpLiteral> denyNegativeBody = new ArrayList<>();
             PelpObjectiveLiteral denyAddition = new PelpObjectiveLiteral(subjectiveLiteral.getObjectiveLiteral());
+            denyAddition.setNafCount(denyAddition.getNafCount() + 2);
             denyNegativeBody.add(denyAddition);
             PelpSubjectiveLiteral deny = new PelpSubjectiveLiteral(true, true, 0, 0, subjectiveLiteral.getObjectiveLiteral());
             denyNegativeBody.add(translateSubjectiveLiteral(deny));
