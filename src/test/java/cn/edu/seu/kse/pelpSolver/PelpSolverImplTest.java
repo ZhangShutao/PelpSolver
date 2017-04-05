@@ -120,4 +120,10 @@ public class PelpSolverImplTest {
         testProgram(new File("test" + File.separator + "case10.lp"),
                 new File("test" + File.separator + "case10.out"));
     }
+
+    @Test
+    public void testSelfSupport1() {
+        testProgram(new File("test" + File.separator + "case11.lp"),
+                new File("test" + File.separator + "case11.out"));
+    }
 }
