@@ -163,10 +163,7 @@ public class SoftRuleReducer implements ProgramTranslator {
         selectedBody.addAll(rule.getBody());
 
         Set<PelpRule> resultRules = new HashSet<>();
-        rule.getHead().forEach(literal -> {
-            PelpRule resultRule = new PelpRule(Collections.singletonList(literal), selectedBody, null);
-            resultRules.add(resultRule);
-        });
+        resultRules.add(new PelpRule(rule.getHead(), selectedBody, null));
         return resultRules;
     }
 
