@@ -73,7 +73,7 @@ public class PelpSolverImpl implements PelpSolver {
     }
 
     @Override
-    public Set<WorldView> solve(PelpProgram program) throws SyntaxErrorException, ReasoningErrorException {
+    public Set<WorldView> solve(int optMode, PelpProgram program) throws SyntaxErrorException, ReasoningErrorException {
         Set<WorldView> worldViews = new HashSet<>();
         try {
             AspProgram aspProgram = pelp2Asp(program);
@@ -159,10 +159,10 @@ public class PelpSolverImpl implements PelpSolver {
     }
 
     @Override
-    public String solve(String program) throws SyntaxErrorException, ReasoningErrorException {
+    public String solve(int optMode, String program) throws SyntaxErrorException, ReasoningErrorException {
         Logger.info("solving program...\n{}", program);
         PelpProgram pelpProgram = PelpSyntaxParser.parseProgram(program);
-        Set<WorldView> worldViews = solve(pelpProgram);
+        Set<WorldView> worldViews = solve(optMode, pelpProgram);
         StringJoiner outputJoiner = new StringJoiner("\n");
 
         if (worldViews.isEmpty()) {

@@ -5,6 +5,7 @@ import cn.edu.seu.kse.exception.SyntaxErrorException;
 import cn.edu.seu.kse.pelpSolver.PelpSolver;
 import cn.edu.seu.kse.pelpSolver.impl.PelpSolverImpl;
 import cn.edu.seu.kse.util.Logger;
+import org.apache.commons.cli.*;
 
 import java.io.*;
 import java.util.Date;
@@ -15,6 +16,7 @@ import java.util.StringJoiner;
  *
  */
 public class App {
+
     private static PelpSolver pelpSolver = new PelpSolverImpl();
 
     private static String readFile(String fileName) throws IOException {
@@ -28,15 +30,17 @@ public class App {
     }
 
     public static void main( String[] args ) {
-        if (args.length != 1) {
-            StringJoiner cmd = new StringJoiner(" ");
-            for (String arg : args) {
-                cmd.add(arg);
+        Options options = new Options();
+        options.addOption("opt", true, "0 as not optimise, 1 as simplify");
+        CommandLineParser parser = new DefaultParser();
+
+        try {
+            CommandLine cmd = parser.parse(options, args);
+            int optMode = 0;
+            if (cmd.hasOption("opt")) {
+                optMode = Integer.getInteger(cmd.getOptionValue("opt"));
             }
-            Logger.warn("非法的调用参数：{}\nUsage: java PelpSolver filename", cmd);
-            System.out.println("非法的调用参数：" + cmd + "\nUsage: java PelpSolver filename");
-        } else {
-            String fileName = args[0];
+            String fileName = cmd.getArgs()[0];
             try {
                 String programStr = readFile(fileName);
                 Date startTime = new Date();
@@ -60,8 +64,9 @@ public class App {
                 Logger.warn("文件读取出错：{}", e.getMessage());
                 System.out.println("文件读取出错：" + e.getMessage());
             }
-
-            PelpSolver solver = new PelpSolverImpl();
+        } catch (ParseException e) {
+            Logger.warn("命令行解析错误：{}", e.getMessage());
+            System.out.println("命令行解析错误：" + e.getMessage() + "\nUsage: PelpSolver [-opt 0/1] filename");
         }
     }
 }

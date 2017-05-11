@@ -33,7 +33,7 @@ public class PelpSolverImplTest {
 
     private void testProgram(File inputFile, File outputFile) {
         try {
-            String output = solver.solve(readFile(inputFile));
+            String output = solver.solve(0, readFile(inputFile));
             System.out.println(output);
             assertTrue(output.equals(readFile(outputFile)));
         } catch (SyntaxErrorException e) {
@@ -103,7 +103,7 @@ public class PelpSolverImplTest {
     public void test3doors() {
         try {
             String program = readFile(new File("test" + File.separator + "3doors.lp"));
-            System.out.println(solver.solve(program));
+            System.out.println(solver.solve(0, program));
         } catch (IOException | ReasoningErrorException | SyntaxErrorException e) {
             e.printStackTrace();
         }
