@@ -27,7 +27,7 @@ public class SimplifyResucer implements ProgramTranslator {
             //System.out.println("rule1:" + rule1);
             PelpRule rule2 = mergeProbEpisWithSameObjectiveLiterals(rule1);
             //System.out.println("rule2:" + rule2);
-            if (rule2 != null && !existConflict(rule2)) {
+            if (rule2 != null && !existConflictInBody(rule2) && !existSelfsupport(rule2)) {
                 rule2.setId(id);
                 translated.addRule(rule2);
             }
@@ -146,7 +146,7 @@ public class SimplifyResucer implements ProgramTranslator {
         return translated;
     }
 
-    private boolean existConflict(PelpRule rule) {
+    private boolean existConflictInBody(PelpRule rule) {
         List<PelpLiteral> literals = new ArrayList<>(rule.getBody());
         for (int i = 0; i != literals.size(); ++i) {
             PelpLiteral a = literals.get(i);
@@ -325,6 +325,16 @@ public class SimplifyResucer implements ProgramTranslator {
             PelpObjectiveLiteral right = ((PelpProbRelation) a).getRight();
             if (left.isNaf() && !right.isNaf()
                     && left.isNegation() != right.isNegation()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean existSelfsupport(PelpRule rule) {
+        for (PelpObjectiveLiteral literal : rule.getHead()) {
+            PelpSubjectiveLiteral episSelfSupport = new PelpSubjectiveLiteral(true, true, 1, 1, literal);
+            if (rule.getBody().contains(literal) || rule.getBody().contains(episSelfSupport)) {
                 return true;
             }
         }
