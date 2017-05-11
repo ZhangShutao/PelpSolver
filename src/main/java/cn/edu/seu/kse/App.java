@@ -44,7 +44,7 @@ public class App {
             try {
                 String programStr = readFile(fileName);
                 Date startTime = new Date();
-                String worldViews = pelpSolver.solve(programStr);
+                String worldViews = pelpSolver.solve(optMode, programStr);
                 Date endTime = new Date();
 
                 Logger.info("推理结果：{}", worldViews);

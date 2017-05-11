@@ -15,6 +15,7 @@ import cn.edu.seu.kse.translate.AnswerSet2PossibleWorldTranslator;
 import cn.edu.seu.kse.translate.ProgramTranslator;
 import cn.edu.seu.kse.translate.impl.EpistemicReducer;
 import cn.edu.seu.kse.translate.impl.Pelp2AspTranslator;
+import cn.edu.seu.kse.translate.impl.SimplifyResucer;
 import cn.edu.seu.kse.translate.impl.SoftRuleReducer;
 import cn.edu.seu.kse.util.Logger;
 
@@ -27,6 +28,7 @@ import java.util.*;
  */
 public class PelpSolverImpl implements PelpSolver {
     private AspSolver aspSolver = new AspSolverClingo4Impl();
+    private ProgramTranslator simplifyReducer = new SimplifyResucer();
     private ProgramTranslator softReducer = new SoftRuleReducer();
     private ProgramTranslator epistemicReducer = new EpistemicReducer();
     private ProgramTranslator pelp2AspTranslator = new Pelp2AspTranslator();
@@ -76,7 +78,11 @@ public class PelpSolverImpl implements PelpSolver {
     public Set<WorldView> solve(int optMode, PelpProgram program) throws SyntaxErrorException, ReasoningErrorException {
         Set<WorldView> worldViews = new HashSet<>();
         try {
-            AspProgram aspProgram = pelp2Asp(program);
+            PelpProgram toSolve = program;
+            if (optMode == 1) {
+                toSolve = (PelpProgram) simplifyReducer.translateProgram(program);
+            }
+            AspProgram aspProgram = pelp2Asp(toSolve);
             Set<AnswerSet> answerSets = solveAspProgram(aspProgram);
             Set<WorldView> candidateWorldViews = getCandidateWorldView(answerSets);
             candidateWorldViews.forEach(worldView -> {
