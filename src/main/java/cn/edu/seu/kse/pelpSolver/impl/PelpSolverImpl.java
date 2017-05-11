@@ -14,6 +14,7 @@ import cn.edu.seu.kse.syntax.parser.PelpSyntaxParser;
 import cn.edu.seu.kse.translate.AnswerSet2PossibleWorldTranslator;
 import cn.edu.seu.kse.translate.ProgramTranslator;
 import cn.edu.seu.kse.translate.impl.EpistemicReducer;
+import cn.edu.seu.kse.translate.impl.Pelp2AspTranslator;
 import cn.edu.seu.kse.translate.impl.SoftRuleReducer;
 import cn.edu.seu.kse.util.Logger;
 
@@ -28,6 +29,7 @@ public class PelpSolverImpl implements PelpSolver {
     private AspSolver aspSolver = new AspSolverClingo4Impl();
     private ProgramTranslator softReducer = new SoftRuleReducer();
     private ProgramTranslator epistemicReducer = new EpistemicReducer();
+    private ProgramTranslator pelp2AspTranslator = new Pelp2AspTranslator();
     private AnswerSet2PossibleWorldTranslator answerSetTranslator = new AnswerSet2PossibleWorldTranslator();
 
     public AspSolver getAspSolver() {
@@ -60,6 +62,14 @@ public class PelpSolverImpl implements PelpSolver {
 
     public void setAnswerSetTranslator(AnswerSet2PossibleWorldTranslator answerSetTranslator) {
         this.answerSetTranslator = answerSetTranslator;
+    }
+
+    public ProgramTranslator getPelp2AspTranslator() {
+        return pelp2AspTranslator;
+    }
+
+    public void setPelp2AspTranslator(ProgramTranslator pelp2AspTranslator) {
+        this.pelp2AspTranslator = pelp2AspTranslator;
     }
 
     @Override
@@ -179,8 +189,10 @@ public class PelpSolverImpl implements PelpSolver {
      */
     public AspProgram pelp2Asp(PelpProgram pelpProgram) throws SyntaxErrorException, TranslateErrorException {
         Logger.info("translating PELP program into ASP program:\n{}", pelpProgram.toString());
-        PelpProgram noSoftProgram = (PelpProgram) getSoftReducer().translateProgram(pelpProgram);
-        AspProgram aspProgram = (AspProgram) getEpistemicReducer().translateProgram(noSoftProgram);
+        PelpProgram noSubjectProgram = (PelpProgram) getEpistemicReducer().translateProgram(pelpProgram);
+        Logger.info("LPMLN program:\n{}", noSubjectProgram);
+        PelpProgram noSoftProgram = (PelpProgram) getSoftReducer().translateProgram(noSubjectProgram);
+        AspProgram aspProgram = (AspProgram) getPelp2AspTranslator().translateProgram(noSoftProgram);
 
         Logger.info("translating finished.\n{}", aspProgram.toString());
         return aspProgram;

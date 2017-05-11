@@ -40,6 +40,7 @@ public class SoftRuleReducerTest {
             PelpProgram originProgram = getTestProgram(0);
 
             PelpProgram translatedProgram = (PelpProgram) translator.translateProgram(originProgram);
+            System.out.println(translatedProgram);
             assertTrue(translatedProgram.toString().contains("_herbrand(jo)."));
         } catch (SyntaxErrorException | TranslateErrorException e) {
             fail(e.getMessage());

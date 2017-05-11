@@ -40,7 +40,7 @@ public class Pelp2AspTranslateTest {
                     "a :- K(0, 1] not b.\n" +
                     "a :- K[0, 0] not p.\n" +
                     "r :- not q.");
-            AspProgram aspProgram = (AspProgram) epistemicReducer.translateProgram(program);
+            PelpProgram aspProgram = (PelpProgram) epistemicReducer.translateProgram(program);
 
             System.out.println(aspProgram);
         } catch (SyntaxErrorException | TranslateErrorException e) {
@@ -53,7 +53,20 @@ public class Pelp2AspTranslateTest {
         try {
             PelpProgram program = PelpSyntaxParser.parseProgram("b :- #PL(a(X), b(X)), a(X).\n" +
                     "p(X) | q(X) :- a(X).\n a(1).");
-            AspProgram aspProgram = (AspProgram) epistemicReducer.translateProgram(program);
+            PelpProgram aspProgram = (PelpProgram) epistemicReducer.translateProgram(program);
+
+            System.out.println(aspProgram);
+        } catch (SyntaxErrorException | TranslateErrorException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void testTranslateNormalEpistemic() {
+        try {
+            PelpProgram program = PelpSyntaxParser.parseProgram("p | q.\n" +
+                    ":- K[0.4, 0.6] p.");
+            PelpProgram aspProgram = (PelpProgram) epistemicReducer.translateProgram(program);
 
             System.out.println(aspProgram);
         } catch (SyntaxErrorException | TranslateErrorException e) {

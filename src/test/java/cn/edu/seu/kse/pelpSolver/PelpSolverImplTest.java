@@ -108,4 +108,34 @@ public class PelpSolverImplTest {
             e.printStackTrace();
         }
     }
+
+    @Test
+    public void testConstrain1() {
+        testProgram(new File("test" + File.separator + "case9.lp"),
+                new File("test" + File.separator + "case9.out"));
+    }
+
+    @Test
+    public void testConstrain2() {
+        testProgram(new File("test" + File.separator + "case10.lp"),
+                new File("test" + File.separator + "case10.out"));
+    }
+
+    @Test
+    public void testSelfSupport1() {
+        testProgram(new File("test" + File.separator + "case11.lp"),
+                new File("test" + File.separator + "case11.out"));
+    }
+
+    @Test
+    public void testMultiHeadSoftRule() {
+        testProgram(new File("test" + File.separator + "case13.lp"),
+                new File("test" + File.separator + "case13.out"));
+    }
+
+    @Test
+    public void testENegCalculus() {
+        testProgram(new File("test" + File.separator + "case14.lp"),
+                new File("test" + File.separator + "case14.out"));
+    }
 }
