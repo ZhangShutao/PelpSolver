@@ -198,6 +198,7 @@ public class PelpSolverImpl implements PelpSolver {
         PelpProgram noSubjectProgram = (PelpProgram) getEpistemicReducer().translateProgram(pelpProgram);
         Logger.info("LPMLN program:\n{}", noSubjectProgram);
         PelpProgram noSoftProgram = (PelpProgram) getSoftReducer().translateProgram(noSubjectProgram);
+        Logger.info("translated:\n{}", noSoftProgram.toString());
         AspProgram aspProgram = (AspProgram) getPelp2AspTranslator().translateProgram(noSoftProgram);
 
         Logger.info("translating finished.\n{}", aspProgram.toString());

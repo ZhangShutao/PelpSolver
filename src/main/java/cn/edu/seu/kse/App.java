@@ -38,7 +38,7 @@ public class App {
             CommandLine cmd = parser.parse(options, args);
             int optMode = 0;
             if (cmd.hasOption("opt")) {
-                optMode = Integer.getInteger(cmd.getOptionValue("opt"));
+                optMode = Integer.parseInt(cmd.getOptionValue("opt"));
             }
             String fileName = cmd.getArgs()[0];
             try {
@@ -49,8 +49,8 @@ public class App {
 
                 Logger.info("推理结果：{}", worldViews);
                 System.out.println(worldViews);
-                Logger.info("Using Time: {} ms", endTime.getTime() - startTime.getTime());
-                System.out.println("Using Time: " + (endTime.getTime() - startTime.getTime()) + "ms");
+                Logger.info("Used Time: {} ms", endTime.getTime() - startTime.getTime());
+                System.out.println("Used Time: " + (endTime.getTime() - startTime.getTime()) + "ms");
             } catch (FileNotFoundException e) {
                 Logger.warn("未找到源文件 {}", fileName);
                 System.err.println("未找到源文件");

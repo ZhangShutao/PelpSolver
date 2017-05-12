@@ -33,7 +33,7 @@ public class PelpSolverImplTest {
 
     private void testProgram(File inputFile, File outputFile) {
         try {
-            String output = solver.solve(1, readFile(inputFile));
+            String output = solver.solve(0, readFile(inputFile));
             System.out.println(output);
             assertTrue(output.equals(readFile(outputFile)));
         } catch (SyntaxErrorException e) {
@@ -137,5 +137,11 @@ public class PelpSolverImplTest {
     public void testENegCalculus() {
         testProgram(new File("test" + File.separator + "case14.lp"),
                 new File("test" + File.separator + "case14.out"));
+    }
+
+    @Test
+    public void testProbEpisMerge() {
+        testProgram(new File("test" + File.separator + "case15.lp"),
+                new File("test" + File.separator + "case15.out"));
     }
 }

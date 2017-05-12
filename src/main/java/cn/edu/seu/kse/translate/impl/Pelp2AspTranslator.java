@@ -120,7 +120,7 @@ public class Pelp2AspTranslator implements ProgramTranslator {
         writer.flush();
         writer.close();
 
-        List<String> params = Arrays.asList("--mode=gringo", "--text", "--lparse-rewrite", programFile.getAbsolutePath());
+        List<String> params = Arrays.asList("--mode=gringo", "--text", programFile.getAbsolutePath());
         CommandLineOutput output = CommandLineExecute.callShell("clingo", params);
         programFile.deleteOnExit();
 
