@@ -59,7 +59,7 @@ public class SoftRuleReducer implements ProgramTranslator {
         ruleSet.add(generateHeadSatisfyRule(rule));
         ruleSet.add(generateBodySatisfyRule(rule));
         ruleSet.add(generateUnselectedConstrain(rule));
-        ruleSet.add(generateWeightRule(rule));
+        //ruleSet.add(generateWeightRule(rule));
 
         return ruleSet;
     }
@@ -189,13 +189,13 @@ public class SoftRuleReducer implements ProgramTranslator {
     }
 
     private PelpRule generateHeadSatisfyRule(PelpRule rule) {
-        PelpObjectiveLiteral satisfy = new PelpObjectiveLiteral(0, false, "_sat", generateGroundedRuleIdentifyParams(rule));
+        PelpObjectiveLiteral satisfy = new PelpObjectiveLiteral(0, false, "_sat", generateGroundedRuleIdentifyParamsWithWeight(rule));
         PelpObjectiveLiteral head = new PelpObjectiveLiteral(0, false, "_head", generateGroundedRuleIdentifyParams(rule));
         return new PelpRule(Collections.singletonList(satisfy), Collections.singletonList(head), null);
     }
 
     private PelpRule generateBodySatisfyRule(PelpRule rule) {
-        PelpObjectiveLiteral satisfy = new PelpObjectiveLiteral(0, false, "_sat", generateGroundedRuleIdentifyParams(rule));
+        PelpObjectiveLiteral satisfy = new PelpObjectiveLiteral(0, false, "_sat", generateGroundedRuleIdentifyParamsWithWeight(rule));
         List<PelpLiteral> bodyList = new ArrayList<>();
         bodyList.add(new PelpObjectiveLiteral(1, false, "_body", generateGroundedRuleIdentifyParams(rule)));
         satisfy.getVariableSet().forEach(variable ->
@@ -214,5 +214,16 @@ public class SoftRuleReducer implements ProgramTranslator {
     private PelpRule generateWeightRule(PelpRule rule) {
         PelpObjectiveLiteral satisfy = new PelpObjectiveLiteral(0, false, "_sat", generateGroundedRuleIdentifyParams(rule));
         return new PelpRule(new ArrayList<>(), Collections.singletonList(satisfy), rule.getWeight());
+    }
+
+    private List<PelpParam> generateGroundedRuleIdentifyParamsWithWeight(PelpRule rule) {
+        List<PelpParam> idTerms = new ArrayList<>();
+        idTerms.add(new PelpParam(PelpParam.CONSTANT, rule.getId()));
+
+        idTerms.add(new PelpParam(PelpParam.CONSTANT, (int)(rule.getWeight() * 1000)));
+        Set<PelpParam> variableSet = rule.getVariableSet();
+
+        idTerms.addAll(variableSet);
+        return idTerms;
     }
 }

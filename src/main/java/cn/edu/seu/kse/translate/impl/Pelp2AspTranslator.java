@@ -128,7 +128,7 @@ public class Pelp2AspTranslator implements ProgramTranslator {
 
         String[] lines = output.getOutput().split(System.lineSeparator());
         for (String line : lines) {
-            if (!line.contains("#")) {
+            if (!line.contains("#") && !line.isEmpty()) {
                 try {
                     AspRule rule  = AspSyntaxParser.parseRule(line);
                     if (isEpistemicSelectRule(rule)) {
