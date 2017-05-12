@@ -144,4 +144,10 @@ public class PelpSolverImplTest {
         testProgram(new File("test" + File.separator + "case15.lp"),
                 new File("test" + File.separator + "case15.out"));
     }
+
+    @Test
+    public void testPlanning() {
+        testProgram(new File("test" + File.separator + "planning.lp"),
+                new File("test" + File.separator + "planning.out"));
+    }
 }

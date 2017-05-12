@@ -89,12 +89,8 @@ public class SoftRuleReducer implements ProgramTranslator {
     }
 
     private PelpObjectiveLiteral generateRuleSatisfiedLiteral(PelpRule rule) {
-        Set<PelpParam> variableSet = rule.getVariableSet();
 
-        List<PelpParam> selectTerms = new ArrayList<>();
-        selectTerms.add(new PelpParam(PelpParam.CONSTANT, rule.getId()));
-        selectTerms.addAll(variableSet);
-        return new PelpObjectiveLiteral(0, false, "_sat", selectTerms);
+        return new PelpObjectiveLiteral(0, false, "_sat", generateGroundedRuleIdentifyParamsWithWeight(rule));
     }
 
     /**
