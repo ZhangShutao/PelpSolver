@@ -1,10 +1,8 @@
 package cn.edu.seu.kse.translate.impl;
 
-import cn.edu.seu.kse.exception.SyntaxErrorException;
 import cn.edu.seu.kse.exception.TranslateErrorException;
 import cn.edu.seu.kse.model.ObjectModel;
 import cn.edu.seu.kse.model.pelp.*;
-import cn.edu.seu.kse.syntax.parser.PelpSyntaxParser;
 import cn.edu.seu.kse.translate.ProgramTranslator;
 
 import java.util.*;
@@ -23,29 +21,25 @@ public class SimplifyResucer implements ProgramTranslator {
     @Override
     public ObjectModel translateProgram(ObjectModel program) throws TranslateErrorException {
         PelpProgram origin = (PelpProgram) program;
-        try {
-            PelpProgram translated = PelpSyntaxParser.parseProgram("-_false.");
+        PelpProgram translated = new PelpProgram();
+        translated.addRule(new PelpRule(Collections.singletonList(new PelpObjectiveLiteral(0, true, "_false", new ArrayList<>())), new ArrayList<>()));
 
-            origin.getRules().forEach(originRule -> {
-                PelpRule rule;
+        origin.getRules().forEach(originRule -> {
+            PelpRule rule;
 
-                PelpRule rule1 = reduceKnot(originRule);
-                PelpRule rule2 = mergeProbEpisWithSameObjectiveLiterals(rule1);
-                if (rule2 != null && !existConflictInBody(rule2) && !existSelfsupport(rule2)) {
-                    //PelpRule rule3 = removeConflictHead(rule2);
-                    rule = removeRedundantBody(rule2);
-                } else {
-                    rule = new PelpRule(originRule.getHead(), getFalseBody());
-                }
-                rule.setId(originRule.getId());
-                rule.setWeight(originRule.getWeight());
-                translated.addRule(rule);
-            });
-            return translated;
-        } catch (SyntaxErrorException e) {
-            e.printStackTrace();
-            return null;
-        }
+            PelpRule rule1 = reduceKnot(originRule);
+            PelpRule rule2 = mergeProbEpisWithSameObjectiveLiterals(rule1);
+            if (rule2 != null && !existConflictInBody(rule2)) {
+                //PelpRule rule3 = removeConflictHead(rule2);
+                rule = removeRedundantBody(rule2);
+            } else {
+                rule = new PelpRule(originRule.getHead(), getFalseBody());
+            }
+            rule.setId(originRule.getId());
+            rule.setWeight(originRule.getWeight());
+            translated.addRule(rule);
+        });
+        return translated;
     }
 
     /**
