@@ -1,8 +1,10 @@
 package cn.edu.seu.kse.translate.impl;
 
+import cn.edu.seu.kse.exception.SyntaxErrorException;
 import cn.edu.seu.kse.exception.TranslateErrorException;
 import cn.edu.seu.kse.model.ObjectModel;
 import cn.edu.seu.kse.model.pelp.*;
+import cn.edu.seu.kse.syntax.parser.PelpSyntaxParser;
 import cn.edu.seu.kse.translate.ProgramTranslator;
 
 import java.util.*;
@@ -12,6 +14,7 @@ import java.util.*;
  * Created by 张舒韬 on 2017/5/11.
  */
 public class SimplifyResucer implements ProgramTranslator {
+
     @Override
     public Set<ObjectModel> translate(ObjectModel objectModel) throws TranslateErrorException {
         return null;
@@ -20,23 +23,29 @@ public class SimplifyResucer implements ProgramTranslator {
     @Override
     public ObjectModel translateProgram(ObjectModel program) throws TranslateErrorException {
         PelpProgram origin = (PelpProgram) program;
-        PelpProgram translated = new PelpProgram();
-        origin.getRules().forEach(originRule -> {
-            PelpRule rule1 = reduceKnot(originRule);
-            //System.out.println("rule1:" + rule1);
-            PelpRule rule2 = mergeProbEpisWithSameObjectiveLiterals(rule1);
-            //System.out.println("rule2:" + rule2);
-            if (rule2 != null && !existConflictInBody(rule2) && !existSelfsupport(rule2)) {
-                PelpRule rule3 = removeConflictHead(rule2);
-                PelpRule rule4 = removeRedundantBody(rule3);
-                if (!rule4.getBody().isEmpty() || !rule4.getHead().isEmpty()) {
-                    rule4.setId(originRule.getId());
-                    rule4.setWeight(originRule.getWeight());
-                    translated.addRule(rule4);
+        try {
+            PelpProgram translated = PelpSyntaxParser.parseProgram("-_false.");
+
+            origin.getRules().forEach(originRule -> {
+                PelpRule rule;
+
+                PelpRule rule1 = reduceKnot(originRule);
+                PelpRule rule2 = mergeProbEpisWithSameObjectiveLiterals(rule1);
+                if (rule2 != null && !existConflictInBody(rule2) && !existSelfsupport(rule2)) {
+                    //PelpRule rule3 = removeConflictHead(rule2);
+                    rule = removeRedundantBody(rule2);
+                } else {
+                    rule = new PelpRule(originRule.getHead(), getFalseBody());
                 }
-            }
-        });
-        return translated;
+                rule.setId(originRule.getId());
+                rule.setWeight(originRule.getWeight());
+                translated.addRule(rule);
+            });
+            return translated;
+        } catch (SyntaxErrorException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     /**
@@ -428,6 +437,12 @@ public class SimplifyResucer implements ProgramTranslator {
             return body.contains(literal1);
         }
         return false;
+    }
+
+    private List<PelpLiteral> getFalseBody() {
+        List<PelpLiteral> body = new ArrayList<>();
+        body.add(new PelpObjectiveLiteral(0, false, "_false", new ArrayList<>()));
+        return body;
     }
 
     private boolean sim(double a, double b) {
