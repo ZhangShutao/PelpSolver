@@ -22,14 +22,18 @@ public class SimplifyResucer implements ProgramTranslator {
         PelpProgram origin = (PelpProgram) program;
         PelpProgram translated = new PelpProgram();
         origin.getRules().forEach(originRule -> {
-            String id = originRule.getId();
             PelpRule rule1 = reduceKnot(originRule);
             //System.out.println("rule1:" + rule1);
             PelpRule rule2 = mergeProbEpisWithSameObjectiveLiterals(rule1);
             //System.out.println("rule2:" + rule2);
             if (rule2 != null && !existConflictInBody(rule2) && !existSelfsupport(rule2)) {
-                rule2.setId(id);
-                translated.addRule(rule2);
+                PelpRule rule3 = removeConflictHead(rule2);
+                PelpRule rule4 = removeRedundantBody(rule3);
+                if (!rule4.getBody().isEmpty() || !rule4.getHead().isEmpty()) {
+                    rule4.setId(originRule.getId());
+                    rule4.setWeight(originRule.getWeight());
+                    translated.addRule(rule4);
+                }
             }
         });
         return translated;
@@ -337,6 +341,91 @@ public class SimplifyResucer implements ProgramTranslator {
             if (rule.getBody().contains(literal) || rule.getBody().contains(episSelfSupport)) {
                 return true;
             }
+        }
+        return false;
+    }
+
+    private PelpRule removeConflictHead(PelpRule rule) {
+        List<PelpObjectiveLiteral> reducedHead = new ArrayList<>();
+        for (PelpObjectiveLiteral literal : rule.getHead()) {
+            PelpObjectiveLiteral literal1 = new PelpObjectiveLiteral(literal);
+            literal1.setNafCount(literal.getNafCount() + 1);
+            PelpObjectiveLiteral literal2 = new PelpObjectiveLiteral(literal);
+            literal2.setNegation(!literal.isNegation());
+            PelpSubjectiveLiteral literal3 = new PelpSubjectiveLiteral(true, true, 0, 0, literal);
+            PelpSubjectiveLiteral literal4 = new PelpSubjectiveLiteral(true, true, 1, 1, literal2);
+            if (!(rule.getBody().contains(literal1) || rule.getBody().contains(literal2) || rule.getBody().contains(literal3) || rule.getBody().contains(literal4))) {
+                reducedHead.add(literal);
+            }
+        }
+        return new PelpRule(reducedHead, rule.getBody());
+    }
+
+    private PelpRule removeRedundantBody(PelpRule rule) {
+        List<PelpLiteral> reductBody = new ArrayList<>();
+        for (PelpLiteral literal: rule.getBody()) {
+            if (!existK11Conflict(literal, rule.getBody())
+                    && !existK00Conflict(literal, rule.getBody())
+                    && !existNafConflict(literal, rule.getBody())
+                    && !existPosConflict(literal, rule.getBody())
+                    && !existNegNafConflict(literal, rule.getBody())
+                    && !existNegK01Conflict(literal, rule.getBody())) {
+                reductBody.add(literal);
+            }
+        }
+        return new PelpRule(rule.getHead(), reductBody);
+    }
+
+    private boolean existK11Conflict(PelpLiteral literal, List<PelpLiteral> body) {
+        if (literal instanceof PelpObjectiveLiteral) {
+            PelpSubjectiveLiteral k11 = new PelpSubjectiveLiteral(true, true, 1, 1, (PelpObjectiveLiteral) literal);
+            return body.contains(k11);
+        }
+        return false;
+    }
+
+    private boolean existK00Conflict(PelpLiteral literal, List<PelpLiteral> body) {
+        if (literal instanceof PelpObjectiveLiteral && ((PelpObjectiveLiteral) literal).getNafCount() > 0) {
+            PelpObjectiveLiteral literal1 = new PelpObjectiveLiteral((PelpObjectiveLiteral) literal);
+            literal1.setNafCount(literal1.getNafCount() - 1);
+            PelpSubjectiveLiteral k00 = new PelpSubjectiveLiteral(true, true, 0, 0, literal1);
+            return body.contains(k00);
+        }
+        return false;
+    }
+
+    private boolean existNafConflict(PelpLiteral literal, List<PelpLiteral> body) {
+        if (literal instanceof PelpSubjectiveLiteral && ((PelpSubjectiveLiteral) literal).isKco01()) {
+            PelpObjectiveLiteral literal1 = new PelpObjectiveLiteral(((PelpSubjectiveLiteral) literal).getObjectiveLiteral());
+            literal1.setNafCount(literal1.getNafCount() + 1);
+            return body.contains(literal1);
+        }
+        return false;
+    }
+
+    private boolean existPosConflict(PelpLiteral literal, List<PelpLiteral> body) {
+        if (literal instanceof PelpSubjectiveLiteral && ((PelpSubjectiveLiteral) literal).isKoc01()) {
+            return body.contains(((PelpSubjectiveLiteral) literal).getObjectiveLiteral());
+        }
+        return false;
+    }
+
+    private boolean existNegNafConflict(PelpLiteral literal, List<PelpLiteral> body) {
+        if (literal instanceof PelpObjectiveLiteral && ((PelpObjectiveLiteral) literal).getNafCount() > 0) {
+            PelpObjectiveLiteral literal1 = new PelpObjectiveLiteral(((PelpObjectiveLiteral) literal).getNafCount() - 1,
+                    !((PelpObjectiveLiteral) literal).isNegation(),
+                    ((PelpObjectiveLiteral) literal).getPredicate(),
+                    ((PelpObjectiveLiteral) literal).getParams());
+            return body.contains(literal1);
+        }
+        return false;
+    }
+
+    private boolean existNegK01Conflict(PelpLiteral literal, List<PelpLiteral> body) {
+        if (literal instanceof PelpSubjectiveLiteral && ((PelpSubjectiveLiteral) literal).isKco01()) {
+            PelpObjectiveLiteral literal1 = new PelpObjectiveLiteral(((PelpSubjectiveLiteral) literal).getObjectiveLiteral());
+            literal1.setNegation(!literal1.isNegation());
+            return body.contains(literal1);
         }
         return false;
     }
