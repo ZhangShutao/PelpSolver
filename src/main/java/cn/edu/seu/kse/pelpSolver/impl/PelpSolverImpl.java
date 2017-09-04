@@ -15,6 +15,7 @@ import cn.edu.seu.kse.translate.AnswerSet2PossibleWorldTranslator;
 import cn.edu.seu.kse.translate.ProgramTranslator;
 import cn.edu.seu.kse.translate.impl.EpistemicReducer;
 import cn.edu.seu.kse.translate.impl.Pelp2AspTranslator;
+import cn.edu.seu.kse.translate.impl.SimplifyResucer;
 import cn.edu.seu.kse.translate.impl.SoftRuleReducer;
 import cn.edu.seu.kse.util.Logger;
 
@@ -27,6 +28,7 @@ import java.util.*;
  */
 public class PelpSolverImpl implements PelpSolver {
     private AspSolver aspSolver = new AspSolverClingo4Impl();
+    private ProgramTranslator simplifyReducer = new SimplifyResucer();
     private ProgramTranslator softReducer = new SoftRuleReducer();
     private ProgramTranslator epistemicReducer = new EpistemicReducer();
     private ProgramTranslator pelp2AspTranslator = new Pelp2AspTranslator();
@@ -73,10 +75,14 @@ public class PelpSolverImpl implements PelpSolver {
     }
 
     @Override
-    public Set<WorldView> solve(PelpProgram program) throws SyntaxErrorException, ReasoningErrorException {
+    public Set<WorldView> solve(int optMode, PelpProgram program) throws SyntaxErrorException, ReasoningErrorException {
         Set<WorldView> worldViews = new HashSet<>();
         try {
-            AspProgram aspProgram = pelp2Asp(program);
+            PelpProgram toSolve = program;
+            if (optMode == 1) {
+                toSolve = (PelpProgram) simplifyReducer.translateProgram(program);
+            }
+            AspProgram aspProgram = pelp2Asp(toSolve);
             Set<AnswerSet> answerSets = solveAspProgram(aspProgram);
             Set<WorldView> candidateWorldViews = getCandidateWorldView(answerSets);
             candidateWorldViews.forEach(worldView -> {
@@ -159,10 +165,10 @@ public class PelpSolverImpl implements PelpSolver {
     }
 
     @Override
-    public String solve(String program) throws SyntaxErrorException, ReasoningErrorException {
+    public String solve(int optMode, String program) throws SyntaxErrorException, ReasoningErrorException {
         Logger.info("solving program...\n{}", program);
         PelpProgram pelpProgram = PelpSyntaxParser.parseProgram(program);
-        Set<WorldView> worldViews = solve(pelpProgram);
+        Set<WorldView> worldViews = solve(optMode, pelpProgram);
         StringJoiner outputJoiner = new StringJoiner("\n");
 
         if (worldViews.isEmpty()) {
@@ -192,6 +198,7 @@ public class PelpSolverImpl implements PelpSolver {
         PelpProgram noSubjectProgram = (PelpProgram) getEpistemicReducer().translateProgram(pelpProgram);
         Logger.info("LPMLN program:\n{}", noSubjectProgram);
         PelpProgram noSoftProgram = (PelpProgram) getSoftReducer().translateProgram(noSubjectProgram);
+        Logger.info("translated:\n{}", noSoftProgram.toString());
         AspProgram aspProgram = (AspProgram) getPelp2AspTranslator().translateProgram(noSoftProgram);
 
         Logger.info("translating finished.\n{}", aspProgram.toString());

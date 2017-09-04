@@ -9,6 +9,7 @@ import cn.edu.seu.kse.exception.UnsupportedOsTypeException;
 import cn.edu.seu.kse.model.CommandLineOutput;
 import cn.edu.seu.kse.model.ObjectModel;
 import cn.edu.seu.kse.model.asp.AnswerSet;
+import cn.edu.seu.kse.model.asp.AspLiteral;
 import cn.edu.seu.kse.model.asp.AspProgram;
 import cn.edu.seu.kse.syntax.parser.AspSyntaxParser;
 import cn.edu.seu.kse.util.CommandLineExecute;
@@ -35,7 +36,7 @@ public class AspSolverClingo4Impl implements CommandLineSolver, AspSolver {
 
     public Set<AnswerSet> reason(AspProgram program) throws UnsatisfiableException, ReasoningErrorException, IOException {
         Map<String, String> valueParam = new HashMap<>();
-        valueParam.put("--opt-mode", "enum");
+//        valueParam.put("--opt-mode", "enum");
         valueParam.put("--models", "0");
         List<String> params = generateSolverParamList(valueParam, new ArrayList<>());
 
@@ -101,8 +102,6 @@ public class AspSolverClingo4Impl implements CommandLineSolver, AspSolver {
             throw new UnsatisfiableException("逻辑程序不可满足");
         }
 
-        boolean isOptimize = result.contains("OPTIMUM FOUND");
-
         BufferedReader reader = new BufferedReader(new StringReader(result));
         String line;
         while ((line = reader.readLine()) != null) {
@@ -110,14 +109,22 @@ public class AspSolverClingo4Impl implements CommandLineSolver, AspSolver {
                 String answerSetStr = reader.readLine();
                 AnswerSet answerSet = AspSyntaxParser.parseAnswerSet(answerSetStr);
 
-                if (isOptimize) {
-                    String optimizationStr = reader.readLine();
-                    int weight = Integer.parseInt(optimizationStr.substring(14));
-                    answerSet.setWeight(weight);
-                }
+                int weight = getAnswerSetWeight(answerSet);
+                answerSet.setWeight(weight);
+
                 answerSets.add(answerSet);
             }
         }
         return answerSets;
+    }
+
+    private int getAnswerSetWeight(AnswerSet answerSet) {
+        int sum = 0;
+        for (AspLiteral literal : answerSet.getLiterals()) {
+            if ("_sat".equals(literal.getPredicate())) {
+                sum += Integer.parseInt(literal.getParams().get(1).toString());
+            }
+        }
+        return sum;
     }
 }

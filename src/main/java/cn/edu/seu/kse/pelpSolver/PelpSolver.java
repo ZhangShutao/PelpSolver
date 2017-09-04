@@ -12,7 +12,7 @@ import java.util.Set;
  * Created by 张舒韬 on 2017/2/7.
  */
 public interface PelpSolver {
-    Set<WorldView> solve(PelpProgram program) throws SyntaxErrorException, ReasoningErrorException;
+    Set<WorldView> solve(int optMode, PelpProgram program) throws SyntaxErrorException, ReasoningErrorException;
 
-    String solve(String program) throws SyntaxErrorException, ReasoningErrorException;
+    String solve(int optMode, String program) throws SyntaxErrorException, ReasoningErrorException;
 }
