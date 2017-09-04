@@ -15,7 +15,7 @@ import java.util.StringJoiner;
  * 命令行程序调用工具类
  * Created by 张舒韬 on 2017/1/11.
  */
-public class CommandLineExecute {
+public class CommandLineExecuteImpl implements CommandLineExecutor {
 
     /**
      * 获得当前操作系统调用命令的前缀
@@ -80,7 +80,7 @@ public class CommandLineExecute {
         }
     }
 
-    public static CommandLineOutput callShell(String name, List<String> params) throws UnsupportedOsTypeException, IOException {
+    public CommandLineOutput callShell(String name, List<String> params) throws UnsupportedOsTypeException, IOException {
         StringJoiner cmdJoiner = new StringJoiner(" ");
 
         cmdJoiner.add(getCommandLinePrefix()).add(name);

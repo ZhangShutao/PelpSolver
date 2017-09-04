@@ -9,7 +9,9 @@ import cn.edu.seu.kse.model.asp.*;
 import cn.edu.seu.kse.model.pelp.*;
 import cn.edu.seu.kse.syntax.parser.AspSyntaxParser;
 import cn.edu.seu.kse.translate.ProgramTranslator;
-import cn.edu.seu.kse.util.CommandLineExecute;
+import cn.edu.seu.kse.util.ApacheCommandlineExecutor;
+import cn.edu.seu.kse.util.CommandLineExecuteImpl;
+import cn.edu.seu.kse.util.CommandLineExecutor;
 import cn.edu.seu.kse.util.Logger;
 
 import java.io.*;
@@ -20,6 +22,8 @@ import java.util.*;
  * Created by 张舒韬 on 2017/3/31.
  */
 public class Pelp2AspTranslator implements ProgramTranslator {
+    private CommandLineExecutor cmdExecutor = new ApacheCommandlineExecutor();
+
     @Override
     public Set<ObjectModel> translate(ObjectModel objectModel) throws TranslateErrorException {
         Set<ObjectModel> result = new HashSet<>();
@@ -121,7 +125,7 @@ public class Pelp2AspTranslator implements ProgramTranslator {
         writer.close();
 
         List<String> params = Arrays.asList("--mode=gringo", "--text", programFile.getAbsolutePath());
-        CommandLineOutput output = CommandLineExecute.callShell("clingo", params);
+        CommandLineOutput output = cmdExecutor.callShell("DefaultReasoner5", params);
         programFile.deleteOnExit();
 
         originAsp.getRules().removeIf(this::isEpistemicSelectRule);

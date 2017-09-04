@@ -11,7 +11,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
 
-public class ApacheCommandlineExecutor {
+public class ApacheCommandlineExecutor implements CommandLineExecutor {
 
     public CommandLineOutput callShell(String name, List<String> params) throws UnsupportedOsTypeException, IOException {
         CommandLine cmdline = new CommandLine(name);

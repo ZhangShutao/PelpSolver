@@ -12,7 +12,9 @@ import cn.edu.seu.kse.model.asp.AnswerSet;
 import cn.edu.seu.kse.model.asp.AspLiteral;
 import cn.edu.seu.kse.model.asp.AspProgram;
 import cn.edu.seu.kse.syntax.parser.AspSyntaxParser;
-import cn.edu.seu.kse.util.CommandLineExecute;
+import cn.edu.seu.kse.util.ApacheCommandlineExecutor;
+import cn.edu.seu.kse.util.CommandLineExecuteImpl;
+import cn.edu.seu.kse.util.CommandLineExecutor;
 import cn.edu.seu.kse.util.Logger;
 import org.apache.commons.lang.SystemUtils;
 
@@ -24,6 +26,8 @@ import java.util.*;
  * Created by 张舒韬 on 2017/1/11.
  */
 public class AspSolverClingo4Impl implements CommandLineSolver, AspSolver {
+
+    private CommandLineExecutor cmdExecutor = new ApacheCommandlineExecutor();
 
     private File saveProgramAsTempFile(AspProgram program) throws IOException {
         File programFile = File.createTempFile("pelpTemp", ".lp");
@@ -82,7 +86,8 @@ public class AspSolverClingo4Impl implements CommandLineSolver, AspSolver {
         params.add(programFile.getAbsolutePath());
 
         try {
-            CommandLineOutput result = CommandLineExecute.callShell("clingo", params);
+            CommandLineOutput result = cmdExecutor.callShell("DefaultReasoner5", params);
+            //CommandLineOutput = ApacheCommandlineExecutor("DefaultReasoner5", params);
             if (result.getError().contains("ERROR")) {
                 throw new ReasoningErrorException(result.getError());
             } else {
