@@ -1,13 +1,18 @@
 package cn.edu.seu.kse.model.pelp;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+
 import java.util.HashSet;
 import java.util.Set;
 
 /**
- * TODO:
- * Created by 张舒韬 on 2017/3/15.
+ * objective relation expressions in PELP programs
+ *
+ * @author 张舒韬
+ * @date 2017/3/15
  */
-public class PelpRelation extends PelpObjective {
+public class PelpRelation extends BasePelpObjective {
 
     private PelpParam left;
     private PelpParam right;
@@ -75,5 +80,24 @@ public class PelpRelation extends PelpObjective {
     @Override
     public boolean isPositive() {
         return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder().append(left).append(right).append(operator).toHashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        } else if (null == obj || obj.getClass() != PelpRelation.class) {
+            return false;
+        } else {
+            PelpRelation other = (PelpRelation) obj;
+            return new EqualsBuilder().append(left, other.left)
+                    .append(right, other.right)
+                    .append(operator, other.operator).isEquals();
+        }
     }
 }

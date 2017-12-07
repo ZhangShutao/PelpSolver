@@ -3,8 +3,10 @@ package cn.edu.seu.kse.model.asp;
 import java.util.Arrays;
 
 /**
- * TODO:
- * Created by 张舒韬 on 2017/3/15.
+ * relation expressions in answer set programs
+ *
+ * @author 张舒韬
+ * @date 2017/3/15
  */
 public class AspRelation extends AspLiteral {
     public AspRelation(AspParam left, String operator, AspParam right) {
@@ -18,4 +20,5 @@ public class AspRelation extends AspLiteral {
     public String toString() {
         return getParams().get(0).toString() + getPredicate() + getParams().get(1).toString();
     }
+
 }

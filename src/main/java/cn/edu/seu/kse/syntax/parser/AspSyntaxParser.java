@@ -1,7 +1,7 @@
 package cn.edu.seu.kse.syntax.parser;
 
 import cn.edu.seu.kse.exception.SyntaxErrorException;
-import cn.edu.seu.kse.model.ObjectModel;
+import cn.edu.seu.kse.model.BaseObjectModel;
 import cn.edu.seu.kse.model.asp.AnswerSet;
 import cn.edu.seu.kse.model.asp.AspProgram;
 import cn.edu.seu.kse.model.asp.AspRule;
@@ -31,9 +31,9 @@ public class AspSyntaxParser {
         return parser;
     }
 
-    public static ObjectModel getVisitedObject(ParseTree tree) {
+    public static BaseObjectModel getVisitedObject(ParseTree tree) {
         AspVisitorImpl visitor = new AspVisitorImpl();
-        return (ObjectModel) visitor.visit(tree);
+        return (BaseObjectModel) visitor.visit(tree);
     }
 
     /**

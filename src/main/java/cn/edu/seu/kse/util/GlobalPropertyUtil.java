@@ -6,7 +6,9 @@ import java.util.Properties;
 
 /**
  * 读取配置文件中定义的全局配置
- * Created by 张舒韬 on 2017/2/7.
+ *
+ * @author 张舒韬
+ * @date 2017/2/7
  */
 public class GlobalPropertyUtil {
     private static Properties property = null;

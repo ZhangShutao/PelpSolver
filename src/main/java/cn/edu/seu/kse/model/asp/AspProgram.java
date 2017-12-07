@@ -1,6 +1,6 @@
 package cn.edu.seu.kse.model.asp;
 
-import cn.edu.seu.kse.model.ObjectModel;
+import cn.edu.seu.kse.model.BaseObjectModel;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
@@ -10,9 +10,11 @@ import java.util.StringJoiner;
 
 /**
  * ASP程序的语法类
- * Created by 张舒韬 on 2017/1/9.
+ *
+ * @author 张舒韬
+ * @date 2017/1/9
  */
-public class AspProgram extends ObjectModel {
+public class AspProgram extends BaseObjectModel {
     private Set<AspRule> rules = new HashSet<>();
 
     public AspProgram() {

@@ -1,25 +1,27 @@
 package cn.edu.seu.kse.translate.impl;
 
 import cn.edu.seu.kse.exception.TranslateErrorException;
-import cn.edu.seu.kse.model.ObjectModel;
+import cn.edu.seu.kse.model.BaseObjectModel;
 import cn.edu.seu.kse.model.pelp.*;
 import cn.edu.seu.kse.translate.ProgramTranslator;
 
 import java.util.*;
 
 /**
- * TODO:
- * Created by 张舒韬 on 2017/5/11.
+ * a simple reducer of PELP program used to simplify a PELP program
+ *
+ * @author 张舒韬
+ * @date 2017/5/11
  */
-public class SimplifyResucer implements ProgramTranslator {
+public class SimplifyReducer implements ProgramTranslator {
 
     @Override
-    public Set<ObjectModel> translate(ObjectModel objectModel) throws TranslateErrorException {
+    public Set<BaseObjectModel> translate(BaseObjectModel objectModel) throws TranslateErrorException {
         return null;
     }
 
     @Override
-    public ObjectModel translateProgram(ObjectModel program) throws TranslateErrorException {
+    public BaseObjectModel translateProgram(BaseObjectModel program) throws TranslateErrorException {
         PelpProgram origin = (PelpProgram) program;
         PelpProgram translated = new PelpProgram();
         translated.addRule(new PelpRule(Collections.singletonList(new PelpObjectiveLiteral(0, true, "_false", new ArrayList<>())), new ArrayList<>()));
@@ -44,13 +46,13 @@ public class SimplifyResucer implements ProgramTranslator {
 
     /**
      * 消除规则中的概率认知字Kw not l
-     * @param rule
-     * @return
+     * @param rule the rule to be reduced
+     * @return reduces rule without Kw not l
      */
     private PelpRule reduceKnot(PelpRule rule) {
         PelpRule translated = new PelpRule();
         translated.setHead(rule.getHead());
-        List<PelpLiteral> literals = new ArrayList<>();
+        List<BasePelpLiteral> literals = new ArrayList<>();
         rule.getBody().forEach(literal -> {
             if (literal instanceof PelpSubjectiveLiteral) {
                 literals.add(reduceKnot((PelpSubjectiveLiteral) literal));
@@ -124,14 +126,14 @@ public class SimplifyResucer implements ProgramTranslator {
 
     /**
      * 合并客观字相同的概率认知字，无法合并则返回null
-     * @param rule
-     * @return
+     * @param rule a rule to be reduced
+     * @return a reduced rule
      */
     private PelpRule mergeProbEpisWithSameObjectiveLiterals(PelpRule rule) {
         PelpRule translated = new PelpRule();
         translated.setHead(rule.getHead());
         translated.setWeight(rule.getWeight());
-        List<PelpLiteral> translatedBody = new ArrayList<>();
+        List<BasePelpLiteral> translatedBody = new ArrayList<>();
         rule.getBody().forEach(literal -> {
             if (!(literal instanceof PelpSubjectiveLiteral)) {
                 translatedBody.add(literal);
@@ -140,6 +142,7 @@ public class SimplifyResucer implements ProgramTranslator {
 
         Map<PelpObjectiveLiteral, Set<PelpSubjectiveLiteral>> groups = getProbEpisSetWithSameObjectiveLiterals(rule);
         for (Map.Entry entry : groups.entrySet()) {
+            @SuppressWarnings("unchecked")
             PelpSubjectiveLiteral literal = mergeProbEpis((PelpObjectiveLiteral) entry.getKey(),
                     (Set<PelpSubjectiveLiteral>)entry.getValue());
             if (literal == null) {
@@ -154,14 +157,14 @@ public class SimplifyResucer implements ProgramTranslator {
     }
 
     private boolean existConflictInBody(PelpRule rule) {
-        List<PelpLiteral> literals = new ArrayList<>(rule.getBody());
+        List<BasePelpLiteral> literals = new ArrayList<>(rule.getBody());
         for (int i = 0; i != literals.size(); ++i) {
-            PelpLiteral a = literals.get(i);
+            BasePelpLiteral a = literals.get(i);
             if (isProbNafNegConflict(a)) {
                 return true;
             }
             for (int j = i + 1; j != literals.size(); ++j) {
-                PelpLiteral b = literals.get(j);
+                BasePelpLiteral b = literals.get(j);
                 if (isWeakNegativeConflict(a, b)
                         || isStrongNegativeConflict(a, b)
                         || isNegEpisConflict(a, b) || isNegEpisConflict(b, a)
@@ -181,11 +184,11 @@ public class SimplifyResucer implements ProgramTranslator {
 
     /**
      * 两个扩展字相矛盾
-     * @param a
-     * @param b
-     * @return
+     * @param a an extended literal
+     * @param b another extended literal
+     * @return if these literals are conflict with each other
      */
-    private boolean isWeakNegativeConflict(PelpLiteral a, PelpLiteral b) {
+    private boolean isWeakNegativeConflict(BasePelpLiteral a, BasePelpLiteral b) {
         if (a instanceof PelpObjectiveLiteral && b instanceof PelpObjectiveLiteral) {
             PelpObjectiveLiteral literal1 = (PelpObjectiveLiteral) a;
             PelpObjectiveLiteral literal2 = (PelpObjectiveLiteral) b;
@@ -199,7 +202,7 @@ public class SimplifyResucer implements ProgramTranslator {
         return false;
     }
 
-    private boolean isStrongNegativeConflict(PelpLiteral a, PelpLiteral b) {
+    private boolean isStrongNegativeConflict(BasePelpLiteral a, BasePelpLiteral b) {
         if (a instanceof PelpObjectiveLiteral && b instanceof PelpObjectiveLiteral) {
             PelpObjectiveLiteral literal1 = (PelpObjectiveLiteral) a;
             PelpObjectiveLiteral literal2 = (PelpObjectiveLiteral) b;
@@ -213,7 +216,7 @@ public class SimplifyResucer implements ProgramTranslator {
         return false;
     }
 
-    private boolean isNegEpisConflict(PelpLiteral a, PelpLiteral b) {
+    private boolean isNegEpisConflict(BasePelpLiteral a, BasePelpLiteral b) {
         if (a instanceof PelpObjectiveLiteral && b instanceof PelpSubjectiveLiteral) {
             PelpObjectiveLiteral literal1 = (PelpObjectiveLiteral) a;
             PelpSubjectiveLiteral literal2 = (PelpSubjectiveLiteral) b;
@@ -225,7 +228,7 @@ public class SimplifyResucer implements ProgramTranslator {
         return false;
     }
 
-    private boolean isPosEpisConflict(PelpLiteral a, PelpLiteral b) {
+    private boolean isPosEpisConflict(BasePelpLiteral a, BasePelpLiteral b) {
         if (a instanceof PelpObjectiveLiteral && b instanceof PelpSubjectiveLiteral) {
             PelpObjectiveLiteral literal1 = (PelpObjectiveLiteral) a;
             PelpSubjectiveLiteral literal2 = (PelpSubjectiveLiteral) b;
@@ -241,7 +244,7 @@ public class SimplifyResucer implements ProgramTranslator {
         return false;
     }
 
-    private boolean isPosNegEpisConflict(PelpLiteral a, PelpLiteral b) {
+    private boolean isPosNegEpisConflict(BasePelpLiteral a, BasePelpLiteral b) {
         if (a instanceof PelpObjectiveLiteral && b instanceof PelpSubjectiveLiteral) {
             PelpObjectiveLiteral literal1 = (PelpObjectiveLiteral) a;
             PelpSubjectiveLiteral literal2 = (PelpSubjectiveLiteral) b;
@@ -253,7 +256,7 @@ public class SimplifyResucer implements ProgramTranslator {
         return false;
     }
 
-    private boolean isStrongInverseEpisConflict(PelpLiteral a, PelpLiteral b) {
+    private boolean isStrongInverseEpisConflict(BasePelpLiteral a, BasePelpLiteral b) {
         if (a instanceof PelpSubjectiveLiteral && b instanceof PelpSubjectiveLiteral) {
             PelpSubjectiveLiteral literal1 = (PelpSubjectiveLiteral) a;
             PelpSubjectiveLiteral literal2 = (PelpSubjectiveLiteral) b;
@@ -270,7 +273,7 @@ public class SimplifyResucer implements ProgramTranslator {
         return false;
     }
 
-    private boolean isProbCompareConflict(PelpLiteral a, PelpLiteral b) {
+    private boolean isProbCompareConflict(BasePelpLiteral a, BasePelpLiteral b) {
         if (a instanceof PelpProbRelation && b instanceof PelpProbRelation) {
             PelpProbRelation literal1 = (PelpProbRelation) a;
             PelpProbRelation literal2 = (PelpProbRelation) b;
@@ -281,7 +284,7 @@ public class SimplifyResucer implements ProgramTranslator {
         return false;
     }
 
-    private boolean isLeftProbCNafLessConflict(PelpLiteral a, PelpLiteral b) {
+    private boolean isLeftProbCNafLessConflict(BasePelpLiteral a, BasePelpLiteral b) {
         if (a instanceof PelpProbRelation && b instanceof PelpSubjectiveLiteral) {
             PelpProbRelation literal1 = (PelpProbRelation) a;
             PelpSubjectiveLiteral literal2 = (PelpSubjectiveLiteral) b;
@@ -296,7 +299,7 @@ public class SimplifyResucer implements ProgramTranslator {
         return false;
     }
 
-    private boolean isRightProbCNafLessConflict(PelpLiteral a, PelpLiteral b) {
+    private boolean isRightProbCNafLessConflict(BasePelpLiteral a, BasePelpLiteral b) {
         if (a instanceof PelpProbRelation && b instanceof PelpSubjectiveLiteral) {
             PelpProbRelation literal1 = (PelpProbRelation) a;
             PelpSubjectiveLiteral literal2 = (PelpSubjectiveLiteral) b;
@@ -311,7 +314,7 @@ public class SimplifyResucer implements ProgramTranslator {
         return false;
     }
 
-    private boolean isProbNafNegLessConflict(PelpLiteral a, PelpLiteral b) {
+    private boolean isProbNafNegLessConflict(BasePelpLiteral a, BasePelpLiteral b) {
         if (a instanceof PelpProbRelation && b instanceof PelpSubjectiveLiteral) {
             PelpProbRelation literal1 = (PelpProbRelation) a;
             PelpSubjectiveLiteral literal2 = (PelpSubjectiveLiteral) b;
@@ -326,7 +329,7 @@ public class SimplifyResucer implements ProgramTranslator {
         return false;
     }
 
-    private boolean isProbNafNegConflict(PelpLiteral a) {
+    private boolean isProbNafNegConflict(BasePelpLiteral a) {
         if (a instanceof PelpProbRelation) {
             PelpObjectiveLiteral left = ((PelpProbRelation) a).getLeft();
             PelpObjectiveLiteral right = ((PelpProbRelation) a).getRight();
@@ -365,21 +368,21 @@ public class SimplifyResucer implements ProgramTranslator {
     }
 
     private PelpRule removeRedundantBody(PelpRule rule) {
-        List<PelpLiteral> reductBody = new ArrayList<>();
-        for (PelpLiteral literal: rule.getBody()) {
+        List<BasePelpLiteral> reducedBody = new ArrayList<>();
+        for (BasePelpLiteral literal: rule.getBody()) {
             if (!existK11Conflict(literal, rule.getBody())
                     && !existK00Conflict(literal, rule.getBody())
                     && !existNafConflict(literal, rule.getBody())
                     && !existPosConflict(literal, rule.getBody())
                     && !existNegNafConflict(literal, rule.getBody())
                     && !existNegK01Conflict(literal, rule.getBody())) {
-                reductBody.add(literal);
+                reducedBody.add(literal);
             }
         }
-        return new PelpRule(rule.getHead(), reductBody);
+        return new PelpRule(rule.getHead(), reducedBody);
     }
 
-    private boolean existK11Conflict(PelpLiteral literal, List<PelpLiteral> body) {
+    private boolean existK11Conflict(BasePelpLiteral literal, List<BasePelpLiteral> body) {
         if (literal instanceof PelpObjectiveLiteral) {
             PelpSubjectiveLiteral k11 = new PelpSubjectiveLiteral(true, true, 1, 1, (PelpObjectiveLiteral) literal);
             return body.contains(k11);
@@ -387,7 +390,7 @@ public class SimplifyResucer implements ProgramTranslator {
         return false;
     }
 
-    private boolean existK00Conflict(PelpLiteral literal, List<PelpLiteral> body) {
+    private boolean existK00Conflict(BasePelpLiteral literal, List<BasePelpLiteral> body) {
         if (literal instanceof PelpObjectiveLiteral && ((PelpObjectiveLiteral) literal).getNafCount() > 0) {
             PelpObjectiveLiteral literal1 = new PelpObjectiveLiteral((PelpObjectiveLiteral) literal);
             literal1.setNafCount(literal1.getNafCount() - 1);
@@ -397,7 +400,7 @@ public class SimplifyResucer implements ProgramTranslator {
         return false;
     }
 
-    private boolean existNafConflict(PelpLiteral literal, List<PelpLiteral> body) {
+    private boolean existNafConflict(BasePelpLiteral literal, List<BasePelpLiteral> body) {
         if (literal instanceof PelpSubjectiveLiteral && ((PelpSubjectiveLiteral) literal).isKco01()) {
             PelpObjectiveLiteral literal1 = new PelpObjectiveLiteral(((PelpSubjectiveLiteral) literal).getObjectiveLiteral());
             literal1.setNafCount(literal1.getNafCount() + 1);
@@ -406,14 +409,13 @@ public class SimplifyResucer implements ProgramTranslator {
         return false;
     }
 
-    private boolean existPosConflict(PelpLiteral literal, List<PelpLiteral> body) {
-        if (literal instanceof PelpSubjectiveLiteral && ((PelpSubjectiveLiteral) literal).isKoc01()) {
-            return body.contains(((PelpSubjectiveLiteral) literal).getObjectiveLiteral());
-        }
-        return false;
+    private boolean existPosConflict(BasePelpLiteral literal, List<BasePelpLiteral> body) {
+        return literal instanceof PelpSubjectiveLiteral
+                && ((PelpSubjectiveLiteral) literal).isKoc01()
+                && body.contains(((PelpSubjectiveLiteral) literal).getObjectiveLiteral());
     }
 
-    private boolean existNegNafConflict(PelpLiteral literal, List<PelpLiteral> body) {
+    private boolean existNegNafConflict(BasePelpLiteral literal, List<BasePelpLiteral> body) {
         if (literal instanceof PelpObjectiveLiteral && ((PelpObjectiveLiteral) literal).getNafCount() > 0) {
             PelpObjectiveLiteral literal1 = new PelpObjectiveLiteral(((PelpObjectiveLiteral) literal).getNafCount() - 1,
                     !((PelpObjectiveLiteral) literal).isNegation(),
@@ -424,7 +426,7 @@ public class SimplifyResucer implements ProgramTranslator {
         return false;
     }
 
-    private boolean existNegK01Conflict(PelpLiteral literal, List<PelpLiteral> body) {
+    private boolean existNegK01Conflict(BasePelpLiteral literal, List<BasePelpLiteral> body) {
         if (literal instanceof PelpSubjectiveLiteral && ((PelpSubjectiveLiteral) literal).isKco01()) {
             PelpObjectiveLiteral literal1 = new PelpObjectiveLiteral(((PelpSubjectiveLiteral) literal).getObjectiveLiteral());
             literal1.setNegation(!literal1.isNegation());
@@ -433,8 +435,8 @@ public class SimplifyResucer implements ProgramTranslator {
         return false;
     }
 
-    private List<PelpLiteral> getFalseBody() {
-        List<PelpLiteral> body = new ArrayList<>();
+    private List<BasePelpLiteral> getFalseBody() {
+        List<BasePelpLiteral> body = new ArrayList<>();
         body.add(new PelpObjectiveLiteral(0, false, "_false", new ArrayList<>()));
         return body;
     }

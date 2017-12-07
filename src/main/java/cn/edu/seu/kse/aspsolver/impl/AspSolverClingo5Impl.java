@@ -1,18 +1,19 @@
-package cn.edu.seu.kse.aspSolver.impl;
+package cn.edu.seu.kse.aspsolver.impl;
 
-import cn.edu.seu.kse.aspSolver.AspSolver;
-import cn.edu.seu.kse.aspSolver.CommandLineSolver;
+import cn.edu.seu.kse.aspsolver.AspSolver;
+import cn.edu.seu.kse.aspsolver.CommandLineSolver;
 import cn.edu.seu.kse.exception.ReasoningErrorException;
 import cn.edu.seu.kse.exception.SyntaxErrorException;
 import cn.edu.seu.kse.exception.UnsatisfiableException;
 import cn.edu.seu.kse.exception.UnsupportedOsTypeException;
 import cn.edu.seu.kse.model.CommandLineOutput;
-import cn.edu.seu.kse.model.ObjectModel;
+import cn.edu.seu.kse.model.BaseObjectModel;
 import cn.edu.seu.kse.model.asp.AnswerSet;
 import cn.edu.seu.kse.model.asp.AspLiteral;
 import cn.edu.seu.kse.model.asp.AspProgram;
 import cn.edu.seu.kse.syntax.parser.AspSyntaxParser;
-import cn.edu.seu.kse.util.CommandLineExecute;
+import cn.edu.seu.kse.util.ApacheCommandlineExecutor;
+import cn.edu.seu.kse.util.CommandLineExecutor;
 import cn.edu.seu.kse.util.Logger;
 import org.apache.commons.lang.SystemUtils;
 
@@ -21,9 +22,16 @@ import java.util.*;
 
 /**
  * 调用Clingo 4进行ASP的推理，要求clingo已经配置为环境变量
- * Created by 张舒韬 on 2017/1/11.
+ *
+ * @author 张舒韬
+ * @date 2017/1/11
  */
-public class AspSolverClingo4Impl implements CommandLineSolver, AspSolver {
+public class AspSolverClingo5Impl implements CommandLineSolver, AspSolver {
+    private static final String UNSAT_TAG = "UNSATISFIABLE";
+    private static final String ERR_TAG = "ERROR";
+    private static final String CLINGO_PATH = new File("").getAbsolutePath() + "\\clingo5.2";
+
+    private CommandLineExecutor cmdExecutor = new ApacheCommandlineExecutor();
 
     private File saveProgramAsTempFile(AspProgram program) throws IOException {
         File programFile = File.createTempFile("pelpTemp", ".lp");
@@ -34,9 +42,9 @@ public class AspSolverClingo4Impl implements CommandLineSolver, AspSolver {
         return programFile;
     }
 
+    @Override
     public Set<AnswerSet> reason(AspProgram program) throws UnsatisfiableException, ReasoningErrorException, IOException {
-        Map<String, String> valueParam = new HashMap<>();
-//        valueParam.put("--opt-mode", "enum");
+        Map<String, String> valueParam = new HashMap<>(16);
         valueParam.put("--models", "0");
         List<String> params = generateSolverParamList(valueParam, new ArrayList<>());
 
@@ -64,26 +72,28 @@ public class AspSolverClingo4Impl implements CommandLineSolver, AspSolver {
         }
     }
 
+    @Override
     public List<String> generateSolverParamList(Map<String, String> valueParam, List<String> singleParam) {
         List<String> list = new ArrayList<>();
 
-        valueParam.entrySet().forEach(entry -> {
-            list.add(entry.getKey());
-            list.add(entry.getValue());
+        valueParam.forEach((key, value) -> {
+            list.add(key);
+            list.add(value);
         });
-        singleParam.forEach(list::add);
+        list.addAll(singleParam);
 
         return list;
     }
 
+    @Override
     public String callSolver(File programFile, List<String> options) throws SyntaxErrorException, ReasoningErrorException {
         List<String> params = new ArrayList<>();
         params.addAll(options);
         params.add(programFile.getAbsolutePath());
 
         try {
-            CommandLineOutput result = CommandLineExecute.callShell("clingo", params);
-            if (result.getError().contains("ERROR")) {
+            CommandLineOutput result = cmdExecutor.callShell(CLINGO_PATH, params);
+            if (result.getError().contains(ERR_TAG)) {
                 throw new ReasoningErrorException(result.getError());
             } else {
                 return result.getOutput();
@@ -95,10 +105,11 @@ public class AspSolverClingo4Impl implements CommandLineSolver, AspSolver {
         }
     }
 
-    public List<ObjectModel> resolveReasonResult(String result) throws UnsatisfiableException, IOException, SyntaxErrorException {
-        List<ObjectModel> answerSets = new ArrayList<>();
+    @Override
+    public List<BaseObjectModel> resolveReasonResult(String result) throws UnsatisfiableException, IOException, SyntaxErrorException {
+        List<BaseObjectModel> answerSets = new ArrayList<>();
 
-        if (result.contains("UNSATISFIABLE")) {
+        if (result.contains(UNSAT_TAG)) {
             throw new UnsatisfiableException("逻辑程序不可满足");
         }
 

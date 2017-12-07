@@ -1,6 +1,6 @@
 package cn.edu.seu.kse.model.pelp;
 
-import cn.edu.seu.kse.model.ObjectModel;
+import cn.edu.seu.kse.model.BaseObjectModel;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
@@ -8,10 +8,13 @@ import java.util.*;
 
 /**
  * PELP程序的语法类
- * Created by 张舒韬 on 2017/1/6.
+ *
+ * @author 张舒韬
+ * @date 2017/1/6
  */
-public class PelpProgram extends ObjectModel {
-    private List<PelpRule> rules = new ArrayList<>();   // 程序中的规则
+public class PelpProgram extends BaseObjectModel {
+    /** 程序中的规则 */
+    private List<PelpRule> rules = new ArrayList<>();
 
     public PelpProgram() {
     }

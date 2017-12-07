@@ -8,15 +8,19 @@ import java.util.Set;
 import java.util.StringJoiner;
 
 /**
- * TODO:
- * Created by 张舒韬 on 2017/2/7.
+ * the world view in the reasoning result of a PELP program
+ *
+ * @author 张舒韬
+ * @date 2017/2/7
  */
 public class WorldView {
     private Set<PossibleWorld> possibleWorldSet = new HashSet<>();
-    private Set<PelpSubjective> supportedEpistemic = new HashSet<>(); // 世界观支持的主观字
-    private Set<PelpSubjective> unsupportedEpistemic = new HashSet<>(); // 世界观否定的主观字
+    /** 世界观支持的主观字 */
+    private Set<BasePelpSubjective> supportedEpistemic = new HashSet<>();
+    /** 世界观否定的主观字 */
+    private Set<BasePelpSubjective> unsupportedEpistemic = new HashSet<>();
 
-    public WorldView(Set<PelpSubjective> supportedEpistemic, Set<PelpSubjective> unsupportedEpistemic) {
+    public WorldView(Set<BasePelpSubjective> supportedEpistemic, Set<BasePelpSubjective> unsupportedEpistemic) {
         this.supportedEpistemic = supportedEpistemic;
         this.unsupportedEpistemic = unsupportedEpistemic;
     }
@@ -29,19 +33,19 @@ public class WorldView {
         this.possibleWorldSet = possibleWorldSet;
     }
 
-    public Set<PelpSubjective> getSupportedEpistemic() {
+    public Set<BasePelpSubjective> getSupportedEpistemic() {
         return supportedEpistemic;
     }
 
-    public void setSupportedEpistemic(Set<PelpSubjective> supportedEpistemic) {
+    public void setSupportedEpistemic(Set<BasePelpSubjective> supportedEpistemic) {
         this.supportedEpistemic = supportedEpistemic;
     }
 
-    public Set<PelpSubjective> getUnsupportedEpistemic() {
+    public Set<BasePelpSubjective> getUnsupportedEpistemic() {
         return unsupportedEpistemic;
     }
 
-    public void setUnsupportedEpistemic(Set<PelpSubjective> unsupportedEpistemic) {
+    public void setUnsupportedEpistemic(Set<BasePelpSubjective> unsupportedEpistemic) {
         this.unsupportedEpistemic = unsupportedEpistemic;
     }
 

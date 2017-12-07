@@ -1,10 +1,13 @@
 package cn.edu.seu.kse.model;
 
 /**
- * TODO:
- * Created by 张舒韬 on 2017/1/11.
+ * the output of a shell program
+ *
+ * @author 张舒韬
+ * @date 2017/1/11
  */
 public class CommandLineOutput {
+    private int exitValue;
     private String output;
     private String error;
 
@@ -13,6 +16,12 @@ public class CommandLineOutput {
     }
 
     public CommandLineOutput(String output, String error) {
+        this.output = output;
+        this.error = error;
+    }
+
+    public CommandLineOutput(int exitValue, String output, String error) {
+        this.exitValue = exitValue;
         this.output = output;
         this.error = error;
     }
@@ -31,5 +40,13 @@ public class CommandLineOutput {
 
     public void setError(String error) {
         this.error = error;
+    }
+
+    public int getExitValue() {
+        return exitValue;
+    }
+
+    public void setExitValue(int exitValue) {
+        this.exitValue = exitValue;
     }
 }

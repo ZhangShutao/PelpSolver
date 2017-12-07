@@ -6,7 +6,9 @@ import org.antlr.v4.runtime.Recognizer;
 
 /**
  * 该类的syntaxError方法在处理语法异常时抛出一个运行时异常
- * Created by 张舒韬 on 2017/1/8.
+ *
+ * @author 张舒韬
+ * @date 2017/1/8
  */
 public class SyntaxErrorListener extends BaseErrorListener {
     @Override

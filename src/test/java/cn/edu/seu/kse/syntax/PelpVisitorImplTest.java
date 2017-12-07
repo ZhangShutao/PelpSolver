@@ -1,6 +1,6 @@
 package cn.edu.seu.kse.syntax;
 
-import cn.edu.seu.kse.model.ObjectModel;
+import cn.edu.seu.kse.model.BaseObjectModel;
 import cn.edu.seu.kse.model.pelp.*;
 import cn.edu.seu.kse.syntax.pelp.PelpLexer;
 import cn.edu.seu.kse.syntax.pelp.PelpParser;
@@ -32,9 +32,9 @@ public class PelpVisitorImplTest {
         return parser;
     }
 
-    private ObjectModel getVisitedObject(ParseTree tree) {
+    private BaseObjectModel getVisitedObject(ParseTree tree) {
         PelpVisitorImpl visitor = new PelpVisitorImpl();
-        return (ObjectModel) visitor.visit(tree);
+        return (BaseObjectModel) visitor.visit(tree);
     }
 
     @Test

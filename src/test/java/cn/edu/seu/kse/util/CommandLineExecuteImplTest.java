@@ -16,7 +16,7 @@ import static org.junit.Assert.fail;
  * 测试命令行调用工具
  * Created by 张舒韬 on 2017/1/11.
  */
-public class CommandLineExecuteTest {
+public class CommandLineExecuteImplTest {
     private static final String perfectProgram = "naive(X):-simple(X). simple(jo).";
     private static final String warningProgram = "naive(X):-simple(X).";
     private static final String errorProgram = "Naive(X):-Simple(X). Simple(jo).";
@@ -46,7 +46,7 @@ public class CommandLineExecuteTest {
     public void testCallClingoWithPerfectProgram() {
         File file = generateTemporaryFile(perfectProgram);
         try {
-            CommandLineOutput output = CommandLineExecute.callShell("clingo", Arrays.asList("0", file.getAbsolutePath()));
+            CommandLineOutput output = new ApacheCommandlineExecutor().callShell("clingo", Arrays.asList("0", file.getAbsolutePath()));
 
             assertTrue(output.getOutput().contains("SATISFIABLE"));
             assertTrue(output.getError().isEmpty());
@@ -63,7 +63,7 @@ public class CommandLineExecuteTest {
     public void testCallClingoWithWarningProgram() {
         File file = generateTemporaryFile(warningProgram);
         try {
-            CommandLineOutput output = CommandLineExecute.callShell("clingo", Arrays.asList("0", file.getAbsolutePath()));
+            CommandLineOutput output = new ApacheCommandlineExecutor().callShell("clingo", Arrays.asList("0", file.getAbsolutePath()));
 
             assertTrue(output.getOutput().contains("SATISFIABLE"));
             assertTrue(output.getError().contains("warning"));
@@ -80,7 +80,7 @@ public class CommandLineExecuteTest {
     public void testCallClingoWithErrorProgram() {
         File file = generateTemporaryFile(errorProgram);
         try {
-            CommandLineOutput output = CommandLineExecute.callShell("clingo", Arrays.asList("0", file.getAbsolutePath()));
+            CommandLineOutput output = new ApacheCommandlineExecutor().callShell("clingo", Arrays.asList("0", file.getAbsolutePath()));
 
             assertTrue(output.getOutput().contains("UNKNOWN"));
             assertTrue(output.getError().contains("ERROR"));
@@ -97,7 +97,7 @@ public class CommandLineExecuteTest {
     public void testCallClingoWithUnsatisfiableProgram() {
         File file = generateTemporaryFile(unsatProgram);
         try {
-            CommandLineOutput output = CommandLineExecute.callShell("clingo", Arrays.asList("0", file.getAbsolutePath()));
+            CommandLineOutput output = new ApacheCommandlineExecutor().callShell("clingo", Arrays.asList("0", file.getAbsolutePath()));
             assertTrue(output.getOutput().contains("UNSATISFIABLE"));
         } catch (UnsupportedOsTypeException | IOException e) {
             e.printStackTrace();

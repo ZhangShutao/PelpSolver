@@ -11,11 +11,14 @@ import java.lang.reflect.*;
 
 /**
  * 实现对slf4j的logger的封装
- * Created by 张舒韬 on 2017/2/7.
+ *
+ * @author 张舒韬
+ * @date 2017/2/7
  */
 public class Logger {
     private static org.slf4j.Logger logger;
     private static final String FQCN = Logger.class.getName();
+    private static final String LOG_FUNC_NAME = "log";
 
     static {
         try {
@@ -50,10 +53,12 @@ public class Logger {
     }
 
     private static class LogInterceptor implements MethodInterceptor {
+        @Override
         public Object intercept(Object o, Method method, Object[] objects, MethodProxy methodProxy) throws Throwable {
             // 只拦截log方法。
-            if (objects.length != 4 || !method.getName().equals("log"))
+            if (objects.length != 4 || !LOG_FUNC_NAME.equals(method.getName())) {
                 return methodProxy.invokeSuper(o, objects);
+            }
             objects[0] = FQCN;
             return methodProxy.invokeSuper(o, objects);
         }

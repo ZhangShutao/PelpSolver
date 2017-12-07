@@ -1,4 +1,4 @@
-package cn.edu.seu.kse.aspSolver;
+package cn.edu.seu.kse.aspsolver;
 
 import cn.edu.seu.kse.exception.ReasoningErrorException;
 import cn.edu.seu.kse.exception.UnsatisfiableException;
@@ -10,7 +10,9 @@ import java.util.Set;
 
 /**
  * ASP推理机的调用接口
- * Created by 张舒韬 on 2017/1/11.
+ *
+ * @author 张舒韬
+ * @date 2017/1/11
  */
 public interface AspSolver {
 

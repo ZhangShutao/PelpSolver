@@ -1,7 +1,7 @@
 package cn.edu.seu.kse.translate.impl;
 
 import cn.edu.seu.kse.exception.TranslateErrorException;
-import cn.edu.seu.kse.model.ObjectModel;
+import cn.edu.seu.kse.model.BaseObjectModel;
 import cn.edu.seu.kse.model.pelp.*;
 import cn.edu.seu.kse.translate.ProgramTranslator;
 import cn.edu.seu.kse.util.Logger;
@@ -10,13 +10,15 @@ import java.util.*;
 
 /**
  * 主观字的消除
- * Created by 张舒韬 on 2017/1/18.
+ *
+ * @author 张舒韬
+ * @date 2017/1/18
  */
 public class EpistemicReducer implements ProgramTranslator {
 
     @Override
-    public Set<ObjectModel> translate(ObjectModel objectModel) throws TranslateErrorException {
-        Set<ObjectModel> result = new HashSet<>();
+    public Set<BaseObjectModel> translate(BaseObjectModel objectModel) throws TranslateErrorException {
+        Set<BaseObjectModel> result = new HashSet<>();
         if (objectModel instanceof PelpProgram) {
             result.add(translateProgram(objectModel));
         } else {
@@ -26,7 +28,7 @@ public class EpistemicReducer implements ProgramTranslator {
     }
 
     @Override
-    public ObjectModel translateProgram(ObjectModel program) throws TranslateErrorException {
+    public BaseObjectModel translateProgram(BaseObjectModel program) throws TranslateErrorException {
         Logger.debug("reducing subjective literals...\n{}", program.toString());
         Set<PelpRule> rules = new HashSet<>();
         ((PelpProgram) program).getRules().forEach(pelpRule -> {
@@ -67,21 +69,21 @@ public class EpistemicReducer implements ProgramTranslator {
 
         List<PelpObjectiveLiteral> mixHead = Collections.singletonList(generateMixSubjectiveLiteral(subjectiveLiteral));
 
-        List<PelpLiteral> positiveBody = Collections.singletonList(translateSubjectiveLiteral(subjectiveLiteral));
+        List<BasePelpLiteral> positiveBody = Collections.singletonList(translateSubjectiveLiteral(subjectiveLiteral));
         rules.add(new PelpRule(mixHead, positiveBody));
 
         PelpObjectiveLiteral negation = translateSubjectiveLiteral(subjectiveLiteral);
         negation.setNegation(true);
 
         if (subjectiveLiteral.isKco01() || subjectiveLiteral.isKoc01()) {
-            List<PelpLiteral> negativeBody = new ArrayList<>();
+            List<BasePelpLiteral> negativeBody = new ArrayList<>();
             negativeBody.add(negation);
             PelpObjectiveLiteral addition = new PelpObjectiveLiteral(subjectiveLiteral.getObjectiveLiteral());
             addition.setNafCount(addition.getNafCount() + (subjectiveLiteral.isKco01() ? 1 : 2));
             negativeBody.add(addition);
             rules.add(new PelpRule(mixHead, negativeBody));
         } else {
-            List<PelpLiteral> confirmNegativeBody = new ArrayList<>();
+            List<BasePelpLiteral> confirmNegativeBody = new ArrayList<>();
             PelpObjectiveLiteral confirmAddition = new PelpObjectiveLiteral(subjectiveLiteral.getObjectiveLiteral());
             confirmAddition.setNafCount(confirmAddition.getNafCount() + 1);
             confirmNegativeBody.add(confirmAddition);
@@ -89,7 +91,7 @@ public class EpistemicReducer implements ProgramTranslator {
             confirmNegativeBody.add(translateSubjectiveLiteral(confirm));
             rules.add(new PelpRule(mixHead, confirmNegativeBody));
 
-            List<PelpLiteral> denyNegativeBody = new ArrayList<>();
+            List<BasePelpLiteral> denyNegativeBody = new ArrayList<>();
             PelpObjectiveLiteral denyAddition = new PelpObjectiveLiteral(subjectiveLiteral.getObjectiveLiteral());
             denyAddition.setNafCount(denyAddition.getNafCount());
             denyNegativeBody.add(denyAddition);
@@ -104,7 +106,7 @@ public class EpistemicReducer implements ProgramTranslator {
     private Set<PelpRule> getEpistemicSelectRules(PelpRule rule) {
         Set<PelpRule> selectRules = new HashSet<>();
 
-        List<PelpLiteral> positiveBody = new ArrayList<>(rule.getPositiveBody());
+        List<BasePelpLiteral> positiveBody = new ArrayList<>(rule.getPositiveBody());
 
         rule.getSubjectives().forEach(literal -> {
             selectRules.add(new PelpRule(getEpistemicSelectHead(literal), positiveBody));
@@ -123,7 +125,7 @@ public class EpistemicReducer implements ProgramTranslator {
         return selectRules;
     }
 
-    private List<PelpObjectiveLiteral> getEpistemicSelectHead(PelpSubjective literal) {
+    private List<PelpObjectiveLiteral> getEpistemicSelectHead(BasePelpSubjective literal) {
         List<PelpObjectiveLiteral> fact = new ArrayList<>();
         PelpObjectiveLiteral replacedLiteral;
         if (literal instanceof PelpSubjectiveLiteral) {
@@ -137,7 +139,7 @@ public class EpistemicReducer implements ProgramTranslator {
     }
 
     private PelpRule replaceEpistemicLiteral(PelpRule rule) {
-        List<PelpLiteral> body = new ArrayList<>();
+        List<BasePelpLiteral> body = new ArrayList<>();
         rule.getBody().forEach(pelpLiteral -> {
             if (pelpLiteral instanceof PelpSubjectiveLiteral) {
                 PelpSubjectiveLiteral subjectiveLiteral = (PelpSubjectiveLiteral) pelpLiteral;

@@ -12,8 +12,9 @@ public class CommonsExecTest {
     @Test
     public void testCallClingo5() {
         for (int i = 1; i != 2; ++i) {
+            String path = new File("").getAbsolutePath();
             String fileName = String.format("asp%02d.lp", i);
-            String cmdStr = "DefaultReasoner5 0 --mode=gringo --text " + "test" + File.separator  + fileName;
+            String cmdStr = path + "\\clingo5.2 0 --mode=gringo --text " + "test" + File.separator  + fileName;
 
             DefaultExecutor executor = new DefaultExecutor();
             CommandLine cmdLine = CommandLine.parse(cmdStr);

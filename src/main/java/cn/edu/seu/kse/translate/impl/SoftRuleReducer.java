@@ -1,6 +1,6 @@
 package cn.edu.seu.kse.translate.impl;
 
-import cn.edu.seu.kse.model.ObjectModel;
+import cn.edu.seu.kse.model.BaseObjectModel;
 import cn.edu.seu.kse.model.pelp.*;
 import cn.edu.seu.kse.translate.ProgramTranslator;
 import cn.edu.seu.kse.util.Logger;
@@ -14,8 +14,8 @@ import java.util.*;
 public class SoftRuleReducer implements ProgramTranslator {
 
     @Override
-    public Set<ObjectModel> translate(ObjectModel objectModel) {
-        Set<ObjectModel> objectModelSet = new HashSet<>();
+    public Set<BaseObjectModel> translate(BaseObjectModel objectModel) {
+        Set<BaseObjectModel> objectModelSet = new HashSet<>();
         if (objectModel instanceof PelpProgram) {
             objectModelSet.add(translateProgram(objectModel));
         } else if (objectModel instanceof PelpRule && ((PelpRule) objectModel).isSoft()) {
@@ -27,7 +27,7 @@ public class SoftRuleReducer implements ProgramTranslator {
     }
 
     @Override
-    public ObjectModel translateProgram(ObjectModel program) {
+    public BaseObjectModel translateProgram(BaseObjectModel program) {
         Logger.debug("translating pelp program, reducing soft rules...\n{}", program.toString());
         if (program instanceof PelpProgram) {
             PelpProgram originProgram = (PelpProgram) program;
@@ -140,7 +140,7 @@ public class SoftRuleReducer implements ProgramTranslator {
         PelpObjectiveLiteral selectLiteral = generateRuleSelectedLiteral(rule);
         PelpObjectiveLiteral notSelectLiteral = generateRuleNotSelectedLiteral(rule);
 
-        List<PelpLiteral> herbrandBody = new ArrayList<>();
+        List<BasePelpLiteral> herbrandBody = new ArrayList<>();
         selectLiteral.getVariableSet().forEach(variable ->
             herbrandBody.add(new PelpObjectiveLiteral(0, false, "_herbrand", Collections.singletonList(variable)))
         );
@@ -154,7 +154,7 @@ public class SoftRuleReducer implements ProgramTranslator {
      * @return 软规则被选用时的规则
      */
     private Set<PelpRule> generateSelectedResultRule(PelpRule rule) {
-        List<PelpLiteral> selectedBody = new ArrayList<>();
+        List<BasePelpLiteral> selectedBody = new ArrayList<>();
         selectedBody.add(generateRuleSelectedLiteral(rule));
         selectedBody.addAll(rule.getBody());
 
@@ -169,7 +169,7 @@ public class SoftRuleReducer implements ProgramTranslator {
         List<PelpObjectiveLiteral> headList = Collections.singletonList(headLiteral);
 
         rule.getHead().forEach(head -> {
-            List<PelpLiteral> bodyList = new ArrayList<>();
+            List<BasePelpLiteral> bodyList = new ArrayList<>();
             bodyList.add(head);
             rule.getVariableSet().forEach(var -> {
                 bodyList.add(new PelpObjectiveLiteral(0, false, "_herbrand", Collections.singletonList(var)));
@@ -192,7 +192,7 @@ public class SoftRuleReducer implements ProgramTranslator {
 
     private PelpRule generateBodySatisfyRule(PelpRule rule) {
         PelpObjectiveLiteral satisfy = new PelpObjectiveLiteral(0, false, "_sat", generateGroundedRuleIdentifyParamsWithWeight(rule));
-        List<PelpLiteral> bodyList = new ArrayList<>();
+        List<BasePelpLiteral> bodyList = new ArrayList<>();
         bodyList.add(new PelpObjectiveLiteral(1, false, "_body", generateGroundedRuleIdentifyParams(rule)));
         satisfy.getVariableSet().forEach(variable ->
             bodyList.add(new PelpObjectiveLiteral(0, false, "_herbrand", Collections.singletonList(variable)))
@@ -201,7 +201,7 @@ public class SoftRuleReducer implements ProgramTranslator {
     }
 
     private PelpRule generateUnselectedConstrain(PelpRule rule) {
-        List<PelpLiteral> constrain = new ArrayList<>();
+        List<BasePelpLiteral> constrain = new ArrayList<>();
         constrain.add(generateRuleNotSelectedLiteral(rule));
         constrain.add(generateRuleSatisfiedLiteral(rule));
         return new PelpRule(new ArrayList<>(), constrain, null);

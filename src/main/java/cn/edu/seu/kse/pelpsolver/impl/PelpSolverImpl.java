@@ -1,7 +1,7 @@
-package cn.edu.seu.kse.pelpSolver.impl;
+package cn.edu.seu.kse.pelpsolver.impl;
 
-import cn.edu.seu.kse.aspSolver.AspSolver;
-import cn.edu.seu.kse.aspSolver.impl.AspSolverClingo4Impl;
+import cn.edu.seu.kse.aspsolver.AspSolver;
+import cn.edu.seu.kse.aspsolver.impl.AspSolverClingo5Impl;
 import cn.edu.seu.kse.exception.ReasoningErrorException;
 import cn.edu.seu.kse.exception.SyntaxErrorException;
 import cn.edu.seu.kse.exception.TranslateErrorException;
@@ -9,13 +9,13 @@ import cn.edu.seu.kse.exception.UnsatisfiableException;
 import cn.edu.seu.kse.model.asp.AnswerSet;
 import cn.edu.seu.kse.model.asp.AspProgram;
 import cn.edu.seu.kse.model.pelp.*;
-import cn.edu.seu.kse.pelpSolver.PelpSolver;
+import cn.edu.seu.kse.pelpsolver.PelpSolver;
 import cn.edu.seu.kse.syntax.parser.PelpSyntaxParser;
 import cn.edu.seu.kse.translate.AnswerSet2PossibleWorldTranslator;
 import cn.edu.seu.kse.translate.ProgramTranslator;
 import cn.edu.seu.kse.translate.impl.EpistemicReducer;
 import cn.edu.seu.kse.translate.impl.Pelp2AspTranslator;
-import cn.edu.seu.kse.translate.impl.SimplifyResucer;
+import cn.edu.seu.kse.translate.impl.SimplifyReducer;
 import cn.edu.seu.kse.translate.impl.SoftRuleReducer;
 import cn.edu.seu.kse.util.Logger;
 
@@ -23,12 +23,14 @@ import java.io.IOException;
 import java.util.*;
 
 /**
- * TODO:
- * Created by 张舒韬 on 2017/2/7.
+ * the implementation of interface PelpSolver
+ *
+ * @author 张舒韬
+ * @date 2017/2/7
  */
 public class PelpSolverImpl implements PelpSolver {
-    private AspSolver aspSolver = new AspSolverClingo4Impl();
-    private ProgramTranslator simplifyReducer = new SimplifyResucer();
+    private AspSolver aspSolver = new AspSolverClingo5Impl();
+    private ProgramTranslator simplifyReducer = new SimplifyReducer();
     private ProgramTranslator softReducer = new SoftRuleReducer();
     private ProgramTranslator epistemicReducer = new EpistemicReducer();
     private ProgramTranslator pelp2AspTranslator = new Pelp2AspTranslator();
@@ -96,9 +98,12 @@ public class PelpSolverImpl implements PelpSolver {
                 joiner.add("");
                 Logger.info(joiner.toString());
 
-                if (testWorldView(worldView) // 该世界观中的主观字得到满足
-                        && !supportedCovered(worldViews, worldView) // 该世界观没有被已有的世界观覆盖
-                        && !replaceCoveredWorldView(worldViews, worldView) // 该世界观没有覆盖已有的世界观
+                // 该世界观中的主观字得到满足
+                if (testWorldView(worldView)
+                        // 该世界观没有被已有的世界观覆盖
+                        && !supportedCovered(worldViews, worldView)
+                        // 该世界观没有覆盖已有的世界观
+                        && !replaceCoveredWorldView(worldViews, worldView)
                         ) {
                     worldViews.add(worldView);
                 }
@@ -140,8 +145,8 @@ public class PelpSolverImpl implements PelpSolver {
         return a != b && getSupportSet(a).containsAll(getSupportSet(b));
     }
 
-    private Set<PelpSubjective> getSupportSet(WorldView worldView) {
-        Set<PelpSubjective> supportedSet = new HashSet<>();
+    private Set<BasePelpSubjective> getSupportSet(WorldView worldView) {
+        Set<BasePelpSubjective> supportedSet = new HashSet<>();
         worldView.getSupportedEpistemic().forEach(literal -> {
             if (literal instanceof PelpSubjectiveLiteral) {
                 PelpSubjectiveLiteral subjectiveLiteral = (PelpSubjectiveLiteral) literal;
@@ -219,8 +224,8 @@ public class PelpSolverImpl implements PelpSolver {
             PossibleWorld possibleWorld = getAnswerSetTranslator().translate(answerSet);
             String groupId = getGroupId(answerSet);
             if (!worldViewMap.containsKey(groupId)) {
-                Set<PelpSubjective> supported = getAnswerSetTranslator().getSupportedEpistemic(answerSet);
-                Set<PelpSubjective> notSupported = getAnswerSetTranslator().getNotSupportedEpistemic(answerSet);
+                Set<BasePelpSubjective> supported = getAnswerSetTranslator().getSupportedEpistemic(answerSet);
+                Set<BasePelpSubjective> notSupported = getAnswerSetTranslator().getNotSupportedEpistemic(answerSet);
                 worldViewMap.put(groupId, new WorldView(supported, notSupported));
             }
             worldViewMap.get(groupId).addPossibleWorld(possibleWorld);
@@ -244,13 +249,13 @@ public class PelpSolverImpl implements PelpSolver {
     }
 
     public boolean testWorldView(WorldView worldView) {
-        for (PelpSubjective supported : worldView.getSupportedEpistemic()) {
+        for (BasePelpSubjective supported : worldView.getSupportedEpistemic()) {
             if (!supportedByWorldView(supported, worldView)) {
                 return false;
             }
         }
 
-        for (PelpSubjective unsupported  : worldView.getUnsupportedEpistemic()) {
+        for (BasePelpSubjective unsupported  : worldView.getUnsupportedEpistemic()) {
             if (supportedByWorldView(unsupported, worldView)) {
                 return false;
             }
@@ -258,7 +263,7 @@ public class PelpSolverImpl implements PelpSolver {
         return true;
     }
 
-    private boolean supportedByWorldView(PelpSubjective subjective, WorldView worldView) {
+    private boolean supportedByWorldView(BasePelpSubjective subjective, WorldView worldView) {
         if (subjective instanceof PelpSubjectiveLiteral) {
             PelpSubjectiveLiteral subjectiveLiteral = (PelpSubjectiveLiteral) subjective;
             double weight = getSupportedWeight(subjectiveLiteral.getObjectiveLiteral(), worldView);

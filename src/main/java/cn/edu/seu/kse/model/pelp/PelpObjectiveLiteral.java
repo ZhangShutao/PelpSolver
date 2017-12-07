@@ -7,13 +7,18 @@ import java.util.*;
 
 /**
  * Pelp中的客观字
- * Created by 张舒韬 on 2017/1/8.
+ *
+ * @author 张舒韬
+ * @date 2017/1/8
  */
-public class PelpObjectiveLiteral extends PelpObjective {
+public class PelpObjectiveLiteral extends BasePelpObjective {
     private Integer nafCount = 0;
-    private boolean negation;   // 强否定
-    private String predicate;    // 谓词
-    private List<PelpParam> params = new ArrayList<>(); // 参数列表
+    /** 强否定 */
+    private boolean negation;
+    /** 谓词 */
+    private String predicate;
+    /** 参数列表 */
+    private List<PelpParam> params = new ArrayList<>();
 
     public PelpObjectiveLiteral() {
     }

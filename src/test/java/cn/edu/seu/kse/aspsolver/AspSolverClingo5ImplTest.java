@@ -1,6 +1,6 @@
-package cn.edu.seu.kse.aspSolver;
+package cn.edu.seu.kse.aspsolver;
 
-import cn.edu.seu.kse.aspSolver.impl.AspSolverClingo4Impl;
+import cn.edu.seu.kse.aspsolver.impl.AspSolverClingo5Impl;
 import cn.edu.seu.kse.exception.ReasoningErrorException;
 import cn.edu.seu.kse.exception.SyntaxErrorException;
 import cn.edu.seu.kse.exception.UnsatisfiableException;
@@ -19,8 +19,8 @@ import static org.junit.Assert.fail;
  * 测试ASP推理机Clingo 4的调用
  * Created by 张舒韬 on 2017/1/16.
  */
-public class AspSolverClingo4ImplTest {
-    private static AspSolver solver = new AspSolverClingo4Impl();
+public class AspSolverClingo5ImplTest {
+    private static AspSolver solver = new AspSolverClingo5Impl();
 
     @Test
     public void testSolve() {

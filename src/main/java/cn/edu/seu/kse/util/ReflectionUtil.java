@@ -3,8 +3,10 @@ package cn.edu.seu.kse.util;
 import java.lang.reflect.Field;
 
 /**
- * TODO:
- * Created by 张舒韬 on 2017/2/11.
+ * reflect tool for class Logger
+ *
+ * @author 张舒韬
+ * @date 2017/2/11
  */
 public class ReflectionUtil {
     public static <T> T getFieldValue(Object object,
