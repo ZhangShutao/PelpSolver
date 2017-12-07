@@ -105,13 +105,13 @@ public class PelpVisitorImpl extends PelpBaseVisitor {
 
     @Override
     public Object visitRule_body(PelpParser.Rule_bodyContext ctx) {
-        List<PelpLiteral> body = new ArrayList<>();
+        List<BasePelpLiteral> body = new ArrayList<>();
         for (int i = 0; i != ctx.getChildCount(); ++i) {
             if (ctx.getChild(i) instanceof PelpParser.Subjective_literalContext
                     || ctx.getChild(i) instanceof PelpParser.Objective_literalContext
                     || ctx.getChild(i) instanceof PelpParser.RelationContext
                     || ctx.getChild(i) instanceof PelpParser.Prob_relationContext) {
-                body.add((PelpLiteral) visit(ctx.getChild(i)));
+                body.add((BasePelpLiteral) visit(ctx.getChild(i)));
             }
         }
         return body;
@@ -132,7 +132,7 @@ public class PelpVisitorImpl extends PelpBaseVisitor {
     @Override
     @SuppressWarnings("unchecked")
     public Object visitConstrain_rule(PelpParser.Constrain_ruleContext ctx) {
-        List<PelpLiteral> body = (List) visit(ctx.rule_body());
+        List<BasePelpLiteral> body = (List) visit(ctx.rule_body());
         return new PelpRule(new ArrayList<>(), body, null);
     }
 
@@ -140,7 +140,7 @@ public class PelpVisitorImpl extends PelpBaseVisitor {
     @SuppressWarnings("unchecked")
     public Object visitNormal_rule(PelpParser.Normal_ruleContext ctx) {
         List<PelpObjectiveLiteral> head = (List) visit(ctx.rule_head());
-        List<PelpLiteral> body = (List) visit(ctx.rule_body());
+        List<BasePelpLiteral> body = (List) visit(ctx.rule_body());
         PelpRule rule = new PelpRule(head, body, null);
         if (!rule.isSafe()) {
             throw new RuntimeException("语法错误：规则" + rule +"不安全");

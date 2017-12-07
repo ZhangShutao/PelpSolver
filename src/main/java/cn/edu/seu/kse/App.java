@@ -2,8 +2,8 @@ package cn.edu.seu.kse;
 
 import cn.edu.seu.kse.exception.ReasoningErrorException;
 import cn.edu.seu.kse.exception.SyntaxErrorException;
-import cn.edu.seu.kse.pelpSolver.PelpSolver;
-import cn.edu.seu.kse.pelpSolver.impl.PelpSolverImpl;
+import cn.edu.seu.kse.pelpsolver.PelpSolver;
+import cn.edu.seu.kse.pelpsolver.impl.PelpSolverImpl;
 import cn.edu.seu.kse.util.Logger;
 import org.apache.commons.cli.*;
 
@@ -14,6 +14,7 @@ import java.util.StringJoiner;
 /**
  * Hello world!
  *
+ * @author Zhang Shutao
  */
 public class App {
 

@@ -4,13 +4,12 @@ import cn.edu.seu.kse.exception.SyntaxErrorException;
 import cn.edu.seu.kse.exception.TranslateErrorException;
 import cn.edu.seu.kse.exception.UnsupportedOsTypeException;
 import cn.edu.seu.kse.model.CommandLineOutput;
-import cn.edu.seu.kse.model.ObjectModel;
+import cn.edu.seu.kse.model.BaseObjectModel;
 import cn.edu.seu.kse.model.asp.*;
 import cn.edu.seu.kse.model.pelp.*;
 import cn.edu.seu.kse.syntax.parser.AspSyntaxParser;
 import cn.edu.seu.kse.translate.ProgramTranslator;
 import cn.edu.seu.kse.util.ApacheCommandlineExecutor;
-import cn.edu.seu.kse.util.CommandLineExecuteImpl;
 import cn.edu.seu.kse.util.CommandLineExecutor;
 import cn.edu.seu.kse.util.Logger;
 
@@ -19,14 +18,16 @@ import java.util.*;
 
 /**
  * TODO:
- * Created by 张舒韬 on 2017/3/31.
+ *
+ * @author 张舒韬
+ * @date 2017/3/31
  */
 public class Pelp2AspTranslator implements ProgramTranslator {
     private CommandLineExecutor cmdExecutor = new ApacheCommandlineExecutor();
 
     @Override
-    public Set<ObjectModel> translate(ObjectModel objectModel) throws TranslateErrorException {
-        Set<ObjectModel> result = new HashSet<>();
+    public Set<BaseObjectModel> translate(BaseObjectModel objectModel) throws TranslateErrorException {
+        Set<BaseObjectModel> result = new HashSet<>();
         if (objectModel instanceof PelpProgram) {
             result.add(translateProgram(objectModel));
         } else if (objectModel instanceof PelpRule) {
@@ -38,7 +39,7 @@ public class Pelp2AspTranslator implements ProgramTranslator {
     }
 
     @Override
-    public ObjectModel translateProgram(ObjectModel program) throws TranslateErrorException {
+    public BaseObjectModel translateProgram(BaseObjectModel program) throws TranslateErrorException {
         if (program instanceof PelpProgram) {
             PelpProgram pelpProgram = (PelpProgram) program;
             Set<AspRule> aspRules = new HashSet<>();

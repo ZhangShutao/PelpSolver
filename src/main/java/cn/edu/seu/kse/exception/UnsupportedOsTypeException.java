@@ -1,8 +1,10 @@
 package cn.edu.seu.kse.exception;
 
 /**
- * TODO:
- * Created by 张舒韬 on 2017/1/11.
+ * apache failed to find the OS type of this machine or it is not useful
+ *
+ * @author 张舒韬
+ * @date 2017/1/11
  */
 public class UnsupportedOsTypeException extends Exception {
     public UnsupportedOsTypeException() {

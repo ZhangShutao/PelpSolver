@@ -7,9 +7,11 @@ import java.util.Set;
 
 /**
  * Pelp的主观字
- * Created by 张舒韬 on 2017/1/7.
+ *
+ * @author 张舒韬
+ * @date 2017/1/7
  */
-public class PelpSubjectiveLiteral extends PelpSubjective {
+public class PelpSubjectiveLiteral extends BasePelpSubjective {
 
     private boolean isLeftClose;
     private boolean isRightClose;

@@ -11,6 +11,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
 
+/**
+ * using apache tools to call a shell command
+ * @author Zhang Shutao
+ */
 public class ApacheCommandlineExecutor implements CommandLineExecutor {
 
     public CommandLineOutput callShell(String name, List<String> params) throws UnsupportedOsTypeException, IOException {

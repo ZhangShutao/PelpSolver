@@ -7,10 +7,12 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * TODO:
- * Created by 张舒韬 on 2017/3/28.
+ * probabilistic relation literals in PELP programs
+ *
+ * @author 张舒韬
+ * @date 2017/3/28
  */
-public class PelpProbRelation extends PelpSubjective {
+public class PelpProbRelation extends BasePelpSubjective {
     private PelpObjectiveLiteral left;
     private PelpObjectiveLiteral right;
 

@@ -1,8 +1,8 @@
-package cn.edu.seu.kse.pelpSolver;
+package cn.edu.seu.kse.pelpsolver;
 
 import cn.edu.seu.kse.exception.ReasoningErrorException;
 import cn.edu.seu.kse.exception.SyntaxErrorException;
-import cn.edu.seu.kse.pelpSolver.impl.PelpSolverImpl;
+import cn.edu.seu.kse.pelpsolver.impl.PelpSolverImpl;
 import cn.edu.seu.kse.translate.AnswerSet2PossibleWorldTranslator;
 import org.junit.Test;
 

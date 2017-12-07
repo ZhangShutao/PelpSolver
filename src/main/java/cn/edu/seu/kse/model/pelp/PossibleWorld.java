@@ -8,11 +8,15 @@ import java.util.StringJoiner;
 
 /**
  * Pelp推理结果中的可能世界
- * Created by 张舒韬 on 2017/2/7.
+ *
+ * @author 张舒韬
+ * @date 2017/2/7
  */
 public class PossibleWorld {
-    private Set<PelpObjectiveLiteral> literals; // 可能世界中的客观字
-    private Double weight = 1.0;  // 可能世界在世界观中的权重，在(0, 1]上
+    /** 可能世界中的客观字 */
+    private Set<PelpObjectiveLiteral> literals;
+    /** 可能世界在世界观中的权重，在(0, 1]上 */
+    private Double weight = 1.0;
 
     public PossibleWorld(Set<PelpObjectiveLiteral> literals, Double weight) {
         this.literals = literals;

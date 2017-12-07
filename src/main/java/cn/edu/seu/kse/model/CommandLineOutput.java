@@ -1,8 +1,10 @@
 package cn.edu.seu.kse.model;
 
 /**
- * TODO:
- * Created by 张舒韬 on 2017/1/11.
+ * the output of a shell program
+ *
+ * @author 张舒韬
+ * @date 2017/1/11
  */
 public class CommandLineOutput {
     private int exitValue;

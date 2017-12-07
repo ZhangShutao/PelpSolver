@@ -1,9 +1,9 @@
-package cn.edu.seu.kse.aspSolver;
+package cn.edu.seu.kse.aspsolver;
 
 import cn.edu.seu.kse.exception.ReasoningErrorException;
 import cn.edu.seu.kse.exception.SyntaxErrorException;
 import cn.edu.seu.kse.exception.UnsatisfiableException;
-import cn.edu.seu.kse.model.ObjectModel;
+import cn.edu.seu.kse.model.BaseObjectModel;
 
 import java.io.File;
 import java.io.IOException;
@@ -12,7 +12,9 @@ import java.util.Map;
 
 /**
  * 命令行推理机的实现接口
- * Created by 张舒韬 on 2017/1/11.
+ *
+ * @author 张舒韬
+ * @date 2017/1/11
  */
 public interface CommandLineSolver {
 
@@ -40,5 +42,5 @@ public interface CommandLineSolver {
      * @return 解析所得的推理结果
      * @throws UnsatisfiableException 原程序不可满足
      */
-    List<ObjectModel> resolveReasonResult(String result) throws UnsatisfiableException, IOException, SyntaxErrorException;
+    List<BaseObjectModel> resolveReasonResult(String result) throws UnsatisfiableException, IOException, SyntaxErrorException;
 }

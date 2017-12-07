@@ -11,38 +11,44 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * TODO:
- * Created by 张舒韬 on 2017/2/9.
+ * translate an answer set into a possible world
+ *
+ * @author 张舒韬
+ * @date 2017/2/9
  */
 public class AnswerSet2PossibleWorldTranslator {
+    private final static String SUB_PREFIX = "_";
+    private final static String PROB_SUB_PREFIX = "_k";
+    private final static String REL_SUB_PREFIX = "_pl";
+
     public PossibleWorld translate(AnswerSet answerSet) {
         Set<PelpObjectiveLiteral> pelpLiterals = new HashSet<>();
         answerSet.getLiterals().forEach(aspLiteral -> {
-            if (!aspLiteral.getPredicate().startsWith("_")) {
+            if (!aspLiteral.getPredicate().startsWith(SUB_PREFIX)) {
                 pelpLiterals.add(translateLiteral(aspLiteral));
             }
         });
         return new PossibleWorld(pelpLiterals, answerSet.getWeight() * 0.001);
     }
 
-    public Set<PelpSubjective> getSupportedEpistemic(AnswerSet answerSet) {
-        Set<PelpSubjective> supportedEpistemic = new HashSet<>();
+    public Set<BasePelpSubjective> getSupportedEpistemic(AnswerSet answerSet) {
+        Set<BasePelpSubjective> supportedEpistemic = new HashSet<>();
         answerSet.getLiterals().forEach(aspLiteral -> {
-            if (aspLiteral.getPredicate().startsWith("_k") &&!aspLiteral.isNegation()) {
+            if (aspLiteral.getPredicate().startsWith(PROB_SUB_PREFIX) &&!aspLiteral.isNegation()) {
                 supportedEpistemic.add(translateEpistemic(aspLiteral));
-            } else if (aspLiteral.getPredicate().startsWith("_pl") && !aspLiteral.isNegation()) {
+            } else if (aspLiteral.getPredicate().startsWith(REL_SUB_PREFIX) && !aspLiteral.isNegation()) {
                 supportedEpistemic.add(translateProbRelation(aspLiteral));
             }
         });
         return supportedEpistemic;
     }
 
-    public Set<PelpSubjective> getNotSupportedEpistemic(AnswerSet answerSet) {
-        Set<PelpSubjective> notSupportedEpistemic = new HashSet<>();
+    public Set<BasePelpSubjective> getNotSupportedEpistemic(AnswerSet answerSet) {
+        Set<BasePelpSubjective> notSupportedEpistemic = new HashSet<>();
         answerSet.getLiterals().forEach(aspLiteral -> {
-            if (aspLiteral.getPredicate().startsWith("_k") && aspLiteral.isNegation()) {
+            if (aspLiteral.getPredicate().startsWith(PROB_SUB_PREFIX) && aspLiteral.isNegation()) {
                 notSupportedEpistemic.add(translateEpistemic(aspLiteral));
-            } else if (aspLiteral.getPredicate().startsWith("_pl") && aspLiteral.isNegation()) {
+            } else if (aspLiteral.getPredicate().startsWith(REL_SUB_PREFIX) && aspLiteral.isNegation()) {
                 notSupportedEpistemic.add(translateProbRelation(aspLiteral));
             }
         });

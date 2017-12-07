@@ -1,6 +1,6 @@
 package cn.edu.seu.kse.model.asp;
 
-import cn.edu.seu.kse.model.ObjectModel;
+import cn.edu.seu.kse.model.BaseObjectModel;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
@@ -8,9 +8,11 @@ import java.util.*;
 
 /**
  * ASP推理所得的回答集的语法类
- * Created by 张舒韬 on 2017/1/9.
+ *
+ * @author 张舒韬
+ * @date 2017/1/9
  */
-public class AnswerSet extends ObjectModel {
+public class AnswerSet extends BaseObjectModel {
     private Set<AspLiteral> literals = new HashSet<>();
     private Integer weight = 0;
 

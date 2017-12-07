@@ -1,14 +1,16 @@
 package cn.edu.seu.kse.model.pelp;
 
-import cn.edu.seu.kse.model.ObjectModel;
+import cn.edu.seu.kse.model.BaseObjectModel;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
 /**
  * Pelp中字的参数，分为常量和变量两种
- * Created by 张舒韬 on 2017/1/6.
+ *
+ * @author 张舒韬
+ * @date 2017/1/6
  */
-public class PelpParam extends ObjectModel {
+public class PelpParam extends BaseObjectModel {
     public static final int CONSTANT = 0;
     public static final int VARIABLE = 1;
     public static final int LITERAL = 2;

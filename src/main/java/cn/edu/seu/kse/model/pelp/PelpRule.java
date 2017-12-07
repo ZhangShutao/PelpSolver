@@ -1,6 +1,6 @@
 package cn.edu.seu.kse.model.pelp;
 
-import cn.edu.seu.kse.model.ObjectModel;
+import cn.edu.seu.kse.model.BaseObjectModel;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
@@ -8,24 +8,28 @@ import java.util.*;
 
 /**
  * PELP规则的语法类
- * Created by 张舒韬 on 2017/1/6.
+ *
+ * @author 张舒韬
+ * @date 2017/1/6
  */
-public class PelpRule extends ObjectModel {
+public class PelpRule extends BaseObjectModel {
     private List<PelpObjectiveLiteral> head = new ArrayList<>();
-    private List<PelpLiteral> body = new ArrayList<>();
+    private List<BasePelpLiteral> body = new ArrayList<>();
     private Double weight = null;
 
+    private static final String DEFAULT_ID = "_r0";
+
     public PelpRule() {
-        setId("_r0"); // 默认规则编号为_r0
+        setId(DEFAULT_ID);
     }
 
-    public PelpRule(List<PelpObjectiveLiteral> head, List<PelpLiteral> body) {
+    public PelpRule(List<PelpObjectiveLiteral> head, List<BasePelpLiteral> body) {
         super();
         this.head = head;
         this.body = body;
     }
 
-    public PelpRule(List<PelpObjectiveLiteral> head, List<PelpLiteral> body, Double weight) {
+    public PelpRule(List<PelpObjectiveLiteral> head, List<BasePelpLiteral> body, Double weight) {
         super();
         this.head = head;
         this.body = body;
@@ -40,11 +44,11 @@ public class PelpRule extends ObjectModel {
         this.head = head;
     }
 
-    public List<PelpLiteral> getBody() {
+    public List<BasePelpLiteral> getBody() {
         return body;
     }
 
-    public void setBody(List<PelpLiteral> body) {
+    public void setBody(List<BasePelpLiteral> body) {
         this.body = body;
     }
 
@@ -148,8 +152,8 @@ public class PelpRule extends ObjectModel {
         return variableSet;
     }
 
-    public Set<PelpLiteral> getPositiveBody() {
-        Set<PelpLiteral> literals = new HashSet<>();
+    public Set<BasePelpLiteral> getPositiveBody() {
+        Set<BasePelpLiteral> literals = new HashSet<>();
         getBody().forEach(literal -> {
             if (literal.isPositive()) {
                 literals.add(literal);
@@ -168,11 +172,11 @@ public class PelpRule extends ObjectModel {
         return subjectiveLiterals;
     }
 
-    public Set<PelpSubjective> getSubjectives() {
-        Set<PelpSubjective> subjectives = new HashSet<>();
+    public Set<BasePelpSubjective> getSubjectives() {
+        Set<BasePelpSubjective> subjectives = new HashSet<>();
         getBody().forEach(literal -> {
             if (literal.isSubjective()) {
-                subjectives.add((PelpSubjective) literal);
+                subjectives.add((BasePelpSubjective) literal);
             }
         });
         return subjectives;
