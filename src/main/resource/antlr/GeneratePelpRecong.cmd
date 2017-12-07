@@ -1,0 +1,1 @@
+java org.antlr.v4.Tool -visitor -o ../../java/cn/edu/seu/kse/syntax/pelp -package cn.edu.seu.kse.syntax.pelp  Pelp.g4
