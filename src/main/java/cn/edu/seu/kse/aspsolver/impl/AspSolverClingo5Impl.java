@@ -29,6 +29,7 @@ import java.util.*;
 public class AspSolverClingo5Impl implements CommandLineSolver, AspSolver {
     private static final String UNSAT_TAG = "UNSATISFIABLE";
     private static final String ERR_TAG = "ERROR";
+    private static final String CLINGO_PATH = new File("").getAbsolutePath() + "\\clingo5.2";
 
     private CommandLineExecutor cmdExecutor = new ApacheCommandlineExecutor();
 
@@ -91,8 +92,7 @@ public class AspSolverClingo5Impl implements CommandLineSolver, AspSolver {
         params.add(programFile.getAbsolutePath());
 
         try {
-            CommandLineOutput result = cmdExecutor.callShell("DefaultReasoner5", params);
-            //CommandLineOutput = ApacheCommandlineExecutor("DefaultReasoner5", params);
+            CommandLineOutput result = cmdExecutor.callShell(CLINGO_PATH, params);
             if (result.getError().contains(ERR_TAG)) {
                 throw new ReasoningErrorException(result.getError());
             } else {

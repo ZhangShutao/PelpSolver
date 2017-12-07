@@ -24,6 +24,7 @@ import java.util.*;
  */
 public class Pelp2AspTranslator implements ProgramTranslator {
     private CommandLineExecutor cmdExecutor = new ApacheCommandlineExecutor();
+    private static final String CLINGO_PATH = new File("").getAbsolutePath() + "\\clingo5.2";
 
     @Override
     public Set<BaseObjectModel> translate(BaseObjectModel objectModel) throws TranslateErrorException {
@@ -126,7 +127,7 @@ public class Pelp2AspTranslator implements ProgramTranslator {
         writer.close();
 
         List<String> params = Arrays.asList("--mode=gringo", "--text", programFile.getAbsolutePath());
-        CommandLineOutput output = cmdExecutor.callShell("DefaultReasoner5", params);
+        CommandLineOutput output = cmdExecutor.callShell(CLINGO_PATH, params);
         programFile.deleteOnExit();
 
         originAsp.getRules().removeIf(this::isEpistemicSelectRule);
